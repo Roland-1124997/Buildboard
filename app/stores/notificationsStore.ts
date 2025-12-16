@@ -4,6 +4,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
     const Request = useApiHandler<ApiResponse<any>>("/api/notifications")
     const { create, close } = useModal();
     const { addToast } = useToast();
+    const { setBadge } = useBadge();
 
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
@@ -52,8 +53,10 @@ export const useNotificationsStore = defineStore("Notifications", () => {
         });
 
         watch(events, async () => await refresh());
+        watch(unseen, async (count) => await setBadge(count));
+
         if (Error.value) error.value = Error.value;
-        
+
         return { close }
     };
 
@@ -66,7 +69,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
             query: { action: "markAsSeen", type: message.origin },
         })
 
-        if (error)  return addToast({
+        if (error) return addToast({
             type: "error",
             message: `Error marking notification as seen: ${error}`,
         });
@@ -109,7 +112,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
                 message: "Notification deleted successfully",
             });
         }
-        
+
         const onCancel = () => {
 
             close();

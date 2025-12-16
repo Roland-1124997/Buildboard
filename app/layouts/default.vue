@@ -77,4 +77,27 @@
 		closeStorage();
 		closeNotifications();
 	});
+
+	const requestNotificationsPermission = async () => {
+		if ("Notification" in window) {
+			const permission = await Notification.requestPermission();
+			
+			if (permission === "granted") return addToast({
+				message: "Notificatie permissies toegestaan",
+				type: "success",
+			});
+			
+			else if (permission === "denied") return addToast({
+				message: "Notificatie permissies geweigerd",
+				type: "error",
+			});
+		
+		}
+	};
+
+	onMounted(async () => {
+		if ("Notification" in window && Notification.permission === "default") {
+			await requestNotificationsPermission();
+		}
+	});
 </script>
