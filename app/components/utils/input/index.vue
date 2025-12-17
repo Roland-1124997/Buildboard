@@ -45,17 +45,12 @@
 		hideLabel: { type: Boolean, default: false },
 	});
 
+	const { value } = useField<string | Array<any> | Number>(`${name}`);
 
-	if (initialValue) {
-
-		const { value } = useField<string | Array<any> | Number>(`${name}`);
-
-		watch(() => initialValue,
+	watch(() => initialValue,
 			(initial) => value.value = initial, { immediate: true }
-		);
+	);
 		
-	}
-
 	const inputType = computed(() => 
 		type == "password" 
 			? showPassword.value 
