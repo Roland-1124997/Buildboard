@@ -19,6 +19,12 @@
 					:isButton="true"
 				/>
 
+				<UtilsButtonImportant @click="storageStore.refresh"
+					icon-name="akar-icons:arrow-right-left"
+					description="Bestanden synchroniseren"
+					:isButton="true"
+				/>
+
 			</div>
 
 			<div class="hidden">

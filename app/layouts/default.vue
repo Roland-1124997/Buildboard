@@ -43,7 +43,6 @@
 	await storageStore.initialPayload();
 	await notificationsStore.initialPayload();
 
-	const { close: closeStorage } = await storageStore.realTime();
 	const { close: closeNotifications } = await notificationsStore.realTime();
 
 	const notificationsOptions = computed(() => ({
@@ -74,7 +73,6 @@
 	};
 
 	onUnmounted(() => {
-		closeStorage();
 		closeNotifications();
 	});
 

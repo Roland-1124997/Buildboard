@@ -33,7 +33,13 @@ export const useNotificationsStore = defineStore("Notifications", () => {
             await setBadge(unseen.value);
         }
 
-        else error.value = Error;
+        else {
+            error.value = Error;
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van notificaties.",
+                type: "error",
+            });
+        }
 
     }
 
@@ -45,10 +51,21 @@ export const useNotificationsStore = defineStore("Notifications", () => {
             messages.value = data.value?.data.messages || [];
             unseen.value = data.value?.data.unseen || 0;
 
+            addToast({
+                message: "Notificaties succesvol opgehaald.",
+                type: "success",
+            });
+
             await setBadge(unseen.value);
         }
 
-        else error.value = Error.value;
+        else {
+            error.value = Error.value;
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van notificaties.",
+                type: "error",
+            });
+        }
     }
 
     const realTime = async () => {
@@ -72,7 +89,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
 
         const { error } = await Request.Patch({
             extends: `/${message.uid}`,
-            query: { action: "markAsSeen", type: message.origin },
+            query: { action: "markAsSeen" },
         })
 
         if (error) return addToast({
@@ -89,7 +106,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
 
         const { error } = await Request.Patch({
             extends: `/${message.uid}`,
-            query: { action: "markAsUnseen", type: message.origin },
+            query: { action: "markAsUnseen" },
         })
 
         if (error) return addToast({
@@ -140,7 +157,6 @@ export const useNotificationsStore = defineStore("Notifications", () => {
 
             const { error } = await Request.Delete({
                 extends: `/${message.uid}`,
-                query: { type: message.origin },
             })
 
             close();

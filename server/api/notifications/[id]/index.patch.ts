@@ -6,32 +6,20 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const id = getRouterParam(event, 'id');
     const action = getQuery(event).action;
-    const type = getQuery(event).type;
 
     const search = { uid: id };
     const seen = [
         '\\Seen',
     ];
 
-    if (type == "email") {
-        
-        const { error } = action == 'markAsSeen'
-            ? await useAddMessageFlags(imap_client, search, seen)
-            : await useRemoveMessageFlags(imap_client, search, seen);
+    const { error } = action == 'markAsSeen'
+        ? await useAddMessageFlags(imap_client, search, seen)
+        : await useRemoveMessageFlags(imap_client, search, seen);
 
-        await useCloseImapClient(imap_client);
+    await useCloseImapClient(imap_client);
 
-        if (error) return useReturnResponse(event, internalServerError);
-    }
-
-    else if (type == "bericht") {
-
-        const { error } = action == 'markAsSeen'
-            ? await server.from("berichten").update({ flags: seen }).eq("uid", id)
-            : await server.from("berichten").update({ flags: [] }).eq("uid", id);
-
-        if (error) return useReturnResponse(event, internalServerError);
-    }
+    if (error) return useReturnResponse(event, internalServerError);
+   
 
     return useReturnResponse(event, {
         status: {

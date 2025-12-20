@@ -38,29 +38,36 @@ export const useStorageStore = defineStore("storage", () => {
         const { data, error: Error } = await Request.Get();
 
         if (!Error && data) files.value = data.data ?? [];
-        else error.value = Error;
+
+        else {
+            error.value = Error;
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van bestanden.",
+                type: "error",
+            });
+        }
     }
 
     const initialPayload = async () => {
 
         const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>("/api/storage")
 
-        if (!Error.value && data.value) files.value = data.value?.data || [];
-        else error.value = Error.value;
+        if (!Error.value && data.value) {
+            files.value = data.value?.data || [];
+            addToast({
+                message: "Bestanden succesvol opgehaald.",
+                type: "success",
+            });
+        }
+
+        else {
+            error.value = Error.value;
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van bestanden.",
+                type: "error",
+            });
+        }
     }
-
-    const realTime = async () => {
-
-        const event_id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-        const { data: events, error: Error, close } = useEventSource(`/realtime/${event_id}/storage/`, [], {
-            autoReconnect: true,
-        });
-
-        watch(events, async () => await refresh());
-        if (Error.value) error.value = Error.value;
-        return { close }
-    };
 
     const upload = async (fileList: FileList) => {
 
@@ -117,7 +124,7 @@ export const useStorageStore = defineStore("storage", () => {
 
     const remove = async (file: FileData) => {
 
-        const onConfirm = async () => { 
+        const onConfirm = async () => {
 
             const { error } = await Request.Delete({ extends: `/${file.id}` })
 
@@ -129,7 +136,7 @@ export const useStorageStore = defineStore("storage", () => {
                 duration: 5000,
             });
 
-            addToast({                
+            addToast({
                 message: "Bestand succesvol verwijderd.",
                 type: "success",
             });
@@ -137,7 +144,7 @@ export const useStorageStore = defineStore("storage", () => {
             await refresh()
         }
 
-        const onCancel = () => { 
+        const onCancel = () => {
 
             close();
             addToast({
@@ -169,7 +176,7 @@ export const useStorageStore = defineStore("storage", () => {
     const preview = async (file: FileData) => {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.platform);
 
-        
+
         if (isMobile) return await download(file, { mimetype: file.metadata.mimetype });
 
         navigateTo(file.media.preview, {
@@ -208,7 +215,6 @@ export const useStorageStore = defineStore("storage", () => {
         error,
         refresh,
         initialPayload,
-        realTime,
         upload,
         patch,
         remove,

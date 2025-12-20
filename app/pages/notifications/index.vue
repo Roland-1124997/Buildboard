@@ -20,19 +20,23 @@
 						:isSmall="true"
 					/>
 
-					<button type="button" @click="setFilter('all')" :class="['flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none w-fit focus:outline-none focus:ring-2', activeFilter === 'all' ? 'bg-neutral-100 text-neutral-800 border-neutral-400 focus:ring-neutral-400' : 'text-gray-700 bg-white border-gray-300 hover:bg-neutral-50 hover:text-neutral-600 focus:text-neutral-600 focus:border-neutral-500 hover:border-neutral-500 focus:ring-neutral-400']" aria-label="Toon alle berichten">
+					<button type="button" @click="setFilter('all')" :class="['flex items-center justify-center gap-2 px-4 py-[0.60rem] md:py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none w-fit focus:outline-none focus:ring-2', activeFilter === 'all' ? 'bg-neutral-100 text-neutral-800 border-neutral-400 focus:ring-neutral-400' : 'text-gray-700 bg-white border-gray-300 hover:bg-neutral-50 hover:text-neutral-600 focus:text-neutral-600 focus:border-neutral-500 hover:border-neutral-500 focus:ring-neutral-400']" aria-label="Toon alle berichten">
 						<icon name="akar-icons:filter" class="w-4 h-4" aria-hidden="true" />
 						<span class="hidden md:flex">Alles</span>
 					</button>
 
-					<button type="button" @click="setFilter('email')" :class="['flex items-center justify-center flex-1 gap-2 px-4 py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', activeFilter === 'email' ? 'bg-blue-100 text-blue-800 border-blue-400 focus:ring-blue-300' : 'text-gray-700 bg-white border-gray-300 hover:bg-blue-50 hover:text-blue-600 focus:text-blue-600 focus:border-blue-500 hover:border-blue-500 focus:ring-blue-300']" aria-label="Filter op emails">
-						<icon name="akar-icons:envelope" class="w-4 h-4" aria-hidden="true" />
-						<span>Emails</span>
+					<button type="button" @click="setFilter('gelezen')" :class="['flex items-center justify-center flex-1 gap-2 px-4 py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', activeFilter === 'gelezen' ? 'bg-blue-100 text-blue-800 border-blue-400 focus:ring-blue-300' : 'text-gray-700 bg-white border-gray-300 hover:bg-blue-50 hover:text-blue-600 focus:text-blue-600 focus:border-blue-500 hover:border-blue-500 focus:ring-blue-300']" aria-label="Zoek gelezen berichten">
+						<icon name="akar-icons:open-envelope" class="w-4 h-4" aria-hidden="true" />
+						<span>
+							Gelezen
+						</span>
 					</button>
 
-					<button type="button" @click="setFilter('bericht')" :class="['flex items-center justify-center flex-1 gap-2 px-4 py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', activeFilter === 'berichten' ? 'bg-purple-100 text-purple-800 border-purple-400 focus:ring-purple-300' : 'text-gray-700 bg-white border-gray-300 hover:bg-purple-50 focus:text-purple-600 hover:text-purple-600 focus:border-purple-500 hover:border-purple-500 focus:ring-purple-300']" :aria-pressed="activeFilter === 'berichten'" aria-label="Filter op berichten">
-						<icon name="akar-icons:chat-bubble" class="w-4 h-4" aria-hidden="true" />
-						<span>Berichten</span>
+					<button type="button" @click="setFilter('ongelezen')" :class="['flex items-center justify-center flex-1 gap-2 px-4 py-2 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', activeFilter === 'ongelezen' ? 'bg-red-100 text-red-800 border-red-400 focus:ring-red-300' : 'text-gray-700 bg-white border-gray-300 hover:bg-red-50 focus:text-red-600 hover:text-red-600 focus:border-red-500 hover:border-red-500 focus:ring-red-300']" :aria-pressed="activeFilter === 'ongelezen'" aria-label="Zoek ongelezen berichten">
+						<icon name="akar-icons:envelope" class="w-4 h-4" aria-hidden="true" />
+						<span>
+							Ongelezen
+						</span>
 					</button>
 				</div>
 			</nav>
@@ -172,7 +176,7 @@
 	// ***************************************************************************
 
 	const notificationsStore = useNotificationsStore();
-	const { markAsSeen, markAsUnseen, deleteMessage, savePayload, clearSavedPayload } = notificationsStore;
+	const { markAsSeen, markAsUnseen, deleteMessage, savePayload, refresh } = notificationsStore;
 
 	const route = useRoute();
 	const router = useRouter();
@@ -223,7 +227,7 @@
 
 	const activeFilter = ref(route.query.filter || "all");
 
-	const setFilter = (filterType: string) => {
+	const setFilter = async (filterType: string) => {
 		activeFilter.value = filterType;
 
 		router.push({
@@ -232,6 +236,8 @@
 				filter: filterType,
 			},
 		});
+
+		await refresh();
 	};
 
 	const activeMessageId = computed(() => route.query.id);
@@ -250,10 +256,13 @@
 		let filtered = messages.value.data.messages;
 
 		filtered = filtered.filter((message: any) => {
-			const origin = message.origin;
-			if (activeFilter.value === "all") return true;
 
-			return origin == activeFilter.value;
+			const flags = message.flags || [];
+
+			if (activeFilter.value === "all") return true;
+			if (activeFilter.value === "gelezen") return flags.includes('\\Seen');
+			else if (activeFilter.value === "ongelezen") return !flags.includes('\\Seen');
+			
 		});
 
 		router.replace({ query: { 
