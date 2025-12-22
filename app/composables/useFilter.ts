@@ -7,20 +7,20 @@ export const useFilter = () => {
     const router = useRouter();
     const route = useRoute();
 
-    if(!filter.value) filter.value = route.query.filter as string || null;
-    
+    filter.value = route.query.filter as string || null;
+
     const setFilter = (value: string | LocationQueryValue[] | null) => {
 
-        if(!value) {
+        if (!value) {
             filter.value = null;
 
             const query = { ...route.query };
             delete query.filter;
 
             router.replace({ query });
-            
+
         }
-    
+
         else {
             filter.value = value as string;
             router.replace({ query: { ...route.query, filter: value } });
@@ -28,11 +28,11 @@ export const useFilter = () => {
     }
 
 
-    
+
     return {
         filter,
         setFilter,
-    
+
     };
 
 };

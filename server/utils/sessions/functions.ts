@@ -3,7 +3,17 @@ import type { H3Event } from "h3";
 import type { SupabaseClient, Session, User } from "@supabase/supabase-js";
 
 export const useGetSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
-    return await client.auth.getUser(currentSession?.access_token || "non_Existing");
+    
+    const stored = useStorage<User>(`sessions`);
+    const cached = await stored.getItem(`session`);
+    
+    if(!currentSession?.access_token) return await client.auth.getUser(currentSession?.access_token || "non_Existing");
+    if(cached) return { data: { user: cached }, error: null };
+    
+    const { data, error } = await client.auth.getUser(currentSession?.access_token || "non_Existing");
+    if(!error && data) await stored.setItem(`session`, data.user, { ttl: 60 * 5 });
+    
+    return { data, error };
 }
 
 export const useRefreshSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {

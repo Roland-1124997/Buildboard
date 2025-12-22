@@ -1,10 +1,9 @@
 export default defineEventHandler(async (event) => {
 
     const client = await serverSupabaseClient(event);
-    const server = serverSupabaseServiceRole(event);
     const currentSession = await useGetCookies(event);
 
-    const { data, error } = await client.auth.getUser(currentSession?.access_token || "non_Existing");
+    const { data, error } = await useGetSession(client, currentSession);
 
     if (error) {
         const { data, error } = await useRefreshSession(client, currentSession);

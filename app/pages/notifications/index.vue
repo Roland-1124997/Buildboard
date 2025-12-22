@@ -13,7 +13,7 @@
 						{{ query ? "Probeer een andere zoekterm" : "Er zijn momenteel geen notificaties" }}
 					</p>
 				</div>
-				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="selectMessage(inbox)" @keydown.enter="selectMessage(inbox)" :class="['w-full p-4 text-left cursor-pointer transition-all duration-150 border-b border-b-gray-200 bg-white', selected?.uid === inbox.uid ? 'bg-gray-50' : 'hover:bg-gray-100']">
+				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="selectMessage(inbox)" @keydown.enter="selectMessage(inbox)" :class="['w-full p-4 text-left cursor-pointer transition-all duration-150 border-b border-b-gray-200', selected?.id == inbox.id ? 'bg-gray-50' : 'bg-white hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">

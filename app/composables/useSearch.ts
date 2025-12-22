@@ -30,39 +30,10 @@ export const useSearch = () => {
         }
     }
 
-
-    const context = (path: string) => searchConfig.find(config => config.path === path);
-
     return {
         search,
         setSearch,
-        context
     };
 
 };
-
-
-type SearchConfig = {
-    path: string;
-    label: string;
-    placeholder: string;
-}
-
-const searchConfig: SearchConfig[] = [
-    {
-        path: "/articles",
-        label: "Zoek in artikelen",
-        placeholder: "Zoek artikelen...",
-    },
-    {
-        path: "/storage",
-        label: "Zoek in bestanden",
-        placeholder: "Zoek bestanden...",
-    },
-    {
-        path: "/notifications",
-        label: "Zoek in notificaties",
-        placeholder: "Zoek notificaties...",
-    }
-]
 

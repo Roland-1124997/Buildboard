@@ -32,7 +32,6 @@ export const useMailer = async (options: { recepient: string, subject: string, b
     }
 
     else {
-        console.log('Email sent:', { id: data.id, });
         response.success = true;
     }
 

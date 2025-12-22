@@ -5,7 +5,8 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     if (error) return useReturnResponse(event, internalServerError);
 
     await useDeleteCookies(event);
-
+    await useStorage(`sessions`).removeItem("session");
+    
     return useReturnResponse(event, {
         status: {
             success: true,

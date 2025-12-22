@@ -78,13 +78,7 @@ export const useGetRepositories =async (token: string, per_page: number, page: n
     const { data, error } = await useFetchRepositories(token);
     const paginated = data ? paginate(data, per_page, page) : null;
 
-    if (paginated) {
-        stored.setItem(`repos-${token}`, paginated)
-
-        setTimeout(() => {
-            stored.removeItem(`repos-${token}`)
-        }, 1000 * 60 * 10);
-    }
+    if (paginated) stored.setItem(`repos-${token}`, paginated, { ttl: 60 * 10 }); 
 
     return { data: paginated, error };
 };

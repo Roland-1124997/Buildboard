@@ -31,6 +31,8 @@ export default defineEventHandler(async (event) => {
     }
   });
 
+  await useStorage(`sessions`).setItem("session", { ...data.user });
+
 
   if (data.user.factors) {
 
