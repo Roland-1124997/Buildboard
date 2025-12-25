@@ -116,15 +116,9 @@ type ToolBar = {
     search: search;
 }
 
-export type requests = {
-    name: string;
-    endpoint: string;
-}
-
 export type RouteType = {
     label: string;
     iconName: string;
     alert?: boolean;
     toolbar?: ToolBar;
-    requests?: requests[];
 };

@@ -1,26 +1,35 @@
+export const useNotifications = defineStore("Notifications", () => {
 
-export const useNotificationsStore = defineStore("Notifications", () => {
-
-    const Request = useApiHandler<ApiResponse<any>>("/api/notifications")
     const { create, close } = useModal();
     const { addToast } = useToast();
     const { setBadge } = useBadge();
 
+    const uri = "/api/notifications";
+    const Request = useApiHandler<ApiResponse<any>>(uri);
+
+    const selected = ref<any | null>(null);
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
     const error = ref<any | null>(null);
 
+    const route = useRoute();
+
+    const activeMessageId = computed(() => route.query.id);
+
     const storedPayload = useLocalStorage<string | null>("notification:payload", null);
     const savePayload = async (payload: any) => storedPayload.value = JSON.stringify(payload);
-    const clearSavedPayload = () => storedPayload.value = null
+    const clearSavedPayload = () => storedPayload.value = null;
 
     const getSavedPayload = () => {
         if (storedPayload.value) return JSON.parse(storedPayload.value);
         return null;
-    }
+    };
 
     watch(unseen, async (count) => await setBadge(count)), { immediate: true };
 
+    watch(() => route.path, () => {
+        selected.value = null
+    });
 
     const refresh = async () => {
 
@@ -71,7 +80,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
         });
 
         watch(events, async () => await refresh());
-        
+
         if (Error.value) error.value = Error.value;
 
         return { close }
@@ -115,7 +124,7 @@ export const useNotificationsStore = defineStore("Notifications", () => {
     const requestPermission = async () => {
 
         if (!("Notification" in window) || Notification.permission !== "default") return;
-        
+
         Notification.requestPermission()
             .then((permission) => {
 
@@ -144,14 +153,13 @@ export const useNotificationsStore = defineStore("Notifications", () => {
             }));
     };
 
-
     const deleteMessage = async (message: any) => {
 
         const onConfirm = async () => {
 
             const { error } = await Request.Delete({
                 extends: `/${message.uid}`,
-            })
+            });
 
             close();
             await refresh();
@@ -166,8 +174,8 @@ export const useNotificationsStore = defineStore("Notifications", () => {
                 message: "Notification deleted successfully",
             });
 
-            await refresh()
-        }
+            await refresh();
+        };
 
         const onCancel = () => {
 
@@ -176,20 +184,106 @@ export const useNotificationsStore = defineStore("Notifications", () => {
                 type: "info",
                 message: "Verwijderen geannuleerd",
             });
-        }
+        };
 
         create({
             name: "Confirmatie-Modal",
             description: "Weet je zeker dat je dit bericht wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { onConfirm, onCancel, message, type: "bericht" }
+            props: { onConfirm, onCancel, message, type: "bericht" },
         });
+    };
+
+    const compose = async (payload: Record<string, any>) => {
+        await savePayload(payload);
+
+        const router = useRouter();
+
+        router.push({
+            path: "/compose",
+            query: {
+                reply: "true",
+            },
+        });
+
+    };
+
+    const selectMessage = async (message: any) => {
+        selected.value = message;
+
+        const router = useRouter();
+
+        router.replace({
+            query: {
+                ...useRoute().query,
+                id: message.id,
+            },
+        });
+
+
+        await markAsSeen(message);
+    };
+
+    const backToList = () => {
+        selected.value = null;
+
+        const router = useRouter();
+
+        router.replace({
+            query: {
+                ...useRoute().query,
+                id: undefined,
+            },
+        });
+    };
+
+    const filter = (query: string, filter: string) => {
+
+        let filtered = messages.value;
+
+        filtered = filtered.filter((message: any) => {
+
+            const flags = message.flags || [];
+
+            if (filter === "all") return true;
+            if (filter === "gelezen") return flags.includes('\\Seen');
+            else if (filter === "ongelezen") return !flags.includes('\\Seen');
+
+        });
+
+        if (query) {
+            filtered = filtered.filter((message: any) => {
+                const subject = message.subject || "";
+                const from = message.from?.address || message.from?.name || "";
+                const preview = message.preview || message.text || "";
+
+                return (
+                    subject.toLowerCase().includes((query as string).toLowerCase()) ||
+                    from.toLowerCase().includes((query as string).toLowerCase()) ||
+                    preview.toLowerCase().includes((query as string).toLowerCase())
+                );
+            });
+        }
+
+        return filtered;
+    };
+
+    const openMessageById = async (id: string) => {
+
+        const messageToOpen = messages.value.find((msg: any) => {
+            return msg.id === id;
+        });
+
+        if (messageToOpen) await selectMessage(messageToOpen);
     };
 
     return {
         messages,
+        selected,
         unseen,
         error,
+        activeMessageId,
+        openMessageById,
         clearSavedPayload,
         savePayload,
         getSavedPayload,
@@ -199,7 +293,11 @@ export const useNotificationsStore = defineStore("Notifications", () => {
         markAsUnseen,
         deleteMessage,
         requestPermission,
-        refresh
+        refresh,
+        compose,
+        selectMessage,
+        backToList,
+        filter,
     };
 });
 

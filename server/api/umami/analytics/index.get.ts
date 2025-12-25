@@ -62,9 +62,6 @@ export default defineSupabaseEventHandler(async (event) => {
                 }
             ],
 
-            
-
-
             metrics: {
                 pages: {
                     categories: {

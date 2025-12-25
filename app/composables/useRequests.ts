@@ -1,6 +1,4 @@
 
-import type { FetchUrl, SendOptions, MethodOptions, ErrorResponse, ApiResponse } from "#shared/types";
-
 const catcher = async <T>(promise: Promise<T>) => {
 
     try {
@@ -25,12 +23,12 @@ export const useCsrfToken = async () => {
 
 export const useApiHandler = <G>(url: FetchUrl) => {
 
-    const Send = <T = G>(options?: SendOptions) => {
+    const Send = async <T = G>(options?: SendOptions): Promise<{ data: T | null; error: ErrorResponse | null }> => {
         const extendedUrl = options?.extends ? `${url}${options.extends}` : url;
         return catcher<T>($fetch(extendedUrl, {
             ...options
-        })
-    )}
+        }))
+    }
 
     const Get = <T = G>(options?: MethodOptions) => Send<T>({
         ...options, method: 'GET'

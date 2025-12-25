@@ -17,7 +17,6 @@
 				</div>
 
 				<nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-
 					<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
 						<Icon :name="route.iconName" class="w-5 h-5" />
 						<span class="flex-1">{{ route.label }}</span>
@@ -67,7 +66,6 @@
 					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
 
 					<UtilsButtonFilter v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :color="filterItem.color" :large="filterItem.large" />
-
 				</div>
 
 				<template v-else-if="toolbar?.buttons">
@@ -94,10 +92,9 @@
 </template>
 
 <script setup lang="ts">
-
-	const store = useSessionsStore();
-	const storageStore = useStorageStore();
-	const notificationsStore = useNotificationsStore();
+	const store = useSessions();
+	const storageStore = useStorage();
+	const notificationsStore = useNotifications();
 
 	const { routes, toolbar } = await useApiRoutes();
 
@@ -117,7 +114,6 @@
 		}
 	};
 
-	await storageStore.initialPayload();
 	await notificationsStore.initialPayload();
 
 	const { close: closeNotifications } = await notificationsStore.realTime();
@@ -127,7 +123,7 @@
 	const logout = async () => {
 		const { data, error } = await Request.Post();
 
-		if (error)
+		if (error || !data)
 			return addToast({
 				message: "Er is een fout opgetreden bij het uitloggen",
 				type: "error",

@@ -1,20 +1,20 @@
 <template>
 	<div>
-		<section v-if="analytics" class="relative grid grid-cols-2 gap-4 md:grid-cols-4">
-			<article v-for="statistics in analytics.statistics" :key="statistics.label" class="z-10 w-full p-6 bg-white border rounded-lg">
-				<h2 class="text-sm font-semibold text-gray-700">{{ statistics.label }}</h2>
-				<h3 class="mt-4 text-2xl font-extrabold text-gray-900">{{ useFormatDuration(statistics.value, statistics.format) }}</h3>
-				<p :title="`${useFormatDuration(statistics.difference, statistics.format)}`" class="mt-3">
-					<span :class="statistics.positive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center px-2 py-1 text-sm font-medium rounded">
-						<span class="mr-2" aria-hidden="true">{{ statistics.positive ? "▲" : "▼" }}</span>
-						{{ statistics.percentage | 0 }}%
+		<section v-if="store.statistics" class="relative grid grid-cols-2 gap-4 md:grid-cols-4">
+			<article v-for="statistic in store.statistics" :key="statistic.label" class="z-10 w-full p-6 bg-white border rounded-lg">
+				<h2 class="text-sm font-semibold text-gray-700">{{ statistic.label }}</h2>
+				<h3 class="mt-4 text-2xl font-extrabold text-gray-900">{{ useFormatDuration(statistic.value, statistic.format) }}</h3>
+				<p :title="`${useFormatDuration(statistic.difference, statistic.format)}`" class="mt-3">
+					<span :class="statistic.positive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center px-2 py-1 text-sm font-medium rounded">
+						<span class="mr-2" aria-hidden="true">{{ statistic.positive ? "▲" : "▼" }}</span>
+						{{ statistic.percentage | 0 }}%
 					</span>
 				</p>
 			</article>
 		</section>
 		<section v-else class="relative z-10 flex items-center justify-center w-full h-32 mt-4 bg-white border rounded-lg">
 			<p class="text-gray-500">
-				{{ !analytics ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
+				{{ store.error ? "Fout bij het laden van statistics." : "Laden van analytics..." }}
 			</p>
 		</section>
 
@@ -31,15 +31,21 @@
 				</button>
 			</nav>
 
-			<article v-if="analytics" class="w-full p-6 overflow-hidden z-10 bg-white border rounded-lg h-fit min-h-[16rem]">
+			<article v-if="store.metrics.pages" class="w-full p-6 overflow-hidden z-10 bg-white border rounded-lg h-fit min-h-[16rem]">
 				<div class="px-6 -mx-6 overflow-x-auto">
-					<div v-if="metricsPages.values.length <= 0" class="flex items-center justify-center min-h-[14rem]">
+					<div v-if="store.metrics.pages.values.length <= 0" class="flex items-center justify-center min-h-[14rem]">
 						<p class="text-center text-gray-500">Geen gegevens beschikbaar voor de geselecteerde periode.</p>
 					</div>
 
-					<ChartsTable v-else-if="isTableEnabled" title="Pagina's" :data="metricsPages.values" :categories="metricsPages.categories" />
+					<ChartsTable v-else-if="isTableEnabled" title="Pagina's" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
 					<client-only v-else>
-						<ChartsBar :data="metricsPages.values" :categories="metricsPages.categories" :height="350" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+						<div class="md:hidden">
+							<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="350" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+						</div>
+
+						<div class="hidden md:block">
+							<ChartsGroup :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" :height="350" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+						</div>
 
 						<template #fallback>
 							<div class="flex text-center items-center justify-center min-h-[14rem]">
@@ -51,7 +57,7 @@
 			</article>
 			<article v-else class="relative z-10 flex items-center justify-center w-full h-32 bg-white border rounded-lg">
 				<p class="text-gray-500">
-					{{ !analytics ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
+					{{ store.error ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
 				</p>
 			</article>
 		</section>
@@ -89,43 +95,8 @@
 		],
 	});
 
-	const { useResponse } = await useApiRoutes();
-	const { analytics }: { analytics: Record<string, any> } = await useResponse();
+	const { isTableEnabled, togleTable } = useTable();
+	const store = useAnalytics();
+	await store.initialPayload();
 
-	const route = useRoute();
-	const router = useRouter();
-
-	const isMobile = ref(false);
-	const isTableEnabled = ref(route.query.table === "true");
-
-	const metricsPages = computed(() => {
-		if (!analytics.value?.metrics?.pages) return null;
-
-		if (isMobile.value && !isTableEnabled.value)
-			return {
-				...analytics.value.metrics.pages,
-				values: analytics.value.metrics.pages.values.slice(0, 3),
-				categories: analytics.value.metrics.pages.categories,
-			};
-
-		return analytics.value.metrics.pages;
-	});
-
-	const togleTable = () => {
-		isTableEnabled.value = !isTableEnabled.value;
-		router.push({ query: { table: `${isTableEnabled.value}` } });
-	};
-
-	onMounted(() => {
-		isMobile.value = window.innerWidth < 768;
-		window.addEventListener("resize", () => {
-			isMobile.value = window.innerWidth < 768;
-		});
-	});
-
-	onUnmounted(() => {
-		window.removeEventListener("resize", () => {
-			isMobile.value = window.innerWidth < 768;
-		});
-	});
 </script>

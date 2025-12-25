@@ -1,7 +1,7 @@
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
 
-    const store = useSessionsStore()
+    const store = useSessions()
 
     const identity = Math.random().toString(36).substring(2) + Date.now().toString(36)
 

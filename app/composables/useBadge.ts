@@ -4,7 +4,6 @@ export const useBadge = () => {
         if(import.meta.server) return;
 
         try {
-            // Update badge directly in the current context
             if (count > 0) await (navigator as any).setAppBadge(count);
             else await (navigator as any).clearAppBadge();
 

@@ -4,23 +4,13 @@
 			<FormBase :appendToBody :schema="schema.notification.frontend" :request v-slot="{ loading }">
 				<div class="grid grid-cols-3 gap-2">
 					<div class="sr-only" aria-hidden>
-						<UtilsInput
-							name="referentie" label="Referentie" icon-name="akar-icons:link-chain"
-							type="text" placeholder="Referentie"
-							:disabled="loading" :hide-label="true"
-							:initial-value="repliedContent"/>
+						<UtilsInput name="referentie" label="Referentie" icon-name="akar-icons:link-chain" type="text" placeholder="Referentie" :disabled="loading" :hide-label="true" :initial-value="repliedContent" />
 					</div>
 					<div class="col-span-3">
-						<UtilsInput
-							name="email" label="E-mailadres ontvanger" icon-name="akar-icons:envelope"
-							type="email" placeholder="gebruiker@example.nl" :initial-value="email"
-							:required="true" :disabled="loading" :hide-label="true"/>
+						<UtilsInput name="email" label="E-mailadres ontvanger" icon-name="akar-icons:envelope" type="email" placeholder="gebruiker@example.nl" :initial-value="email" :required="true" :disabled="loading" :hide-label="true" />
 					</div>
 					<div class="col-span-2">
-						<UtilsInput 
-							name="onderwerp" label="Onderwerp van het bericht" icon-name="akar-icons:tag"
-							type="text" placeholder="Onderwerp" :initial-value="onderwerp"
-							:disabled="loading" :required="true" :hide-label="true"/>
+						<UtilsInput name="onderwerp" label="Onderwerp van het bericht" icon-name="akar-icons:tag" type="text" placeholder="Onderwerp" :initial-value="onderwerp" :disabled="loading" :required="true" :hide-label="true" />
 					</div>
 					<button type="submit" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Verstuur bericht" :disabled="loading">
 						<span v-if="!loading">Verstuur</span>
@@ -41,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-
 	definePageMeta({
 		middleware: "authorized",
 	});
@@ -72,15 +61,14 @@
 		],
 	});
 
-	const { addToast } = useToast()
+	const { addToast } = useToast();
 
 	const hidden = ["Highlight", "link", "Paragraph", "Code Block", "Horizontal Rule", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Details", "Verbind project"];
 
-	const notificationsStore = useNotificationsStore();
-	const { getSavedPayload, clearSavedPayload } = notificationsStore;
+	const store = useNotifications();
 
 	const route = useRoute();
-	const data = getSavedPayload() || {};
+	const data = store.getSavedPayload() || {};
 
 	const email = ref(data?.from?.address || "");
 	const onderwerp = ref(data?.subject ? (data.subject.startsWith("Re:") ? data.subject : `Re: ${data.subject}`) : "");
@@ -120,8 +108,9 @@
 			}
 		},
 		onUpdate: ({ editor }) => {
-			composedContent.value = editor.getHTML()}
-		});
+			composedContent.value = editor.getHTML();
+		},
+	});
 
 	onUnmounted(() => {
 		if (editor.value) {
@@ -131,38 +120,35 @@
 
 	onBeforeRouteLeave(() => {
 		composedContent.value = null;
-		clearSavedPayload();
+		store.clearSavedPayload();
 	});
 
 	const successMessage = route.query.reply ? "Je antwoord is succesvol verzonden!" : "Je bericht is succesvol verzonden!";
 	const failureMessage = route.query.reply ? "Er is een fout opgetreden bij het verzenden van je antwoord. Probeer het later opnieuw." : "Er is een fout opgetreden bij het verzenden van je bericht. Probeer het later opnieuw.";
 
 	const request: requestOptions = {
-		url: '/api/notifications' as FetchUrl,
-		method: 'POST' as SendOptions['method'],
+		url: "/api/notifications" as FetchUrl,
+		method: "POST" as SendOptions["method"],
 		successMessage,
-		
+
 		onsuccess: () => {
 			composedContent.value = null;
-			clearSavedPayload();
+			store.clearSavedPayload();
 		},
 
 		onfailure: () => {
 			addToast({
-                type: "error",
-                message: failureMessage,
+				type: "error",
+				message: failureMessage,
 				duration: 5000,
-            });
+			});
 		},
 	};
 
 	const appendToBody = async (values: any) => {
-
 		return {
 			...values,
 			content: editor.value ? editor.value.getJSON() : "",
-		}
+		};
 	};
-
-
 </script>

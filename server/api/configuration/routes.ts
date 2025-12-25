@@ -12,24 +12,12 @@ const createSearch = (context: string) => ({
     placeholder: `Zoek ${context}...`,
 });
 
-const createRequest = (overrides: Record<string, any>) => ({
-    name: "Voorbeeld Request",
-    endpoint: "/api/example",
-    ...overrides,
-});
-
 const routes = cachedFunction(() => {
 
     return {
         "/": {
             label: "Dashboard",
             iconName: "akar-icons:dashboard",
-            requests: [
-                createRequest({
-                    name: "analytics",
-                    endpoint: "/api/umami/analytics",
-                })
-            ]
         },
         "/notifications": {
             label: "Notificaties",
@@ -66,12 +54,6 @@ const routes = cachedFunction(() => {
                 ],
                 search: createSearch("artikelen"),
             },
-            requests: [
-                createRequest({
-                    name: "articles",
-                    endpoint: "/api/articles",
-                })
-            ]
         },
         "/storage": {
             label: "Storage",
@@ -105,7 +87,7 @@ const routes = cachedFunction(() => {
         }
     }
 }, {
-    maxAge: 60 * 60,
+    maxAge: 0,
     name: 'route-configuration',
 });
 

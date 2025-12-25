@@ -1,19 +1,17 @@
 <template>
 	<div class="grid flex-1 grid-cols-1 h-[69dvh] md:h-[74dvh] overflow-hidden md:grid-cols-2">
-
 		<h1 class="sr-only">Notificaties Dashboard</h1>
-		
-		<div class="z-10 md:pr-4 md:border-r" :class="{ 'hidden md:block': selected }">
-		
+
+		<div class="z-10 md:pr-4 md:border-r" :class="{ 'hidden md:block': store.selected }">
 			<div class="flex-1 h-full overflow-y-auto">
 				<div v-if="filteredMessages.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
 					<icon name="akar-icons:inbox" class="w-16 h-16 mb-4 text-gray-300" aria-hidden="true" />
 					<h3 class="mb-2 text-lg font-medium">Geen berichten</h3>
 					<p class="text-sm text-center">
-						{{ query ? "Probeer een andere zoekterm" : "Er zijn momenteel geen notificaties" }}
+						{{ search ? "Probeer een andere zoekterm" : "Er zijn momenteel geen notificaties" }}
 					</p>
 				</div>
-				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="selectMessage(inbox)" @keydown.enter="selectMessage(inbox)" :class="['w-full p-4 text-left cursor-pointer transition-all duration-150 border-b border-b-gray-200', selected?.id == inbox.id ? 'bg-gray-50' : 'bg-white hover:bg-gray-100']">
+				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left cursor-pointer transition-all duration-150 border-b border-b-gray-200', store.selected?.id == inbox.id ? 'bg-gray-50' : 'bg-white hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">
@@ -36,15 +34,15 @@
 							<p v-html="inbox.preview || 'Geen preview beschikbaar'" class="text-sm leading-relaxed text-gray-500 line-clamp-2"></p>
 
 							<div class="flex items-center justify-start gap-2 mt-3">
-								<button type="button" v-if="inbox.flags.includes('\\Seen')" @click.stop="markAsUnseen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als ongelezen">
+								<button type="button" v-if="inbox.flags.includes('\\Seen')" @click.stop="store.markAsUnseen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als ongelezen">
 									<icon name="material-symbols:mark-email-unread-outline-rounded" size="1rem" aria-hidden="true" />
 									<span>Markeer als ongelezen</span>
 								</button>
-								<button type="button" v-else @click.stop="markAsSeen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als gelezen">
+								<button type="button" v-else @click.stop="store.markAsSeen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als gelezen">
 									<icon name="material-symbols:mark-email-read-outline-rounded" size="1rem" aria-hidden="true" />
 									<span>Markeer als gelezen</span>
 								</button>
-								<button type="button" @click.stop="deleteMessage(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-red-600 transition-colors duration-200 border border-red-300 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Verplaats dit bericht naar prullenbak">
+								<button type="button" @click.stop="store.deleteMessage(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-red-600 transition-colors duration-200 border border-red-300 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Verplaats dit bericht naar prullenbak">
 									<icon name="material-symbols:delete-outline-rounded" size="1rem" aria-hidden="true" />
 									<span>Prullenbak</span>
 								</button>
@@ -55,31 +53,31 @@
 			</div>
 		</div>
 
-		<main v-if="selected" class="z-10 flex flex-col overflow-hidden bg-white" :class="{ 'md:hidden': !selected }">
+		<main v-if="store.selected" class="z-10 flex flex-col overflow-hidden bg-white" :class="{ 'md:hidden': !store.selected }">
 			<header class="flex-shrink-0 p-4 bg-white border-b border-gray-200">
 				<div class="space-y-3">
 					<h1 id="message-subject" class="text-xl font-bold leading-tight text-gray-900 text-balance md:text-2xl">
-						{{ selected.subject || "(Geen onderwerp)" }}
+						{{ store.selected.subject || "(Geen onderwerp)" }}
 					</h1>
 
 					<div class="flex flex-col gap-1 text-sm text-gray-600">
 						<div class="flex items-center">
 							<span class="min-w-0 mr-2 font-medium">Van:</span>
-							<a :href="`mailto:${selected.from.address}`" class="text-[#1d4ed8] text-lg underline truncate hover:text-[#1e40af] focus:outline-none focus:ring-2 focus:ring-blue-500 rounded" :aria-label="`E-mail ${selected.from.address || 'Onbekende afzender'}`">
-								{{ selected.from.address || "Onbekende afzender" }}
+							<a :href="`mailto:${store.selected.from.address}`" class="text-[#1d4ed8] text-lg underline truncate hover:text-[#1e40af] focus:outline-none focus:ring-2 focus:ring-blue-500 rounded" :aria-label="`E-mail ${store.selected.from.address || 'Onbekende afzender'}`">
+								{{ store.selected.from.address || "Onbekende afzender" }}
 							</a>
 						</div>
 						<div class="flex items-center">
 							<span class="min-w-0 mr-2 font-medium">Datum:</span>
-							<NuxtTime :datetime="selected.date" weekday="long" year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit" class="text-gray-700" />
+							<NuxtTime :datetime="store.selected.date" weekday="long" year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit" class="text-gray-700" />
 						</div>
 
 						<div class="flex items-center gap-2 mt-2">
-							<button @click="backToList" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg md:hidden hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Terug naar berichtenlijst">
+							<button @click="store.backToList()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg md:hidden hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Terug naar berichtenlijst">
 								<span>Overzicht</span>
 							</button>
 
-							<button @click="compose(selected)" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Beantwoord dit bericht">
+							<button @click="store.compose(store.selected)" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Beantwoord dit bericht">
 								<icon name="akar-icons:reply" class="w-4 h-4" aria-hidden="true" />
 								<span>Beantwoorden</span>
 							</button>
@@ -91,7 +89,7 @@
 			<div class="flex-1 p-4 overflow-y-auto" aria-label="Bericht inhoud">
 				<article class="prose text-gray-800 max-w-none">
 					<div class="text-balance">
-						<div v-html="selected.html" :class="selected.origin == 'email' ? 'space-y-4' : ''" class="text-balance viewer"></div>
+						<div v-html="store.selected.html" :class="store.selected.origin == 'email' ? 'space-y-4' : ''" class="text-balance viewer"></div>
 					</div>
 				</article>
 			</div>
@@ -140,99 +138,14 @@
 
 	// ***************************************************************************
 
-	const notificationsStore = useNotificationsStore();
-	const { markAsSeen, markAsUnseen, deleteMessage, savePayload, refresh } = notificationsStore;
-
-	const route = useRoute();
-	const router = useRouter();
-	const messages = computed(() => ({ data: { messages: notificationsStore.messages } }));
-
 	const { search } = useSearch();
 	const { filter } = useFilter();
 
-	// ***************************************************************************
+	const store = useNotifications();
 
-	const compose = async (payload: Record<string, any>) => {
-		await savePayload(payload);
-
-		router.push({
-			path: "/compose",
-			query: {
-				reply: "true",
-			},
-		});
-	};
-
-	const query = computed(() => search.value || "");
-	const activeFilter = computed(() => filter.value || "all");
-
-	const selected = ref<any | null>(null);
-
-	const selectMessage = async (message: any) => {
-		selected.value = message;
-
-		router.push({
-			query: {
-				...router.currentRoute.value.query,
-				id: message.id,
-			},
-		});
-
-		markAsSeen(message);
-	};
-
-	const backToList = () => {
-		selected.value = null;
-
-		router.push({
-			query: {
-				...router.currentRoute.value.query,
-				id: undefined,
-			},
-		});
-	};
-
-	// ***************************************************************************
-
-	const activeMessageId = computed(() => route.query.id);
-
-	if (activeMessageId.value) {
-		const messageToOpen = messages.value.data.messages.find((msg: any) => {
-			return msg.id === activeMessageId.value;
-		});
-
-		if (messageToOpen) {
-			selectMessage(messageToOpen);
-		}
-	}
+	store.openMessageById((store.activeMessageId as string) || "");
 
 	const filteredMessages = computed(() => {
-		let filtered = messages.value.data.messages;
-
-		filtered = filtered.filter((message: any) => {
-
-			const flags = message.flags || [];
-
-			if (activeFilter.value === "all") return true;
-			if (activeFilter.value === "gelezen") return flags.includes('\\Seen');
-			else if (activeFilter.value === "ongelezen") return !flags.includes('\\Seen');
-			
-		});
-
-		if (query.value) {
-			filtered = filtered.filter((message: any) => {
-				const subject = message.subject || "";
-				const from = message.from?.address || message.from?.name || "";
-				const preview = message.preview || message.text || "";
-
-				return (
-					subject.toLowerCase().includes((query.value as string).toLowerCase()) ||
-					from.toLowerCase().includes((query.value as string).toLowerCase()) ||
-					preview.toLowerCase().includes((query.value as string).toLowerCase())
-				);
-			});
-		}
-
-		return filtered;
+		return store.filter(search.value as string, (filter.value || "all") as string);
 	});
 </script>

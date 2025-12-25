@@ -159,7 +159,6 @@
 	};
 
 	const successMessage = editId.value ? "Het artikel is succesvol bijgewerkt." : "Het artikel is succesvol aangemaakt.";
-
 	const failureMessage = editId.value ? "Er is een fout opgetreden bij het bijwerken van het artikel. Probeer het later opnieuw." : "Er is een fout opgetreden bij het aanmaken van het artikel. Probeer het later opnieuw.";
 
 	const { upload, setFormData } = useHandleFormData(successMessage, failureMessage);

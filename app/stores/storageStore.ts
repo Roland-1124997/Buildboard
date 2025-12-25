@@ -1,5 +1,5 @@
-
-const fetchBlob = async (url: string): Promise<{ data: Blob | null; error: any }> => await useApiHandler(url).Get<Blob>({ responseType: "blob" });
+const fetchBlob = async (url: string): Promise<{ data: Blob | null; error: any }> =>
+    await useApiHandler(url).Get<Blob>({ responseType: "blob" });
 
 const createBlobLink = (blob: Blob, filename: string, mimetype?: string) => {
     const blobUrl = window.URL.createObjectURL(new Blob([blob], { type: mimetype }));
@@ -20,11 +20,13 @@ const getProperty = (types: FileType[], extension: string, property: "label" | "
     return type ? type[property] : property === "label" ? "Onbekend bestandstype" : property === "color" ? "text-gray-600" : "bg-gray-50";
 };
 
-export const useStorageStore = defineStore("storage", () => {
+export const useStorage = defineStore("storage", () => {
 
-    const Request = useApiHandler<ApiResponse<FileData[]>>("/api/storage")
     const { create, close } = useModal();
     const { addToast } = useToast();
+
+    const uri = "/api/storage";
+    const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
 
     const files = ref<FileData[]>([]);
     const error = ref<ErrorResponse | null | any>(null);
@@ -46,14 +48,14 @@ export const useStorageStore = defineStore("storage", () => {
                 type: "error",
             });
         }
-    }
+    };
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>("/api/storage")
+        const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>(uri);
 
         if (!Error.value && data.value) files.value = data.value?.data || [];
-    
+
         else {
             error.value = Error.value;
             addToast({
@@ -61,7 +63,7 @@ export const useStorageStore = defineStore("storage", () => {
                 type: "error",
             });
         }
-    }
+    };
 
     const upload = async (fileList: FileList) => {
 
@@ -77,7 +79,7 @@ export const useStorageStore = defineStore("storage", () => {
             formData.append(file.name.replaceAll(" ", "-"), file);
         });
 
-        const { error } = await Request.Post({ body: formData })
+        const { error } = await Request.Post({ body: formData });
 
         if (error) return addToast({
             message: "Er is een fout opgetreden tijdens het uploaden van je bestanden.",
@@ -89,8 +91,7 @@ export const useStorageStore = defineStore("storage", () => {
             type: "success",
         });
 
-        await refresh()
-
+        await refresh();
     };
 
     const patch = async (file: FileData) => {
@@ -111,16 +112,14 @@ export const useStorageStore = defineStore("storage", () => {
             type: "info",
         });
 
-
-        await refresh()
-
+        await refresh();
     };
 
     const remove = async (file: FileData) => {
 
         const onConfirm = async () => {
 
-            const { error } = await Request.Delete({ extends: `/${file.id}` })
+            const { error } = await Request.Delete({ extends: `/${file.id}` });
 
             close();
 
@@ -135,8 +134,8 @@ export const useStorageStore = defineStore("storage", () => {
                 type: "success",
             });
 
-            await refresh()
-        }
+            await refresh();
+        };
 
         const onCancel = () => {
 
@@ -145,15 +144,15 @@ export const useStorageStore = defineStore("storage", () => {
                 message: "Bestand verwijderen geannuleerd.",
                 type: "info",
             });
-        }
+        };
 
         create({
             name: "Confirmatie-Modal",
             description: "Weet je zeker dat je dit bestand wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { onConfirm, onCancel, message: file, type: "bestand" }
+            props: { onConfirm, onCancel, message: file, type: "bestand" },
         });
-    }
+    };
 
     const download = async (file: FileData, options?: { mimetype?: string }) => {
         const { data, error } = await fetchBlob(file.media.preview);

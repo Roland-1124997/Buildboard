@@ -21,7 +21,7 @@
 								</NuxtLink>
 								<span aria-hidden>|</span>
 
-								<button aria-label="verwijder artikel" class="flex items-center justify-center gap-1 hover:text-gray-300" @click="deleteArticle(art.id)">
+								<button aria-label="verwijder artikel" class="flex items-center justify-center gap-1 hover:text-gray-300" @click="store.remove(art.id)">
 									<icon name="akar-icons:trash" class="w-4 h-4" aria-hidden="true" />
 									<span class="sr-only">Verwijderen</span>
 								</button>
@@ -89,68 +89,11 @@
 		],
 	});
 
-	
-	const { search } = useSearch()
-	const query = computed(() => search.value || "");
+	const { search } = useSearch();
+	const store = useArticles();
 
-	const { create, close } = useModal();
-	const { addToast } = useToast();
-
-	const { useResponse } = await useApiRoutes();
-	const { articles }: { articles: Record<string, any> } = await useResponse();
-	
-	const Request = useApiHandler<ApiResponse<Record<string, any>>>("/api/articles");
-
+	await store.initialPayload();
 	const filteredArticles = computed(() => {
-		let filtered = articles.value || [];
-
-		if (query.value) {
-			filtered = filtered.filter((message: any) => {
-				const title = message.title || "";
-				const description = message.description || "";
-
-				return title.toLowerCase().includes((query.value as string).toLowerCase()) || description.toLowerCase().includes((query.value as string).toLowerCase());
-			});
-		}
-
-		return filtered;
+		return store.filter(search.value as string);
 	});
-
-	const deleteArticle = async (id: string) => {
-		const content = articles.value.find((art: any) => art.id === id);
-
-		const onConfirm = async () => {
-			const { error } = await Request.Delete({ extends: `/${id}` });
-
-			close();
-
-			if (error)
-				return addToast({
-					message: "Er is een fout opgetreden bij het verwijderen van het artikel",
-					type: "error",
-				});
-
-			articles.value = articles.value.filter((art: any) => art.id !== id);
-
-			addToast({
-				message: "Artikel succesvol verwijderd",
-				type: "success",
-			});
-		};
-
-		const onCancel = () => {
-			close();
-			addToast({
-				message: "Verwijderen geannuleerd",
-				type: "info",
-			});
-		};
-
-		create({
-			name: "Confirmatie-Modal",
-			description: "Weet je zeker dat je dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
-			component: "Confirm",
-			props: { onConfirm, onCancel, message: content, type: "artikel" },
-		});
-	};
 </script>

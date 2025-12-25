@@ -1,18 +1,17 @@
+export const useSessions = defineStore("session", () => {
 
-export const useSessionsStore = defineStore("session", () => {
-    
     const session: any = ref({
         data: null,
         error: true,
-    })
+    });
 
-    const setSession = (data: any, error: any) => session.value = { data, error }
+    const setSession = (data: any, error: any) => session.value = { data, error };
 
-    const clearSession = () =>{ 
-        session.value = { data: null, error: null }
-    }
+    const clearSession = () => {
+        session.value = { data: null, error: null };
+    };
 
-    const getSession = async () => session.value
+    const getSession = async () => session.value;
 
     return {
         setSession,

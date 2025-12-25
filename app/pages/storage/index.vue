@@ -1,6 +1,6 @@
 <template>
 	<div class="">
-		<div class="z-20 w-full pt-1 pb-3 border-b ">
+		<div class="z-20 w-full pt-1 pb-3 border-b">
 			<div class="flex items-center justify-between w-full gap-2 text-2xl font-bold">
 				<h1>Opslag</h1>
 			</div>
@@ -16,8 +16,8 @@
 				<div class="grid gap-3 md:grid-cols-2">
 					<div v-for="(file, index) in filteredFiles" :key="index" class="z-10 flex items-center w-full gap-3 p-3 transition-all bg-white border border-gray-200 rounded-lg hover:bg-gray-50 group hover:border-gray-300">
 						<div class="flex-shrink-0">
-							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :class="storageStore.getIconBackground(types, file.metadata.extension)">
-								<icon name="akar-icons:file" size="1.45rem" :class="storageStore.getIconColor(types, file.metadata.extension)" />
+							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :class="store.getIconBackground(types, file.metadata.extension)">
+								<icon name="akar-icons:file" size="1.45rem" :class="store.getIconColor(types, file.metadata.extension)" />
 							</div>
 						</div>
 
@@ -27,9 +27,9 @@
 									{{ file.name.charAt(0).toUpperCase() + file.name.slice(1).split(".")[0] }}
 								</p>
 								<div class="flex items-center gap-1 text-[0.73rem] md:text-sm -mt-[0.10rem]">
-									<span :class="storageStore.getIconColor(types, file.metadata.extension)" class="font-semibold">{{ storageStore.getTypeLabel(types, file.metadata.extension) }}</span>
+									<span :class="store.getIconColor(types, file.metadata.extension)" class="font-semibold">{{ store.getTypeLabel(types, file.metadata.extension) }}</span>
 									<span aria-hidden class="text-gray-500">•</span>
-									<span class="text-gray-500">{{ storageStore.formatSize(file.metadata.size) }}</span>
+									<span class="text-gray-500">{{ store.formatSize(file.metadata.size) }}</span>
 								</div>
 								<div class="flex items-center gap-2 text-xs text-gray-500 capitalize">
 									<NuxtTime locale="nl" weekday="long" year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit" :datetime="file.metadata.updated_at" />
@@ -37,19 +37,19 @@
 							</div>
 
 							<div class="flex flex-shrink-0 gap-x-2">
-								<button @click="storageStore.patch(file)" class="text-gray-500 transition-colors rounded-lg hover:text-orange-600" :title="!file.published ? 'Maak zichtbaar' : 'Verbergen'" :aria-label="!file.published ? 'Maak zichtbaar' : 'Verbergen'">
+								<button @click="store.patch(file)" class="text-gray-500 transition-colors rounded-lg hover:text-orange-600" :title="!file.published ? 'Maak zichtbaar' : 'Verbergen'" :aria-label="!file.published ? 'Maak zichtbaar' : 'Verbergen'">
 									<icon :name="file.published ? 'akar-icons:link-on' : 'akar-icons:link-off'" size="1.1rem" />
 								</button>
 
-								<button @click="storageStore.preview(file)" class="text-gray-500 transition-colors rounded-lg hover:text-green-600" title="Voorbeeld" aria-label="Bekijk voorbeeld van bestand">
+								<button @click="store.preview(file)" class="text-gray-500 transition-colors rounded-lg hover:text-green-600" title="Voorbeeld" aria-label="Bekijk voorbeeld van bestand">
 									<icon name="akar-icons:eye" size="1.1rem" />
 								</button>
 
-								<button @click="storageStore.download(file)" class="text-gray-500 transition-colors rounded-lg hover:text-blue-600" title="Download" aria-label="Download bestand">
+								<button @click="store.download(file)" class="text-gray-500 transition-colors rounded-lg hover:text-blue-600" title="Download" aria-label="Download bestand">
 									<icon name="akar-icons:download" size="1.1rem" />
 								</button>
 
-								<button @click="storageStore.remove(file)" class="text-gray-500 transition-colors rounded-lg hover:text-red-600" title="Verwijderen" aria-label="Verwijder bestand">
+								<button @click="store.remove(file)" class="text-gray-500 transition-colors rounded-lg hover:text-red-600" title="Verwijderen" aria-label="Verwijder bestand">
 									<icon name="akar-icons:trash-can" size="1.1rem" />
 								</button>
 							</div>
@@ -100,11 +100,6 @@
 		],
 	});
 
-	const storageStore = useStorageStore();
-
-	const { search } = useSearch()
-	const query = computed(() => search.value || "");
-	
 	const types: FileType[] = [
 		{ extension: "png", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
 		{ extension: "jpg", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
@@ -122,7 +117,12 @@
 		{ extension: "zip", label: "ZIP Archief", color: "text-purple-800", background: "bg-purple-50" },
 	];
 
+	const store = useStorage();
+	const { search } = useSearch();
+
+	await store.initialPayload();
+
 	const filteredFiles = computed(() => {
-		return storageStore.filter(query.value as string, types);
+		return store.filter(search.value as string, types);
 	});
 </script>
