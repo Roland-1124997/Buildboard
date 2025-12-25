@@ -38,7 +38,7 @@ const routes = cachedFunction(() => {
                     createFilter("gelezen", "akar-icons:open-envelope", "Gelezen", "Zoek gelezen berichten", "blue", true),
                     createFilter("ongelezen", "akar-icons:envelope", "Ongelezen", "Zoek ongelezen berichten", "red", true),
                 ],
-                search: createSearch("artikelen"),
+                search: createSearch("berichten"),
             },
         },
         "/artikelen": {
