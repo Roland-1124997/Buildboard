@@ -20,8 +20,8 @@
 					<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
 						<Icon :name="route.iconName" class="w-5 h-5" />
 						<span class="flex-1">{{ route.label }}</span>
-						<span v-if="route.alert && notificationsStore.unseen > 0" class="px-2 py-0.5 flex items-center justify-center text-xs font-medium text-white bg-red-600 rounded-full">
-							{{ notificationsStore.unseen }}
+						<span v-if="route.alert && notificationsStore.unseen > 0" class="inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-h-5 min-w-5 h-fit w-fit">
+							{{ notificationsStore.unseen > 99 ? "99+" : notificationsStore.unseen }}
 						</span>
 					</NuxtLink>
 				</nav>
@@ -59,7 +59,20 @@
 				<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" @change="handleFileSelect" class="sr-only" />
 			</div>
 
-			<div v-if="toolbar" :class="toolbar?.stacked ? 'flex-col h-[6.8rem] pt-[0.67rem]' : 'h-16 items-center justify-between'" class="z-40 flex gap-2 px-4 bg-white border-b lg:px-4">
+			
+
+			<div v-if="selected" :class="selected ? ' md:hidden' : ''" class="z-40 flex items-center h-16 gap-2 px-4 bg-white border-b lg:px-4">
+				<button @click="notificationsStore.backToList()" class="flex items-center justify-center gap-2 px-3 py-[0.64rem] text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg md:hidden hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Terug naar berichtenlijst">
+					<icon name="akar-icons:chevron-left" class="w-4 h-4" aria-hidden="true" />
+					<span class="sr-only ">Overzicht</span>
+				</button>
+
+				<button @click="notificationsStore.compose(selected)" class="flex items-center justify-center w-full gap-2 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Beantwoord dit bericht">
+					<span>Beantwoorden</span>
+				</button>
+			</div>
+
+			<div v-if="toolbar" :class="[selected ? ' hidden md:flex' : '', toolbar?.stacked ? 'flex-col h-[6.8rem] pt-[0.67rem]' : 'h-16 items-center justify-between']" class="z-40 flex gap-2 px-4 bg-white border-b lg:px-4">
 				<UtilsInputSearch name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" />
 
 				<div v-if="toolbar?.groupWithFilters" class="flex items-center gap-[0.35rem]">
@@ -94,6 +107,7 @@
 	const storageStore = useStorage();
 	const notificationsStore = useNotifications();
 
+	const route = useRoute();
 	const { routes, toolbar } = await useApiRoutes();
 
 	const { addToast } = useToast();
@@ -113,8 +127,7 @@
 	};
 
 	const routerActiveRelatedClass = (to: string) => {
-		const route = useRoute();
-
+		
 		const path = route.path.replace("/", "");
 		const target = to.replace("/", "");
 
@@ -126,6 +139,7 @@
 
 	await notificationsStore.initialPayload();
 
+	const selected = computed(() => notificationsStore.selected || route.query.id || null );
 	const { close: closeNotifications } = await notificationsStore.realTime();
 
 	const Request = useApiHandler<ApiResponse<any>>("/api/auth/logout");

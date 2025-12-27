@@ -1,5 +1,5 @@
 <template>
-	<div class="grid flex-1 grid-cols-1 h-[69dvh] md:h-[74dvh] overflow-hidden md:grid-cols-2">
+	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[77dvh] md:h-[74dvh] md:grid-cols-2">
 		<h1 class="sr-only">Notificaties Dashboard</h1>
 
 		<div class="z-10 md:pr-4 md:border-r" :class="{ 'hidden md:block': store.selected }">
@@ -8,54 +8,67 @@
 					<icon name="akar-icons:inbox" class="w-16 h-16 mb-4 text-gray-300" aria-hidden="true" />
 					<h3 class="mb-2 text-lg font-medium">Geen berichten</h3>
 					<p class="text-sm text-center">
-						{{ search ? "Probeer een andere zoekterm" : "Er zijn momenteel geen notificaties" }}
+						{{ search ? "Probeer een andere zoekterm" : `Er zijn momenteel geen ${ $route.query.filter == "all" ? '' : $route.query.filter } berichten` }}
 					</p>
 				</div>
-				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left cursor-pointer transition-all duration-150 border-b border-b-gray-200', store.selected?.id == inbox.id ? 'bg-gray-50' : 'bg-white hover:bg-gray-100']">
+				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-2">
-									<div v-if="!inbox.flags.includes('\\Seen')" class="flex-shrink-0 w-3 h-3 bg-blue-500 rounded-full" role="status" aria-label="Ongelezen bericht"></div>
+									<div v-if="!inbox.flags.includes('\\Seen')" class="flex-shrink-0 w-4 h-4 text-white bg-blue-500 rounded-full " role="status" aria-label="Ongelezen bericht"></div>
 									<h2 class="font-semibold text-gray-900 truncate text-balance">
 										{{ inbox.from.name || "Onbekende afzender" }}
 									</h2>
 								</div>
 
-								<p class="text-sm text-gray-600 truncate">
-									<NuxtTime :datetime="inbox.date" year="2-digit" month="2-digit" day="2-digit" hour="2-digit" minute="2-digit" />
-								</p>
+								<div class="flex items-center gap-3">
+									<p class="text-sm text-gray-600 truncate">
+										<NuxtTime :datetime="inbox.date" year="2-digit" month="2-digit" day="2-digit" hour="2-digit" minute="2-digit" />
+									</p>
+
+									<div class="relative" @click.stop>
+										<button @click="inbox.showDropdown = !inbox.showDropdown" class="flex items-center justify-center w-8 h-8 text-gray-600 transition-colors rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" :aria-label="`Meer acties voor bericht van ${inbox.from.name || 'Onbekende afzender'}`" :aria-expanded="inbox.showDropdown">
+											<icon name="humbleicons:dots-horizontal" class="w-5 h-5" aria-hidden="true" />
+										</button>
+
+										<div v-if="inbox.showDropdown" class="absolute right-0 z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-52">
+											<button v-if="inbox.flags.includes('\\Seen')" @click="store.markAsUnseen(inbox); inbox.showDropdown = false;" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
+												<icon name="akar-icons:envelope" size="1.25rem" aria-hidden="true" />
+												<span>Markeer als ongelezen</span>
+											</button>
+											<button v-else @click="store.markAsSeen(inbox); inbox.showDropdown = false;" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
+												<icon name="akar-icons:open-envelope" size="1.25rem" aria-hidden="true" />
+												<span>Markeer als gelezen</span>
+											</button>
+											<button @click="store.deleteMessage(inbox); inbox.showDropdown = false;" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-red-600 transition-colors border-t border-gray-200 hover:bg-red-50 focus:outline-none focus:bg-red-50">
+												<icon name="akar-icons:trash-can" size="1.25rem" aria-hidden="true" />
+												<span>Prullenbak</span>
+											</button>
+										</div>
+									</div>
+								</div>
 							</div>
 
-							<p class="text-sm font-medium text-gray-600 truncate">
+							<p  class="text-sm font-medium text-gray-600 text-balance line-clamp-2">
 								{{ inbox.subject || "(Geen onderwerp)" }}
 							</p>
 
-							<p v-html="inbox.preview || 'Geen preview beschikbaar'" class="text-sm leading-relaxed text-gray-500 line-clamp-2"></p>
-
-							<div class="flex items-center justify-start gap-2 mt-3">
-								<button type="button" v-if="inbox.flags.includes('\\Seen')" @click.stop="store.markAsUnseen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als ongelezen">
-									<icon name="material-symbols:mark-email-unread-outline-rounded" size="1rem" aria-hidden="true" />
-									<span>Markeer als ongelezen</span>
-								</button>
-								<button type="button" v-else @click.stop="store.markAsSeen(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Markeer dit bericht als gelezen">
-									<icon name="material-symbols:mark-email-read-outline-rounded" size="1rem" aria-hidden="true" />
-									<span>Markeer als gelezen</span>
-								</button>
-								<button type="button" @click.stop="store.deleteMessage(inbox)" class="flex items-center justify-center gap-2 px-2 py-1 text-xs text-red-600 transition-colors duration-200 border border-red-300 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Verplaats dit bericht naar prullenbak">
-									<icon name="material-symbols:delete-outline-rounded" size="1rem" aria-hidden="true" />
-									<span>Prullenbak</span>
-								</button>
-							</div>
+							<p v-html="inbox.preview || 'Geen preview beschikbaar'" :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed line-clamp-2"></p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<main v-if="store.selected" class="z-10 flex flex-col overflow-hidden bg-white" :class="{ 'md:hidden': !store.selected }">
-			<header class="flex-shrink-0 p-4 bg-white border-b border-gray-200">
-				<div class="space-y-3">
+		<main v-if="store.selected" class="z-10 flex flex-col -mt-3 overflow-hidden bg-white" :class="{ 'md:hidden': !store.selected }">
+			<header class="flex-shrink-0 py-2 pb-3 bg-white border-b border-gray-200 md:p-4">
+				<div class="z-40 items-center hidden gap-2 pb-3 border-b md:flex">
+					<button @click="store.compose(store.selected)" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg w-fit hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Beantwoord dit bericht">
+						<span>Beantwoorden</span>
+					</button>
+				</div>
+				<div class="space-y-3 md:mt-2">
 					<h1 id="message-subject" class="text-xl font-bold leading-tight text-gray-900 text-balance md:text-2xl">
 						{{ store.selected.subject || "(Geen onderwerp)" }}
 					</h1>
@@ -71,22 +84,11 @@
 							<span class="min-w-0 mr-2 font-medium">Datum:</span>
 							<NuxtTime :datetime="store.selected.date" weekday="long" year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit" class="text-gray-700" />
 						</div>
-
-						<div class="flex items-center gap-2 mt-2">
-							<button @click="store.backToList()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg md:hidden hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Terug naar berichtenlijst">
-								<span>Overzicht</span>
-							</button>
-
-							<button @click="store.compose(store.selected)" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Beantwoord dit bericht">
-								<icon name="akar-icons:reply" class="w-4 h-4" aria-hidden="true" />
-								<span>Beantwoorden</span>
-							</button>
-						</div>
 					</div>
 				</div>
 			</header>
 
-			<div class="flex-1 p-4 overflow-y-auto" aria-label="Bericht inhoud">
+			<div class="flex-1 py-2 overflow-y-auto md:p-4" aria-label="Bericht inhoud">
 				<article class="prose text-gray-800 max-w-none">
 					<div class="text-balance">
 						<div v-html="store.selected.html" :class="store.selected.origin == 'email' ? 'space-y-4' : ''" class="text-balance viewer"></div>
