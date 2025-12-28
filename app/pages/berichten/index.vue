@@ -2,11 +2,11 @@
 	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[77dvh] md:h-[74dvh] md:grid-cols-2">
 		<div class="z-10 md:pr-4 md:border-r" :class="{ 'hidden md:block': store.selected }">
 			<div class="flex-1 h-full overflow-y-auto">
-				<div v-if="filteredMessages.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
+				<div v-if="store.messages.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
 					<icon name="akar-icons:inbox" class="w-16 h-16 mb-4 text-gray-300" aria-hidden="true" />
 					<h3 class="mb-2 text-lg font-medium">Geen berichten</h3>
 					<p class="text-sm text-center">
-						{{ search ? "Probeer een andere zoekterm" : `Er zijn momenteel geen ${ $route.query.filter == "all" ? '' : $route.query.filter } berichten` }}
+						{{ displayMessage() }}
 					</p>
 				</div>
 
@@ -46,7 +46,7 @@
 
 				</div>
 
-				<div type="button" v-for="inbox in filteredMessages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
+				<div type="button" v-for="inbox in store.messages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">
@@ -175,13 +175,29 @@
 
 	// ***************************************************************************
 
-	
+	const { search } = useSearch();
+	const { filter } = useFilter();
+
+	const displayMessage = () => {
+
+		if(filter.value) {
+
+			const seen = filter.value === "gelezen"
+			const unseen = filter.value === "ongelezen"
+
+			if(seen) return `Er zijn momenteel geen gelezen berichten`;
+			else if(unseen) return `Er zijn momenteel geen ongelezen berichten`;
+			else {
+				if(search.value) return "Probeer een andere zoekterm";
+				else return `Er zijn momenteel geen berichten`;
+			}
+		}
+
+		return "Probeer een andere zoekterm";
+
+	}
+
 	const store = useNotifications();
 	store.openMessageById((store.activeMessageId as string) || "");
 	
-	const { search } = useSearch();
-
-	const filteredMessages = computed(() => {
-		return store.filter(search.value as string);
-	});
 </script>

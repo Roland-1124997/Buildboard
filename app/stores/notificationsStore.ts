@@ -40,13 +40,14 @@ export const useNotifications = defineStore("Notifications", () => {
     });
 
     const refresh = async (params?: {
-        filter?: string; page?: number
+        filter?: string; page?: number, search?: string
     }) => {
 
         const { data, error: Error } = await Request.Get({
             query: { 
                 page: params?.page || 1,
-                filter: params?.filter || useRoute().query.filter || 'all'
+                filter: params?.filter || useRoute().query.filter || 'all',
+                search: params?.search
             },
         });
 
@@ -75,7 +76,8 @@ export const useNotifications = defineStore("Notifications", () => {
         const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications', {
             query: { 
                 page: useRoute().query.page || 1,
-                filter: useRoute().query.filter || 'all'
+                filter: useRoute().query.filter || 'all',
+                search: useRoute().query.search || ''
             },
         });
 
@@ -264,37 +266,6 @@ export const useNotifications = defineStore("Notifications", () => {
         });
     };
 
-    const filter = (query: string) => {
-
-        const filtered = ref(messages.value);
-
-        // filtered = filtered.filter((message: any) => {
-
-        //     const flags = message.flags || [];
-
-        //     if (filter === "all") return true;
-        //     if (filter === "gelezen") return flags.includes('\\Seen');
-        //     else if (filter === "ongelezen") return !flags.includes('\\Seen');
-
-        // });
-
-        if (query) {
-            filtered.value = filtered.value.filter((message: any) => {
-                const subject = message.subject || "";
-                const from = message.from?.address || message.from?.name || "";
-                const preview = message.preview || message.text || "";
-
-                return (
-                    subject.toLowerCase().includes((query as string).toLowerCase()) ||
-                    from.toLowerCase().includes((query as string).toLowerCase()) ||
-                    preview.toLowerCase().includes((query as string).toLowerCase())
-                );
-            });
-        }
-
-        return filtered.value;
-    };
-
     const openMessageById = async (id: string) => {
 
         const messageToOpen = messages.value.find((msg: any) => {
@@ -387,7 +358,6 @@ export const useNotifications = defineStore("Notifications", () => {
         compose,
         selectMessage,
         backToList,
-        filter,
         nextPage,
         previousPage,
         toPage,

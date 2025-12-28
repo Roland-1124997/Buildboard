@@ -9,7 +9,7 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     const filter = String(getQuery(event).filter || '');
 
     const { data, unseen, error, pagination } = await fetchImapMessages(imap_client, {
-        limit: 2, page, filter, search
+        limit: 1, page, filter, search
     });
 
     await useCloseImapClient(imap_client);

@@ -16,6 +16,16 @@ export const useFilter = (options?: {
 
     filter.value = route.query.filter as string || null;
 
+    const execute = async (value: string) => {
+
+        if (options?.callback) {
+            await options.callback({
+                filter: value,
+                page: 1
+            });
+        }
+    }
+
     const setFilter = async (value: string | LocationQueryValue[] | null) => {
 
         if (!value) {
@@ -32,13 +42,7 @@ export const useFilter = (options?: {
             filter.value = value as string;
             router.replace({ query: { ...route.query, filter: value, page: 1 } });
         
-            if (options?.callback) {
-                await options.callback({
-                    filter: value as string,
-                    page: 1
-                });
-            }
-        
+            await execute(value as string);
         }
     }
 

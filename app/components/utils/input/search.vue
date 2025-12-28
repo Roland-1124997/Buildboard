@@ -9,13 +9,22 @@
 </template>
 
 <script setup lang="ts">
-	
-	const { search, setSearch } = useSearch()
-	
-	watch(search, (newValue) => {
-		if (newValue) setSearch(newValue);
-		else setSearch(null);
+	const store = useNotifications();
+	const route = useRoute();
+
+	const { search, setSearch } = useSearch({
+		callback: async (params: { filter: string; search: string; page: number }) => {
+			if (route.path === "/berichten") await store.refresh(params);
+		},
 	});
+
+	watchDebounced(
+		search,
+		async (newValue) => {
+			await setSearch(newValue);
+		},
+		{ debounce: 1000, maxWait: 5000 }
+	);
 
 	const { name, initialValue } = defineProps({
 		name: { type: String, required: true },
@@ -25,8 +34,7 @@
 		disabled: { type: Boolean, default: false },
 		initialValue: { type: String, default: "" },
 	});
-	
+
 	const { value } = useField<string>(`${name}`);
 	value.value = initialValue;
-
 </script>

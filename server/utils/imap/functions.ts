@@ -139,11 +139,7 @@ export const useDeleteMessage = async (client: ImapFlow, search: any) => {
     });
 
     return { data, error };
-
 }
-
-
-
 
 export const unseenMessagesCount = async (client: ImapFlow) => {
     const count = await client.search({ seen: false });

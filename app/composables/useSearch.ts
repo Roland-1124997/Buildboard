@@ -2,7 +2,15 @@ import type { LocationQueryValue } from 'vue-router';
 
 const search = ref<string | null>(null);
 
-export const useSearch = () => {
+export const useSearch = (options?: {
+    callback?: (
+        params: { 
+            filter: string;
+            search: string;
+            page: number 
+        }
+    ) => Promise<void>,
+}) => {
 
     const router = useRouter();
     const route = useRoute();
@@ -13,7 +21,20 @@ export const useSearch = () => {
         search.value = null
     });
 
-    const setSearch = (value: string | LocationQueryValue[] | null) => {
+    const execute = async (value: string) => {
+
+        if (options?.callback) {
+            await options.callback({
+                filter: route.query.filter as string || 'all',
+                search: value,
+                page: Number(route.query.page || 1)
+            });
+        }
+    }
+
+    const setSearch = async (value: string | LocationQueryValue[] | null) => {
+
+        if (typeof value == 'object') return;
 
         if (!value) {
             search.value = null;
@@ -22,11 +43,13 @@ export const useSearch = () => {
             delete query.search;
 
             router.replace({ query });
+            await execute('');
         }
 
         else {
             search.value = value as string;
             router.replace({ query: { ...route.query, search: value } });
+            await execute(value as string);
         }
     }
 

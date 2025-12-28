@@ -30,11 +30,18 @@ export const useArticles = defineStore("articles", () => {
         if (!query) return articles.value;
 
         return articles.value?.filter((article: any) => {
-            const title = article.title || "";
-            const content = article.content || "";
 
-            return title.toLowerCase().includes(query.toLowerCase()) || content.toLowerCase().includes(query.toLowerCase());
+            const title = article.title || "";
+            const description = article.description || "";
+            const topics = article.topics.map((t: any) => t).join(" ") || "";
+
+            const foundInTitle = title.toLowerCase().includes(query.toLowerCase());
+            const foundInDescription = description.toLowerCase().includes(query.toLowerCase());
+            const foundInTopics = topics.toLowerCase().includes(query.toLowerCase());
+
+            return foundInTitle || foundInDescription || foundInTopics; 
         });
+        
     };
 
     const remove = (id: number) => {
