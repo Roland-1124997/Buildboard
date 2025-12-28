@@ -4,18 +4,41 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     const imap_client = await useConnectClient();
     await useGetImapMailbox(imap_client, 'INBOX');
 
-    const list = await fetchImapNewMessages(imap_client, { messages: 100 });
-    list.messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const page = Number(getQuery(event).page || 1);
+    const search = String(getQuery(event).search || '');
+    const filter = String(getQuery(event).filter || '');
+
+    const { data, unseen, error, pagination } = await fetchImapMessages(imap_client, {
+        limit: 2, page, filter, search
+    });
 
     await useCloseImapClient(imap_client);
 
-    return useReturnResponse(event, { 
+    if (error || !data) return useReturnResponse(event, {
+        status: {
+            code: 200,
+            success: false,
+            message: 'Er zijn geen berichten gevonden',
+        },
+        data: {
+            messages: [],
+            unseen: unseen
+        }
+    })
+
+    return useReturnResponse(event, {
         status: {
             code: 200,
             success: true,
             message: 'Berichten succesvol opgehaald',
         },
-        data: list
+        pagination: {
+            page: pagination.current_page,
+            total: pagination.total_Pages,
+        },
+        data: {
+            ...data,
+            unseen
+        }
     });
-
 });

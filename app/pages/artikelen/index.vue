@@ -1,13 +1,6 @@
 <template>
 	<div class="">
-		<div class="z-20 w-full pt-1 pb-3 border-b">
-			<div class="flex items-center justify-between w-full gap-2 text-2xl font-bold">
-				<h1>Artikelen</h1>
-			</div>
-			<p class="w-full text-gray-600 text-pretty">Overzicht van alle artikelen van je website, deze kun je hier lezen en bewerken.</p>
-		</div>
-
-		<div class="grid gap-3 mt-4 md:grid-cols-3 pb-[5.5rem] md:pb-0">
+		<div class="grid gap-3 md:grid-cols-3 pb-[5.5rem] md:pb-0">
 			<div v-for="art in filteredArticles" :key="art.id" class="z-10 flex flex-col h-full p-4 duration-150 bg-white border rounded-lg group hover:bg-gray-50">
 				<div class="flex flex-col flex-1 gap-4">
 					<div class="relative flex flex-col flex-1">

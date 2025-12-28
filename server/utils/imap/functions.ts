@@ -6,7 +6,7 @@ import { JSDOM } from 'jsdom';
 const { IMAP_HOST, IMAP_PORT, IMAP_SECURE, IMAP_USER, IMAP_PASS } = useRuntimeConfig();
 
 export const sanitizeHtml = (html: string) => {
-    
+
     let output = sanitize(html, {
         allowedTags: sanitize.defaults.allowedTags.concat(['img']),
         allowedAttributes: {
@@ -57,6 +57,7 @@ export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetc
 
     for await (let message of client.fetch(criteria, fetchOptions)) {
 
+
         let html = '';
         let preview = '';
         let attachments = [];
@@ -93,7 +94,8 @@ export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetc
         });
     }
 
-    return messages.reverse();
+    return messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 }
 
 
@@ -142,3 +144,18 @@ export const useDeleteMessage = async (client: ImapFlow, search: any) => {
 
 
 
+
+export const unseenMessagesCount = async (client: ImapFlow) => {
+    const count = await client.search({ seen: false });
+    return count === false ? 0 : count.length;
+}
+
+export const makeImapPagination = (totalItems: number, currentPage: number, itemsPerPage: number) => {
+    const total = Math.ceil(totalItems / itemsPerPage);
+    const page = currentPage
+
+    const end = totalItems - (page - 1) * itemsPerPage;
+    const start = Math.max(end - itemsPerPage + 1, 1);
+
+    return { page, total, start, end };
+}

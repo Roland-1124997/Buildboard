@@ -59,23 +59,84 @@ export const stopImapWatcher = async () => {
 
 export const getImapEmitter = () => imapEmitter;
 
-export const fetchImapNewMessages = async (client: ImapFlow, options: Record<string, number>) => {
+const getFilteredMessageUids = async (client: ImapFlow, filter: string) => {
 
-    const mailbox = await useGetImapMailbox(client, 'INBOX');
+    const seen_filter = filter === "gelezen"
+    const unseen_filter = filter === "ongelezen"
 
-    const startSeq = Math.max(1, (mailbox.exists || 0) - options.messages)
+    if (unseen_filter) {
+        const uids = await client.search({ seen: false });
+        return uids === false ? [] : uids;
+    } 
+    
+    else if (seen_filter) {
+        const uids = await client.search({ seen: true });
+        return uids === false ? [] : uids;
+    }
 
-    const messages = await useFetchImapMessages(client, `${startSeq}:*`, {
+    return [];
+};
+
+const buildFetchCriteria = (uids: number[], page: number, limit: number, start: number, end: number) => {
+    if (uids.length > 0) {
+        const sortedUids = [...uids].sort((a, b) => b - a);
+        const pageUids = sortedUids.slice((page - 1) * limit, page * limit);
+        
+        return pageUids.join(',');
+    }
+    
+    return `${start}:${end}`;
+};
+
+const fetchMessagesWithCriteria = async (client: ImapFlow, criteria: string) => {
+    return await useFetchImapMessages(client, criteria, {
         uid: true,
         envelope: true,
         internalDate: true,
         flags: true,
         source: true,
     });
+};
 
-    const unseen = messages.filter((m: any) => !m.flags.includes('\\Seen')).length;
-
-    return { messages, unseen };
+export const fetchImapMessages = async (client: ImapFlow, options: {
+    limit: number,
+    page: number,
+    filter?: string,
+    search?: string
+}) => {
     
-}
+    let totalMessages = 0;
 
+    const mailbox = await useGetImapMailbox(client, 'INBOX');
+    const unseen = await unseenMessagesCount(client);
+    const filter = options.filter as string;
+
+    const seen_filter = filter === "gelezen"
+    const unseen_filter = filter === "ongelezen"
+    const messageUids = await getFilteredMessageUids(client, filter);
+    
+    if (seen_filter || unseen_filter) totalMessages = messageUids.length;
+    else totalMessages = mailbox.exists || 0;
+    
+    const { page, total, start, end } = makeImapPagination(
+        totalMessages,
+        options.page as number,
+        options.limit as number
+    );
+
+    if (page > total || totalMessages === 0) return { data: null, unseen, error: true };
+
+    const criteria = buildFetchCriteria(messageUids, page, options.limit as number, start, end);
+    const messages = await fetchMessagesWithCriteria(client, criteria);
+
+    return {
+        data: {
+            messages,
+        },
+        unseen,
+        pagination: {
+            current_page: page,
+            total_Pages: total,
+        }
+    };
+};

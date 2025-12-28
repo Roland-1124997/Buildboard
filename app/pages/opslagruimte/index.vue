@@ -1,13 +1,6 @@
 <template>
 	<div class="">
-		<div class="z-20 w-full pt-1 pb-3 border-b">
-			<div class="flex items-center justify-between w-full gap-2 text-2xl font-bold">
-				<h1>Opslag</h1>
-			</div>
-			<p class="w-full text-gray-600 text-pretty">Overzicht van je opgeslagen bestanden en documenten deze kun je hier beheren.</p>
-		</div>
-
-		<div class="mt-4 pb-[5.5rem] md:pb-0">
+		<div class=" pb-[5.5rem] md:pb-0">
 			<div v-if="filteredFiles.length > 0" class="space-y-3">
 				<div class="mb-3">
 					<h2 class="text-sm font-bold text-gray-800">{{ filteredFiles.length }} {{ filteredFiles.length === 1 ? "document" : "documenten" }}</h2>

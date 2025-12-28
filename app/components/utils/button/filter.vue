@@ -6,7 +6,11 @@
 </template>
 
 <script setup lang="ts">
-	const { filter, setFilter } = useFilter();
+
+	const store = useNotifications();
+	const { filter, setFilter } = useFilter({
+		callback: async (params) => await store.refresh(params) 
+	});
 
 	defineProps({
 		type: {

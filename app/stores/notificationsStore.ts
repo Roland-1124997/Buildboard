@@ -7,6 +7,14 @@ export const useNotifications = defineStore("Notifications", () => {
     const uri = "/api/notifications";
     const Request = useApiHandler<ApiResponse<any>>(uri);
 
+    const pagination = ref<{
+        page: number;
+        total: number;
+    }>({
+        page: 1,
+        total: 1,
+    });
+
     const selected = ref<any | null>(null);
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
@@ -31,11 +39,21 @@ export const useNotifications = defineStore("Notifications", () => {
         selected.value = null
     });
 
-    const refresh = async () => {
+    const refresh = async (params?: {
+        filter?: string; page?: number
+    }) => {
 
-        const { data, error: Error } = await Request.Get();
+        const { data, error: Error } = await Request.Get({
+            query: { 
+                page: params?.page || 1,
+                filter: params?.filter || useRoute().query.filter || 'all'
+            },
+        });
 
         if (!Error && data) {
+            pagination.value.page = data.pagination?.page || 1;
+            pagination.value.total = data.pagination?.total || 1;
+
             messages.value = data.data?.messages || [];
             unseen.value = data.data?.unseen || 0;
 
@@ -54,9 +72,18 @@ export const useNotifications = defineStore("Notifications", () => {
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications');
+        const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications', {
+            query: { 
+                page: useRoute().query.page || 1,
+                filter: useRoute().query.filter || 'all'
+            },
+        });
 
         if (!Error.value && data.value) {
+
+            pagination.value.page = data.value?.pagination?.page || 1;
+            pagination.value.total = data.value?.pagination?.total || 1;
+
             messages.value = data.value?.data.messages || [];
             unseen.value = data.value?.data.unseen || 0;
             await setBadge(unseen.value);
@@ -237,22 +264,22 @@ export const useNotifications = defineStore("Notifications", () => {
         });
     };
 
-    const filter = (query: string, filter: string) => {
+    const filter = (query: string) => {
 
-        let filtered = messages.value;
+        const filtered = ref(messages.value);
 
-        filtered = filtered.filter((message: any) => {
+        // filtered = filtered.filter((message: any) => {
 
-            const flags = message.flags || [];
+        //     const flags = message.flags || [];
 
-            if (filter === "all") return true;
-            if (filter === "gelezen") return flags.includes('\\Seen');
-            else if (filter === "ongelezen") return !flags.includes('\\Seen');
+        //     if (filter === "all") return true;
+        //     if (filter === "gelezen") return flags.includes('\\Seen');
+        //     else if (filter === "ongelezen") return !flags.includes('\\Seen');
 
-        });
+        // });
 
         if (query) {
-            filtered = filtered.filter((message: any) => {
+            filtered.value = filtered.value.filter((message: any) => {
                 const subject = message.subject || "";
                 const from = message.from?.address || message.from?.name || "";
                 const preview = message.preview || message.text || "";
@@ -265,7 +292,7 @@ export const useNotifications = defineStore("Notifications", () => {
             });
         }
 
-        return filtered;
+        return filtered.value;
     };
 
     const openMessageById = async (id: string) => {
@@ -277,12 +304,75 @@ export const useNotifications = defineStore("Notifications", () => {
         if (messageToOpen) await selectMessage(messageToOpen);
     };
 
+    const nextPage = async () => {
+        if (pagination.value.page < pagination.value.total) {
+
+            const router = useRouter();
+            pagination.value.page += 1;
+
+            await refresh({
+                page: pagination.value.page
+            });
+
+            router.replace({
+                query: {
+                    ...useRoute().query,
+                    page: pagination.value.page,
+                },
+            });
+
+            
+        }
+    };
+
+    const previousPage = async () => {
+        if (pagination.value.page > 1) {
+            pagination.value.page -= 1;
+
+            const router = useRouter();
+
+            await refresh({
+                page: pagination.value.page
+            });
+
+            router.replace({    
+                query: {
+                    ...useRoute().query,
+                    page: pagination.value.page,
+                },
+            });
+
+        }
+    };
+
+    const toPage = async (page: number) => {
+        if (page >= 1 && page <= pagination.value.total) {
+            pagination.value.page = page;
+
+            const router = useRouter();
+
+            await refresh({
+                page: pagination.value.page
+            });
+
+            router.replace({
+                query: {
+                    ...useRoute().query,
+                    page: pagination.value.page,
+                },
+            });
+
+        }
+
+    };
+
     return {
         messages,
         selected,
         unseen,
         error,
         activeMessageId,
+        pagination,
         openMessageById,
         clearSavedPayload,
         savePayload,
@@ -298,6 +388,9 @@ export const useNotifications = defineStore("Notifications", () => {
         selectMessage,
         backToList,
         filter,
+        nextPage,
+        previousPage,
+        toPage,
     };
 });
 
