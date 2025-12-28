@@ -19,7 +19,7 @@ export const useNotifications = defineStore("Notifications", () => {
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
     const error = ref<any | null>(null);
-
+    
     const route = useRoute();
 
     const activeMessageId = computed(() => route.query.id);
@@ -45,7 +45,7 @@ export const useNotifications = defineStore("Notifications", () => {
 
         const { data, error: Error } = await Request.Get({
             query: { 
-                page: params?.page || 1,
+                page: params?.page || useRoute().query.page || 1,
                 filter: params?.filter || useRoute().query.filter || 'all',
                 search: params?.search
             },
@@ -191,7 +191,6 @@ export const useNotifications = defineStore("Notifications", () => {
             });
 
             close();
-            await refresh();
 
             if (error) return addToast({
                 type: "error",
@@ -203,7 +202,8 @@ export const useNotifications = defineStore("Notifications", () => {
                 message: "Bericht succesvol verwijderd",
             });
 
-            await refresh();
+            await refresh({ page: 1 });
+
         };
 
         const onCancel = () => {
