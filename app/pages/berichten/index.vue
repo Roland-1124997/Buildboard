@@ -173,8 +173,8 @@
 
 	// ***************************************************************************
 
-	const { search } = useSearch();
-	const { filter } = useFilter();
+	const { search, history: searchHistory, setSearch } = useSearch();
+	const { filter, history: filterHistory, setFilter } = useFilter();
 
 	const displayMessage = () => {
 
@@ -197,5 +197,33 @@
 
 	const store = useNotifications();
 	store.openMessageById((store.activeMessageId as string) || "");
+
+	onMounted( async () => {
+
+		const path = useRoute().path;
+
+		const lastSearchEntry = searchHistory.LastEntry(path);
+		const latestSearch = lastSearchEntry?.search
+
+		const lastFilterEntry = filterHistory.LastEntry(path);
+		const latestFilter = lastFilterEntry?.filter
+
+		const willRefresh = !!latestSearch ||
+			latestFilter == "gelezen" || 
+			latestFilter == "ongelezen"
+			
+		if(willRefresh) {
+
+			searchHistory.clear(path);
+			filterHistory.clear(path);
+
+			await setFilter("all");
+			await setSearch(null);
+
+			await store.refresh()
+
+		}
+
+	})
 	
 </script>
