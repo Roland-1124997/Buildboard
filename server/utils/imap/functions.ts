@@ -8,13 +8,17 @@ const { IMAP_HOST, IMAP_PORT, IMAP_SECURE, IMAP_USER, IMAP_PASS } = useRuntimeCo
 export const sanitizeHtml = (html: string) => {
 
     let output = sanitize(html, {
-        allowedTags: sanitize.defaults.allowedTags.concat(['img']),
+        allowedTags: sanitize.defaults.allowedTags.concat(['img']).filter(tag => tag !== 'blockquote' && tag !== 'div'),
         allowedAttributes: {
             ...sanitize.defaults.allowedAttributes,
             '*': ['class']
         },
         allowedSchemes: ['http', 'https', 'mailto', 'data']
     })
+
+    output = output.replace(/\n{2,}/g, '');
+    output = output.replace(/[^\x00-\x7F]/g, ''); 
+    output = output.replace(/^(<br\s*\/?>)+/i, '');
 
     return output;
 }
@@ -54,9 +58,9 @@ export const useReleaseImapMailbox = async (lock: any) => {
 
 export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetchOptions: any) => {
     const messages = [];
+    const threadmap = new Map<string, string>();
 
     for await (let message of client.fetch(criteria, fetchOptions)) {
-
 
         let html = '';
         let preview = '';
@@ -64,6 +68,14 @@ export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetc
         let previewText = '';
 
         if (!message.source) continue;
+
+        const emailSubject = message.envelope?.subject;
+        const stripedSubject = emailSubject?.split(':')[1]?.trim() || emailSubject?.trim();
+
+        if (stripedSubject) {
+            threadmap.set(stripedSubject, threadmap.get(stripedSubject) || crypto.randomUUID());
+            message.threadId = threadmap.get(stripedSubject);
+        }
 
         const mail = await simpleParser(message.source);
 
@@ -75,24 +87,26 @@ export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetc
         });
 
         html = sanitizeHtml(mail.html || "") || mail.textAsHtml || '';
+
         attachments = mail.attachments;
         preview = previewText || mail.text || mail.textAsHtml || '';
         preview = preview
             .replace(/https?:\/\/[^\s]+/g, '')
             .replace(/\[/g, '')
+            .replace(/\]/g, '')
+            .replace(/\)/g, ') ')
+            .replace(/\s+/g, ' ')
+            .trim()
 
         messages.push({
             id: message.id,
-            messageId: mail.messageId || null,
-            threadId: mail.inReplyTo || (mail.references && mail.references[0]) || mail.messageId || null,
+            threadId: message.threadId || null,
             uid: message.uid,
             subject: message.envelope?.subject,
             date: message.envelope?.date,
             from: message.envelope?.from?.[0],
-            inReplyTo: mail.inReplyTo || null,
             flags: message.flags ? Array.from(message.flags) : [],
             attachments, preview, html,
-            origin: "email",
             references: mail.references || null,
         });
     }

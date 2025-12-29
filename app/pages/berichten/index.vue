@@ -33,7 +33,7 @@
 					<div v-if="store.pagination.page + 1 <= store.pagination.total" class="flex items-center w-full gap-2">
 
 						<button @click="store.nextPage" class="flex items-center justify-center w-full gap-2 px-5 py-2 text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Beantwoord dit bericht">
-						{{ store.pagination.page + 1 }}
+							{{ store.pagination.page + 1 }}
 						</button>
 
 						<button @click="store.toPage(store.pagination.total)" class="flex w-full items-center justify-center gap-2 px-3 py-[0.64rem] text-sm font-medium text-blue-600 transition-colors duration-200 border border-blue-300 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Beantwoord dit bericht">
@@ -44,19 +44,23 @@
 					</div>
 				</div>
 
-				<div type="button" v-for="inbox in store.messages" :key="inbox.key" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full p-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
+				<div type="button" v-for="inbox in store.messages" :key="inbox.id" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full md:p-4 p-3 px-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-2">
 									<div v-if="!inbox.flags.includes('\\Seen')" class="flex-shrink-0 w-4 h-4 text-white bg-blue-500 rounded-full " role="status" aria-label="Ongelezen bericht"></div>
+									<div v-if="store.messages.filter(message => message.threadId === inbox.threadId).length > 1" class="flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full" role="status" :aria-label="`${store.messages.filter(m => m.threadId === inbox.threadId).length} berichten in deze conversatie`">
+										<icon name="akar-icons:chat-dots" class="w-3 h-3" aria-hidden="true" />
+										<span>{{ store.messages.filter(m => m.threadId === inbox.threadId).length }}</span>
+									</div>
 									<h2 class="font-semibold text-gray-900 truncate text-balance">
 										{{ inbox.from.name || "Onbekende afzender" }}
 									</h2>
 								</div>
 
 								<div class="flex items-center gap-3">
-									<p class="text-sm text-gray-600 truncate">
+									<p class="text-xs text-gray-600 truncate md:text-sm">
 										<NuxtTime :datetime="inbox.date" year="2-digit" month="2-digit" day="2-digit" hour="2-digit" minute="2-digit" />
 									</p>
 
@@ -87,7 +91,9 @@
 								{{ inbox.subject || "(Geen onderwerp)" }}
 							</p>
 
-							<p v-html="inbox.preview || 'Geen preview beschikbaar'" :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed text-balance line-clamp-2"></p>
+							<p :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed line-clamp-2">
+								{{ inbox.preview || 'Geen preview beschikbaar' }}
+							</p>
 						</div>
 					</div>
 				</div>
@@ -124,7 +130,7 @@
 			<div class="flex-1 py-2 overflow-y-auto md:p-4" aria-label="Bericht inhoud">
 				<article class="prose text-gray-800 max-w-none">
 					<div class="text-balance">
-						<div v-html="store.selected.html" :class="store.selected.origin == 'email' ? 'space-y-4' : ''" class="text-balance viewer"></div>
+						<div v-html="store.selected.html" class="space-y-3 text-balance viewer"></div>
 					</div>
 				</article>
 			</div>
@@ -221,7 +227,6 @@
 			await setSearch(null);
 
 			await store.refresh()
-
 		}
 
 	})
