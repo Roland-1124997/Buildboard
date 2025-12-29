@@ -83,11 +83,11 @@
 								</div>
 							</div>
 
-							<p  class="text-sm font-medium text-gray-600 text-balance line-clamp-2">
+							<p class="text-sm font-medium text-gray-600 text-balance line-clamp-2">
 								{{ inbox.subject || "(Geen onderwerp)" }}
 							</p>
 
-							<p v-html="inbox.preview || 'Geen preview beschikbaar'" :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed line-clamp-2"></p>
+							<p v-html="inbox.preview || 'Geen preview beschikbaar'" :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed text-balance line-clamp-2"></p>
 						</div>
 					</div>
 				</div>

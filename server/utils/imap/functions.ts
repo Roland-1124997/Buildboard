@@ -77,6 +77,9 @@ export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetc
         html = sanitizeHtml(mail.html || "") || mail.textAsHtml || '';
         attachments = mail.attachments;
         preview = previewText || mail.text || mail.textAsHtml || '';
+        preview = preview
+            .replace(/https?:\/\/[^\s]+/g, '')
+            .replace(/\[/g, '')
 
         messages.push({
             id: message.id,
