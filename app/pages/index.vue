@@ -7,7 +7,7 @@
 				<p :title="`${useFormatDuration(statistic.difference, statistic.format)}`" class="mt-3">
 					<span :class="statistic.positive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center px-2 py-1 text-sm font-medium rounded">
 						<span class="mr-2" aria-hidden="true">{{ statistic.positive ? "▲" : "▼" }}</span>
-						{{ statistic.percentage | 0 }}%
+						{{ statistic.percentage }}
 					</span>
 				</p>
 			</article>
