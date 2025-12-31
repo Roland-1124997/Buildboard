@@ -40,7 +40,7 @@
 					<ChartsTable v-else-if="isTableEnabled" title="Pagina's" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
 					<client-only v-else>
 						<div class="md:hidden">
-							<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="248" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+							<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="200" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
 						</div>
 
 						<div class="hidden md:block">

@@ -39,7 +39,7 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             iconName: "akar-icons:inbox",
             alert: true,
             toolbar: {
-                groupWithFilters: false,
+                groupWithFilters: true,
                 fallbackFilter: 'alles',
                 buttons: [
                     createButton({
