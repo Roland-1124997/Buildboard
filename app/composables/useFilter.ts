@@ -58,6 +58,7 @@ export const useFilter = (options?: {
 
         filter.value = value as string;
         query.filter = filter.value;
+
         
         router.replace({ query });
         await execute(value as string);

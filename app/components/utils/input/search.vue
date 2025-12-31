@@ -1,5 +1,5 @@
 <template>
-	<field :name="name" v-slot="{ field }" >
+	<field :name="name" v-slot="{ field }">
 		<div class="relative w-full">
 			<label :for="name" class="sr-only">{{ label }}</label>
 			<input :value="localSearch" @input="localSearch = ($event.target as HTMLInputElement).value" :id="name" :placeholder type="search" class="w-full p-2 pl-10 text-gray-900 transition border rounded-xl bg-white/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/60 disabled:opacity-60 disabled:cursor-not-allowed" autocomplete="off" spellcheck="true" role="searchbox" :aria-label="label" />
@@ -9,9 +9,8 @@
 </template>
 
 <script setup lang="ts">
-	
 	const { store, name, initialValue } = defineProps({
-		store: { type: Object as () => StoreType | undefined, default: undefined, required: true },
+		store: { type: Object as () => StoreType | undefined, default: undefined, required: false },
 		name: { type: String, required: true },
 		label: { type: String, default: "text" },
 		placeholder: { type: String, default: "" },
@@ -25,25 +24,26 @@
 
 	const route = useRoute();
 	const localSearch = ref();
-	const localHistory = ref()
+	const localHistory = ref();
 
 	const { history, setSearch } = useSearch({
 		localSearch,
 		callback: async (params) => {
-			
-			if (route.path === "/berichten" ) {
-				if(store && store.refresh) await store.refresh(params);
+			if (route.path === "/berichten") {
+				if (store && store.refresh) await store.refresh(params);
 			}
 		},
 	});
 
 	localHistory.value = history.LastEntry(route.path)?.search || "";
 
-	onMounted(() => localSearch.value = localHistory.value);
+	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
 
-	watchDebounced(localSearch, async (newValue) => {
-		await setSearch(newValue, localHistory.value );
-	}, { debounce: 1000, maxWait: 5000 });
-
-	
+	watchDebounced(
+		localSearch,
+		async (newValue) => {
+			await setSearch(newValue, localHistory.value);
+		},
+		{ debounce: 1000, maxWait: 5000 }
+	);
 </script>
