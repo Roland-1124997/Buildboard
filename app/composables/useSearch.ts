@@ -33,40 +33,36 @@ export const useSearch = (
     }
 
     watch( () => route.path, async () => {
-
-        search.value = null
-        if (options?.localSearch) options.localSearch.value = null
-
         const lastEntry = LastEntry(route.path);
-        if (lastEntry) {
-            clear(route.path);
-            await execute("")
-        }
+        search.value = lastEntry?.search || null;
+        if (options?.localSearch) options.localSearch.value = search.value;
     });
 
-    const setSearch = async (value: string | LocationQueryValue[] | null) => {
+    const setSearch = async (value: string | LocationQueryValue[] | null, latestEntry: string) => {
 
-        if (typeof value == 'object') return;
+        const query = { ...route.query };
 
         set(route.path, [
-            ...get(route.path),
             { search: value as string || null }
         ]);
 
         if (!value) {
             search.value = null;
-        
-            const query = { ...route.query };
             delete query.search;
 
             router.replace({ query });
+            
+            if(value === latestEntry) return;
             await execute('');
         }
 
         else {
             search.value = value as string;
+            query.search = search.value;
+
+            router.replace({ query });
             
-            router.replace({ query: { ...route.query, search: value } });
+            if(value === latestEntry) return;
             await execute(value as string);
         }
     }

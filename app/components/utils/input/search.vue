@@ -10,26 +10,8 @@
 
 <script setup lang="ts">
 	
-	const { store } = await useApiRoutes();
-
-	const route = useRoute();
-	const localSearch = ref();
-
-	const { setSearch } = useSearch({
-		localSearch,
-		callback: async (params) => {
-			
-			if (route.path === "/berichten" ) {
-				if(store.value.refresh) await store.value.refresh(params);
-			}
-		},
-	});
-
-	watchDebounced(localSearch, async (newValue) => {
-		await setSearch(newValue);
-	}, { debounce: 1000, maxWait: 5000 });
-
-	const { name, initialValue } = defineProps({
+	const { store, name, initialValue } = defineProps({
+		store: { type: Object as () => StoreType | undefined, default: undefined, required: true },
 		name: { type: String, required: true },
 		label: { type: String, default: "text" },
 		placeholder: { type: String, default: "" },
@@ -40,4 +22,28 @@
 
 	const { value } = useField<string>(`${name}`);
 	value.value = initialValue;
+
+	const route = useRoute();
+	const localSearch = ref();
+	const localHistory = ref()
+
+	const { history, setSearch } = useSearch({
+		localSearch,
+		callback: async (params) => {
+			
+			if (route.path === "/berichten" ) {
+				if(store && store.refresh) await store.refresh(params);
+			}
+		},
+	});
+
+	localHistory.value = history.LastEntry(route.path)?.search || "";
+
+	onMounted(() => localSearch.value = localHistory.value);
+
+	watchDebounced(localSearch, async (newValue) => {
+		await setSearch(newValue, localHistory.value );
+	}, { debounce: 1000, maxWait: 5000 });
+
+	
 </script>

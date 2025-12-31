@@ -8,3 +8,8 @@
 	</UtilsNavigation>
 </template>
 
+<script setup lang="ts">
+	useSearch();
+	useFilter()
+</script>
+

@@ -40,7 +40,7 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             alert: true,
             toolbar: {
                 groupWithFilters: false,
-                fallbackFilter: 'all',
+                fallbackFilter: 'alles',
                 buttons: [
                     createButton({
                         to: "/berichten/opstellen",

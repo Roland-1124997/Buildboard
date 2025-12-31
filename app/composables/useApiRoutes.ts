@@ -15,7 +15,7 @@ export const useApiRoutes = async () => {
         const name = routes.value[current.value]?.toolbar?.store;
         const pinia = useNuxtApp().$pinia;
 
-        return (pinia as any)._s.get(name) as StoreType | undefined;
+        return (pinia as any)._s.get(name) as StoreType;
     });
 
     const { data, error } = await useFetch<Record<string, RouteType>>("/api/configuration/routes", {

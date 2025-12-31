@@ -36,8 +36,15 @@ export const useFilter = (options?: {
             const lastEntry = LastEntry(route.path);
             filter.value = lastEntry?.filter || options?.fallbackFilter?.value || null;
 
+            if (options?.fallbackFilter?.value != filter.value) {
+                router.replace({
+                    query: {
+                        ...route.query,
+                        filter: filter.value || undefined,
+                    }
+                });
+            }
         });
-        
     }
 
     const setFilter = async (value: string | LocationQueryValue[] | null, page?: number | null) => {
@@ -46,7 +53,6 @@ export const useFilter = (options?: {
         delete query.page;
 
         set(route.path, [
-            ...get(route.path),
             { filter: value as string || null }
         ]);
 
