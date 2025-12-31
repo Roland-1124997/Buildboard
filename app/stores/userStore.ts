@@ -1,4 +1,4 @@
-export const useSessions = defineStore("session", () => {
+export const useSessions = defineStore("useSessions", () => {
 
     const session: any = ref({
         data: null,

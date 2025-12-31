@@ -1,6 +1,8 @@
-const createButton = (overrides: Record<string, any>) => ({
-    iconName: "akar-icons:edit",
+
+
+const createButton = (overrides: Buttons) => ({
     ...overrides,
+    iconName: overrides.iconName || "akar-icons:edit",
 });
 
 const createFilter = (type: string, iconName: string, label: string, ariaLabel: string, color: string, large: boolean, alwaysShowLabel = true) => ({
@@ -9,15 +11,29 @@ const createFilter = (type: string, iconName: string, label: string, ariaLabel: 
 
 const createSearch = (context: string) => ({
     label: `Zoek in ${context}`,
-    placeholder: `Zoek ${context}...`,
+    placeholder: `Zoek in ${context}...`,
 });
 
-const routes = cachedFunction(() => {
+const routes = cachedFunction((): Record<string, RouteType> => {
 
     return {
         "/": {
             label: "Statistieken",
             iconName: "akar-icons:statistic-up",
+            toolbar: {
+                stacked: false,
+                groupWithFilters: true,
+                fallbackFilter: 'vandaag',
+                filters: [
+                    createFilter("vandaag", "akar-icons:clock", "Vandaag", "Toon statistieken van vandaag", "neutral", false, false),
+                    createFilter("week", "akar-icons:calendar", "Week", "Toon statistieken van deze week", "neutral", true, true),
+                    createFilter("maand", "akar-icons:calendar", "Maand", "Toon statistieken van deze maand", "neutral", true, true),
+                    createFilter("jaar", "akar-icons:calendar", "Jaar", "Toon statistieken van dit jaar", "neutral", true, true),
+                ],
+                // search: createSearch("statistieken"),
+                store: 'useAnalytics',
+            },
+            
         },
         "/berichten": {
             label: "Berichten",
@@ -26,6 +42,7 @@ const routes = cachedFunction(() => {
             toolbar: {
                 stacked: true,
                 groupWithFilters: true,
+                fallbackFilter: 'all',
                 buttons: [
                     createButton({
                         to: "/berichten/opstellen",
@@ -39,7 +56,9 @@ const routes = cachedFunction(() => {
                     createFilter("ongelezen", "akar-icons:envelope", "Ongelezen", "Zoek ongelezen berichten", "red", true),
                 ],
                 search: createSearch("berichten"),
+                store: 'useNotifications',
             },
+            
         },
         "/artikelen": {
             label: "Artikelen",
@@ -53,6 +72,7 @@ const routes = cachedFunction(() => {
                     }),
                 ],
                 search: createSearch("artikelen"),
+                store: 'useArticles',
             },
         },
         "/opslagruimte": {
@@ -75,7 +95,8 @@ const routes = cachedFunction(() => {
                     }),
                 ],
                 search: createSearch("bestanden"),
-            }
+                store: 'useStorage',
+            },
         },
         "/account": {
             label: "Account",

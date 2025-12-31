@@ -84,12 +84,12 @@ export type Anchor = {
     textContent: string;
 };
 
-type search = {
+export type search = {
     label: string,
     placeholder: string,
 }
 
-type Filters = {
+export type Filters = {
     type: string,
     iconName: string,
     label: string,
@@ -99,21 +99,23 @@ type Filters = {
     large: boolean,
 }
 
-type Buttons = {
-    iconName: string,
-    to: string,
-    description: string,
-    isSmall: boolean,
-    isButton: boolean,
+export type Buttons = {
+    iconName?: string,
+    to?: string,
+    description?: string,
+    isSmall?: boolean,
+    isButton?: boolean,
     onClick?: 'triggerFileSelect' | 'refresh',
 }
 
-type ToolBar = {
-    stacked: boolean;
-    groupWithFilters: boolean;
-    buttons: Buttons[];
-    filters: Filters[];
-    search: search;
+export type ToolBar = {
+    stacked?: boolean;
+    groupWithFilters?: boolean;
+    fallbackFilter?: string;
+    buttons?: Buttons[];
+    filters?: Filters[];
+    search?: search;
+    store: string;
 }
 
 export type RouteType = {

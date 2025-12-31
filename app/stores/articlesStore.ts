@@ -1,4 +1,4 @@
-export const useArticles = defineStore("articles", () => {
+export const useArticles = defineStore("useArticles", () => {
 
     const { addToast } = useToast();
     const { create, close } = useModal();

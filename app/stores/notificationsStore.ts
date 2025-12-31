@@ -1,4 +1,4 @@
-export const useNotifications = defineStore("Notifications", () => {
+export const useNotifications = defineStore("useNotifications", () => {
 
     const { create, close } = useModal();
     const { addToast } = useToast();

@@ -7,39 +7,26 @@
 
 <script setup lang="ts">
 
-	const store = useNotifications();
-	const { filter, setFilter } = useFilter({
-		callback: async (params) => await store.refresh(params) 
-	});
+	import type { Store } from "pinia";
 
-	defineProps({
-		type: {
-			type: String,
-			required: true,
-		},
-		iconName: {
-			type: String,
-			required: true,
-		},
-		label: {
-			type: String,
-			required: true,
-		},
-		alwaysShowLabel: {
-			type: Boolean,
-			required: true,
-		},
-		color: {
-			type: String,
-			required: false,
-			default: "neutral",
-		},
-		large: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
-	});
+	defineProps<{
+		store: Store<string, {
+			refresh?: (params?: {
+				filter?: string;
+				page?: number;
+				search?: string;
+			}) => Promise<void>;
+		}> | undefined,
+
+		filter: string | null,
+		setFilter: (filter: string) => void,
+		type: string,
+		iconName: string,
+		label: string,
+		alwaysShowLabel: boolean,
+		color: string,
+		large: boolean,
+	}>();
 
 	const getColorClasses = (color: string, isActive: boolean) => {
 		const colors: Record<string, { active: string; inactive: string }> = {

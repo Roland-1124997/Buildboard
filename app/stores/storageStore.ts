@@ -20,7 +20,7 @@ const getProperty = (types: FileType[], extension: string, property: "label" | "
     return type ? type[property] : property === "label" ? "Onbekend bestandstype" : property === "color" ? "text-gray-600" : "bg-gray-50";
 };
 
-export const useStorage = defineStore("storage", () => {
+export const useStorage = defineStore("useStorage", () => {
 
     const { create, close } = useModal();
     const { addToast } = useToast();

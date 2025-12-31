@@ -5,15 +5,15 @@ const { clear, get, LastEntry, set } = useHistory<{ search: string | null }>();
 
 export const useSearch = (
     options?: {
-    localSearch?: Ref<string | null>;
-    callback?: (
-        params: { 
-            filter: string;
-            search: string;
-            page: number 
-        }
-    ) => Promise<void>,
-}) => {
+        localSearch?: Ref<string | null>;
+        callback?: (
+            params: { 
+                filter: string;
+                search: string;
+                page: number 
+            }
+        ) => Promise<void>,
+    }) => {
 
     const router = useRouter();
     const route = useRoute();

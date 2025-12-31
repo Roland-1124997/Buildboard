@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <UtilsApp>
     <VitePwaManifest />
     <NuxtRouteAnnouncer />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-  </div>
+  </UtilsApp>
 </template>
 

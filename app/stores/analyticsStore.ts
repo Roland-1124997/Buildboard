@@ -1,4 +1,4 @@
-export const useAnalytics = defineStore("analytics", () => {
+export const useAnalytics = defineStore("useAnalytics", () => {
 
     const { addToast } = useToast();
 
