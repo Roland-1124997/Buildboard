@@ -1,7 +1,6 @@
 <template>
 	<div>
-
-        <div class="hidden">
+		<div class="hidden">
 			<label class="sr-only" for="file">file</label>
 			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" @change="handleFileSelect" class="sr-only" />
 		</div>
@@ -17,45 +16,48 @@
 			</button>
 		</div>
 
-		<div v-if="toolbar" :class="[selected ? ' hidden md:flex' : '', toolbar?.stacked ? 'flex-col h-[6.8rem] pt-[0.67rem]' : 'h-16 items-center justify-between']" class="z-40 flex gap-2 px-4 bg-white border-b lg:px-4">
-			<UtilsInputSearch v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" />
 
-			<div v-if="toolbar?.groupWithFilters" class="flex items-center w-full gap-[0.35rem]">
-				<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
+		<div v-if="toolbar" class="z-40">
 
-				<UtilsButtonFilter :setFilter :filter :store v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :color="filterItem.color" :large="filterItem.large" />
+			<div v-if="toolbar?.groupWithFilters" :class="[selected ? ' hidden md:flex' : '', !toolbar?.groupWithFilters ? '' : 'flex-wrap']" class="flex items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
+				<UtilsInputSearch v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" />
+
+				<div class="flex items-center w-full gap-[0.35rem]">
+					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
+					<UtilsButtonFilter v-if="toolbar.filters" :setFilter :filter :store v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
+				</div>
+
 			</div>
 
-			<template v-else-if="toolbar?.buttons">
-				<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
-			</template>
+			<div v-else class="flex flex-col items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
+
+				<div class="flex items-center justify-between w-full gap-2 " >
+					<UtilsInputSearch v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" />
+					<UtilsButtonImportant v-if="toolbar.buttons" v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
+				</div>
+
+				<div v-if="toolbar.filters" class="flex items-center justify-between w-full gap-2 ">
+					<UtilsButtonFilter :setFilter :filter :store v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-
-	import type { Store } from "pinia";
-
-    const storageStore = useStorage();
+	
+	const storageStore = useStorage();
 	const notificationsStore = useNotifications();
 
-    const route = useRoute();
-	const selected = computed(() => notificationsStore.selected || route.query.id || null );
-	
-    const { toolbar, store, } = defineProps<{
-		toolbar: ToolBar | undefined,
-		store: Store<string, {
-			refresh?: (params?: {
-				filter?: string;
-				page?: number;
-				search?: string;
-			}) => Promise<void>;
-		}> | undefined,
+	const route = useRoute();
+	const selected = computed(() => notificationsStore.selected || route.query.id || null);
+
+	const { toolbar, store } = defineProps<{
+		toolbar: ToolBar | undefined;
+		store: StoreType | undefined;
 	}>();
 
-	
-    const fallbackFilter = computed(() => toolbar?.fallbackFilter || null);
+	const fallbackFilter = computed(() => toolbar?.fallbackFilter || null);
 
 	const { filter, setFilter } = useFilter({
 		enableWatch: true,
@@ -65,9 +67,9 @@
 		},
 	});
 
-    const inputRef = ref<HTMLInputElement | null>(null);
+	const inputRef = ref<HTMLInputElement | null>(null);
 
-    const triggerFileSelect = () => inputRef.value?.click();
+	const triggerFileSelect = () => inputRef.value?.click();
 
 	const handleFileSelect = async (event: Event) => {
 		const input = event.target as HTMLInputElement;
@@ -77,6 +79,4 @@
 			input.value = "";
 		}
 	};
-
-    
 </script>

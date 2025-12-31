@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<section v-if="store.statistics" class="relative grid grid-cols-2 gap-4 md:grid-cols-4">
+		<section v-if="store.statistics" class="relative grid grid-cols-2 gap-3 md:grid-cols-4">
 			<article v-for="statistic in store.statistics" :key="statistic.label" class="z-10 w-full p-6 bg-white border rounded-lg">
 				<h2 class="text-sm font-semibold text-gray-700">{{ statistic.label }}</h2>
 				<h3 class="mt-4 text-2xl font-extrabold text-gray-900">{{ useFormatDuration(statistic.value, statistic.format) }}</h3>
 				<p :title="`${useFormatDuration(statistic.difference, statistic.format)}`" class="mt-3">
-					<span :class="statistic.positive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center px-2 py-1 text-sm font-medium rounded">
-						<span class="mr-2" aria-hidden="true">{{ statistic.positive ? "▲" : "▼" }}</span>
+					<span :class="statistic.positive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center gap-1 px-2 py-1 text-sm font-medium rounded">
+						<span class="" aria-hidden="true">{{ statistic.positive ? "▲" : "▼" }}</span>
 						{{ statistic.percentage }}
 					</span>
 				</p>
@@ -44,7 +44,7 @@
 						</div>
 
 						<div class="hidden md:block">
-							<ChartsGroup :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" :height="350" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+							<ChartsGroup :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" :height="320" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
 						</div>
 
 						<template #fallback>

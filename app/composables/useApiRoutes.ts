@@ -1,4 +1,3 @@
-import type { Store } from 'pinia';
 export const useApiRoutes = async () => {
 
     const routes = useState<Record<string, RouteType>>('api-routes', () => ({}));
@@ -14,15 +13,9 @@ export const useApiRoutes = async () => {
         current.value = route.path;
 
         const name = routes.value[current.value]?.toolbar?.store;
-
         const pinia = useNuxtApp().$pinia;
 
-        const store = (pinia as any)._s.get(name) as Store<string, { 
-            refresh? : (params?: { filter?: string; page?: number, search?: string }) => Promise<void> 
-        }>;
-
-        return store;
-        
+        return (pinia as any)._s.get(name) as StoreType | undefined;
     });
 
     const { data, error } = await useFetch<Record<string, RouteType>>("/api/configuration/routes", {

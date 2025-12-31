@@ -5,8 +5,8 @@ const createButton = (overrides: Buttons) => ({
     iconName: overrides.iconName || "akar-icons:edit",
 });
 
-const createFilter = (type: string, iconName: string, label: string, ariaLabel: string, color: string, large: boolean, alwaysShowLabel = true) => ({
-    type, iconName, label, alwaysShowLabel, ariaLabel, color, large,
+const createFilter = (type: string, iconName: string, label: string, ariaLabel: string, color: string, shortLabel: string, large: boolean, alwaysShowLabel = true) => ({
+    type, iconName, label, alwaysShowLabel, ariaLabel, color, large, shortLabel: shortLabel,
 });
 
 const createSearch = (context: string) => ({
@@ -21,16 +21,15 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             label: "Statistieken",
             iconName: "akar-icons:statistic-up",
             toolbar: {
-                stacked: false,
                 groupWithFilters: true,
                 fallbackFilter: 'vandaag',
                 filters: [
-                    createFilter("vandaag", "akar-icons:clock", "Vandaag", "Toon statistieken van vandaag", "neutral", false, false),
-                    createFilter("week", "akar-icons:calendar", "Week", "Toon statistieken van deze week", "neutral", true, true),
-                    createFilter("maand", "akar-icons:calendar", "Maand", "Toon statistieken van deze maand", "neutral", true, true),
-                    createFilter("jaar", "akar-icons:calendar", "Jaar", "Toon statistieken van dit jaar", "neutral", true, true),
+                    createFilter("vandaag", "akar-icons:clock", "Vandaag", "Toon statistieken van vandaag", "neutral", "Vandaag", false, false),
+                    createFilter("week", "akar-icons:calendar", "Deze week", "Toon statistieken van deze week", "neutral", "Week", true, true),
+                    createFilter("maand", "akar-icons:calendar", "Deze maand", "Toon statistieken van deze maand", "neutral", "Maand", true, true),
+                    createFilter("jaar", "akar-icons:calendar", "Dit jaar", "Toon statistieken van dit jaar", "neutral", "Jaar",true, true),
                 ],
-                // search: createSearch("statistieken"),
+                search: createSearch("statistieken"),
                 store: 'useAnalytics',
             },
             
@@ -40,8 +39,7 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             iconName: "akar-icons:inbox",
             alert: true,
             toolbar: {
-                stacked: true,
-                groupWithFilters: true,
+                groupWithFilters: false,
                 fallbackFilter: 'all',
                 buttons: [
                     createButton({
@@ -51,9 +49,9 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                     }),
                 ],
                 filters: [
-                    createFilter("all", "akar-icons:filter", "Alles", "Toon alle berichten", "neutral", false, false),
-                    createFilter("gelezen", "akar-icons:open-envelope", "Gelezen", "Zoek gelezen berichten", "blue", true),
-                    createFilter("ongelezen", "akar-icons:envelope", "Ongelezen", "Zoek ongelezen berichten", "red", true),
+                    createFilter("alles", "akar-icons:filter", "Alles", "Toon alle berichten", "neutral", "Alles", false, false),
+                    createFilter("gelezen", "akar-icons:open-envelope", "Gelezen", "Zoek gelezen berichten", "blue", "Gelezen", true),
+                    createFilter("ongelezen", "akar-icons:envelope", "Ongelezen", "Zoek ongelezen berichten", "red","Ongelezen", true),
                 ],
                 search: createSearch("berichten"),
                 store: 'useNotifications',
@@ -64,7 +62,6 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             label: "Artikelen",
             iconName: "akar-icons:newspaper",
             toolbar: {
-                stacked: false,
                 buttons: [
                     createButton({
                         to: "/artikelen/opstellen",
@@ -79,7 +76,6 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             label: "Opslagruimte",
             iconName: "akar-icons:folder",
             toolbar: {
-                stacked: false,
                 buttons: [
                     createButton({
                         iconName: "akar-icons:cloud-upload",

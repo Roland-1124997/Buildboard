@@ -1,10 +1,7 @@
 
-type HistoryEntry<T> = { [K in keyof T]: T[K] | null };
-type History<T> = Record<string, HistoryEntry<T[]>>;
-
 export const useHistory = <T>() => {
 
-    const history: History<T> = {}
+    const history: RouteHistory<T> = {}
 
     const clearHistory = (path: string) => {
         history[path] = [];

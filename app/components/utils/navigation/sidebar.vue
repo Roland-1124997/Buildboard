@@ -52,7 +52,7 @@
     const Request = useApiHandler<ApiResponse<any>>("/api/auth/logout");
 
     defineProps<{
-        routes: Record<string, { label: string; iconName: string; alert?: boolean }>;
+        routes: Record<string, RouteType>;
         notifications: { unseen: number }
     }>();
 

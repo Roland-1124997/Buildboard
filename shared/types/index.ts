@@ -1,6 +1,8 @@
 import type { ZodIssue } from 'zod';
 import type { AuthError } from '@supabase/auth-js';
 
+import type { Store } from "pinia";
+
 export type { SupabaseClient } from '@supabase/supabase-js';
 export type { SubmissionHandler, FormActions } from 'vee-validate';
 export type { Editor } from "@tiptap/core";
@@ -93,6 +95,7 @@ export type Filters = {
     type: string,
     iconName: string,
     label: string,
+    shortLabel: string,
     alwaysShowLabel: boolean,
     ariaLabel: string,
     color: string,
@@ -109,7 +112,6 @@ export type Buttons = {
 }
 
 export type ToolBar = {
-    stacked?: boolean;
     groupWithFilters?: boolean;
     fallbackFilter?: string;
     buttons?: Buttons[];
@@ -124,3 +126,14 @@ export type RouteType = {
     alert?: boolean;
     toolbar?: ToolBar;
 };
+
+export type StoreType = Store<string, {
+    refresh?: (params?: {
+        filter?: string;
+        page?: number;
+        search?: string;
+    }) => Promise<void>;
+}>;
+
+export type HistoryEntry<T> = { [K in keyof T]: T[K] | null };
+export type RouteHistory<T> = Record<string, HistoryEntry<T[]>>;

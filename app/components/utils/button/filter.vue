@@ -1,28 +1,24 @@
 <template>
 	<button type="button" @click="setFilter(type)" :class="['flex items-center justify-center gap-2 px-4 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', large ? 'py-2 w-full' : 'py-[0.68rem] w-fit md:py-2', getColorClasses(color, filter === type)]" :aria-pressed="filter === type">
 		<Icon :name="iconName" class="w-4 h-4" aria-hidden="true" />
-		<span :class="alwaysShowLabel ? 'flex' : 'hidden md:flex'">{{ label }}</span>
+		<span :class="alwaysShowLabel ? 'flex' : 'hidden md:flex'">
+			<span class="hidden md:inline">{{ label }}</span>
+			<span class="md:hidden">{{ shortLabel }}</span>
+		</span>
 	</button>
 </template>
 
 <script setup lang="ts">
 
-	import type { Store } from "pinia";
-
+	
 	defineProps<{
-		store: Store<string, {
-			refresh?: (params?: {
-				filter?: string;
-				page?: number;
-				search?: string;
-			}) => Promise<void>;
-		}> | undefined,
-
+		store: StoreType | undefined,
 		filter: string | null,
 		setFilter: (filter: string) => void,
 		type: string,
 		iconName: string,
 		label: string,
+		shortLabel: string,
 		alwaysShowLabel: boolean,
 		color: string,
 		large: boolean,
