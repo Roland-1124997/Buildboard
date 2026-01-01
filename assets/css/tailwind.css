@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --vis-donut-background-color: transparent !important;
+}
+
 ::-webkit-scrollbar {
     @apply hidden
 }

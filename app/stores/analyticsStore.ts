@@ -27,6 +27,7 @@ export const useAnalytics = defineStore("useAnalytics", () => {
     };
 
     return {
+        analytics,
         statistics,
         metrics,
         error,

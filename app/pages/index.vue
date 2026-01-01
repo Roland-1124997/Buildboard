@@ -1,64 +1,61 @@
 <template>
 	<div>
-		<section v-if="store.statistics" class="relative grid grid-cols-2 gap-3 md:grid-cols-4">
-			<article v-for="statistic in store.statistics" :key="statistic.label" class="z-10 w-full p-6 bg-white border rounded-lg">
-				<h2 class="text-sm font-semibold text-gray-700">{{ statistic.label }}</h2>
-				<h3 class="mt-4 text-2xl font-extrabold text-gray-900">{{ useFormatDuration(statistic.value, statistic.format) }}</h3>
-				<p :title="`${useFormatDuration(statistic.difference, statistic.format)}`" class="mt-3">
-					<span :class="statistic.positive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="inline-flex items-center gap-1 px-2 py-1 text-sm font-medium rounded">
-						<span class="" aria-hidden="true">{{ statistic.positive ? "▲" : "▼" }}</span>
-						{{ statistic.percentage }}
-					</span>
-				</p>
-			</article>
-		</section>
-		<section v-else class="relative z-10 flex items-center justify-center w-full h-32 mt-4 bg-white border rounded-lg">
-			<p class="text-gray-500">
-				{{ store.error ? "Fout bij het laden van statistics." : "Laden van analytics..." }}
-			</p>
+		<h1 class="hidden mb-6 text-2xl font-bold md:flex">Statistieken Overzicht</h1>
+
+		<section class="relative grid grid-cols-2 gap-3 md:grid-cols-4">
+			<UtilsAnalyticsQuickView :data="store.statistics" />
 		</section>
 
-		<section class="relative pb-[5.5rem] mt-3 md:pb-0">
-			<nav class="flex items-end justify-between py-2 pb-3 mb-3 border-y pr-[0.11rem]">
-				<div>
-					<h2 class="text-2xl font-bold">Pagina's</h2>
-					<p class="text-gray-600 text-balance">Overzicht van de weergaven van je pagina's in de afgelopen periode.</p>
-				</div>
+		<section class="grid w-full grid-cols-1 mt-3 gap-y-3 md:gap-3 md:grid-cols-3 h-fit pb-[5.5rem] md:pb-0">
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
+				<h2 class="mb-1 text-xl font-bold">Meest bezochte pagina's</h2>
 
-				<button class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 bg-white border border-gray-300 rounded-lg w-fit hover:bg-blue-50 hover:text-blue-600 focus:text-blue-600 focus:border-blue-500 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300" aria-label="toggle table" @click="togleTable()">
-					<icon :name="!isTableEnabled ? 'akar-icons:full-screen' : 'akar-icons:normal-screen'" class="w-4 h-4" aria-hidden="true" />
-					<span class="sr-only">{{ isTableEnabled ? "Grafiekweergave" : "Tabelweergave" }}</span>
-				</button>
-			</nav>
-
-			<article v-if="store.metrics.pages" class="w-full p-6 overflow-hidden z-10 bg-white border rounded-lg h-fit min-h-[16rem]">
-				<div class="px-6 -mx-6 overflow-x-auto">
-					<div v-if="store.metrics.pages.values.length <= 0" class="flex items-center justify-center min-h-[14rem]">
-						<p class="text-center text-gray-500">Geen gegevens beschikbaar voor de geselecteerde periode.</p>
+				<ClientOnly>
+					<div class="md:hidden">
+						<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="250" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
 					</div>
 
-					<ChartsTable v-else-if="isTableEnabled" title="Pagina's" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
-					<client-only v-else>
-						<div class="md:hidden">
-							<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="200" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
-						</div>
+					<div class="hidden md:block">
+						<ChartsGroup :data="store.metrics.pages.values.slice(0, 5)" :categories="store.metrics.pages.categories" :height="410" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+					</div>
 
-						<div class="hidden md:block">
-							<ChartsGroup :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" :height="320" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
-						</div>
-
-						<template #fallback>
-							<div class="flex text-center items-center justify-center min-h-[14rem]">
-								<p class="text-gray-500">Laden van de grafiek...</p>
-							</div>
-						</template>
-					</client-only>
-				</div>
+					<template #fallback>
+						<div aria-hidden class="flex text-center items-center justify-center h-[268px] md:h-[428px]"></div>
+					</template>
+				</ClientOnly>
 			</article>
-			<article v-else class="relative z-10 flex items-center justify-center w-full h-32 bg-white border rounded-lg">
-				<p class="text-gray-500">
-					{{ store.error ? "Fout bij het laden van analytics." : "Laden van analytics..." }}
-				</p>
+
+			<article class="w-full col-span-1 p-6 bg-white border rounded-lg">
+				<h2 class="mb-4 text-xl font-bold">Meest gebruikte apparaten</h2>
+
+				<nav class="flex items-center w-full mb-3 overflow-x-auto border-b border-gray-200">
+					<button type="button" @click="updateActiveDevice('bezoekers')" :class="[' text-left py-2 w-full text-sm font-medium transition-all whitespace-nowrap relative', activedDevice === 'bezoekers' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900']">
+						Bezoekers
+						<span v-if="activedDevice === 'bezoekers'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></span>
+					</button>
+					<button type="button" @click="updateActiveDevice('bezoeken')" :class="['px-4 w-full py-2 text-sm font-medium transition-all whitespace-nowrap relative', activedDevice === 'bezoeken' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900']">
+						Bezoeken
+						<span v-if="activedDevice === 'bezoeken'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></span>
+					</button>
+					<button type="button" @click="updateActiveDevice('weergaven')" :class="[' text-right w-full py-2 text-sm font-medium transition-all whitespace-nowrap relative', activedDevice === 'weergaven' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900']">
+						Weergaven
+						<span v-if="activedDevice === 'weergaven'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></span>
+					</button>
+				</nav>
+
+				<ClientOnly>
+					<ChartsDonut :active="activedDevice" :data="store.metrics.devices.values" :categories="store.metrics.devices.categories" :height="300" :arc-width="40" />
+					<template #fallback>
+						<div aria-hidden class="flex text-center items-center justify-center h-[300px] md:h-[300px]"></div>
+					</template>
+				</ClientOnly>
+			</article>
+
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
+				<h2 class="mb-1 text-xl font-bold">Algemene breakdown</h2>
+				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina.</p>
+
+				<ChartsCards :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
 			</article>
 		</section>
 	</div>
@@ -95,8 +92,12 @@
 		],
 	});
 
-	const { isTableEnabled, togleTable } = useTable();
+	const activedDevice = ref("bezoekers");
+
+	const updateActiveDevice = (device: string) => {
+		activedDevice.value = device;
+	};
+
 	const store = useAnalytics();
 	await store.initialPayload();
-
 </script>

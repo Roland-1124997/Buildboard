@@ -6,16 +6,24 @@ export default defineSupabaseEventHandler(async (event) => {
 
     const limit = getQuery(event).limit ? Number(getQuery(event).limit) : 5;
 
-    const { data, error } = await useFetchAnalytics("stats",{
+    const { data, error } = await useFetchAnalytics("stats", {
         startAt, endAt, unit: 'day',
         timezone: 'Europe/Amsterdam'
     });
 
     if (error || !data) return useReturnResponse(event, internalServerError);
 
+
+    const { data: devices, error: devicesError } = await useFetchMetrics("device", {
+        startAt, endAt, unit: 'day',
+        timezone: 'Europe/Amsterdam', type: 'device'
+    });
+
+    if (devicesError || !devices) return useReturnResponse(event, internalServerError);
+
     const { data: pages, error: pagesError } = await useFetchMetrics("path", {
         startAt, endAt, unit: 'day',
-        timezone: 'Europe/Amsterdam', type: 'path', limit
+        timezone: 'Europe/Amsterdam', type: 'path'
     });
 
     if (pagesError || !pages) return useReturnResponse(event, internalServerError);
@@ -33,6 +41,8 @@ export default defineSupabaseEventHandler(async (event) => {
                         label: 'Unieke bezoekers',
                         value: data.visitors,
                         previous: data.comparison.visitors,
+                        color: '#6f97ed',
+                        icon: 'akar-icons:person',
                         format: false
                     })
                 },
@@ -41,6 +51,8 @@ export default defineSupabaseEventHandler(async (event) => {
                         label: 'Bezoeken',
                         value: data.visits,
                         previous: data.comparison.visits,
+                        color: "#2563eb",
+                        icon: 'akar-icons:airplay-video',
                         format: false
                     })
                 },
@@ -49,6 +61,8 @@ export default defineSupabaseEventHandler(async (event) => {
                         label: 'Weergaven',
                         value: data.pageviews,
                         previous: data.comparison.pageviews,
+                        color: "#1542a3",
+                        icon: 'akar-icons:eye',
                         format: false
                     })
                 },
@@ -57,12 +71,35 @@ export default defineSupabaseEventHandler(async (event) => {
                         label: 'Gem. sessieduur',
                         value: data.totaltime / data.visits,
                         previous: data.comparison.totaltime / data.comparison.visits,
+                        color: "#0c2970",
+                        icon: 'akar-icons:alarm',
                         format: true
                     })
                 }
             ],
 
             metrics: {
+                devices: {
+                    categories: {
+                        desktop: {
+                            name: "Desktop",
+                            color: "#93c5fd",
+                        },
+                        mobile: {
+                            name: "Mobile",
+                            color: "#60a5fa",
+                        },
+                        laptop: {
+                            name: "Laptop",
+                            color: "#3b82f6",
+                        },
+                        tablet: {
+                            name: "Tablet",
+                            color: "#2563eb",
+                        },
+                    },
+                    values: calculateMetrics(devices)
+                },
                 pages: {
                     categories: {
                         bezoekers: {
@@ -107,7 +144,7 @@ const calculateMetrics = (metrics: Record<string, any>) => {
 
 }
 
-const calculateValues = (options: { label: string, value: number, previous: number, format: Boolean }) => {
+const calculateValues = (options: { label: string, value: number, previous: number, color: string, icon: string, format: Boolean }) => {
 
     const difference = calculateDifference(options.value, options.previous);
     const percentage = calculatePercentage(options.value, options.previous);
@@ -119,6 +156,8 @@ const calculateValues = (options: { label: string, value: number, previous: numb
         difference: difference,
         percentage: `${percentage}%`,
         positive: isPositive,
+        color: options.color,
+        icon: options.icon,
         format: options.format
     }
 }
