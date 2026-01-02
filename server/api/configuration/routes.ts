@@ -29,7 +29,6 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                     createFilter("maand", "akar-icons:calendar", "Deze maand", "Toon statistieken van deze maand", "neutral", "Maand", true, true),
                     createFilter("jaar", "akar-icons:calendar", "Dit jaar", "Toon statistieken van dit jaar", "neutral", "Jaar",true, true),
                 ],
-                search: createSearch("statistieken"),
                 store: 'useAnalytics',
             },
             

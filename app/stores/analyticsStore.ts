@@ -8,6 +8,24 @@ export const useAnalytics = defineStore("useAnalytics", () => {
     const error = ref<any | null>(null);
 
     const uri = "/api/umami/analytics";
+    const Request = useApiHandler<ApiResponse<any>>(uri);
+
+    const refresh = async (params?: { filter?: string, page?: number }) => {
+
+        const { data, error: Error } = await Request.Get({
+            query: { filter: params?.filter || useRoute().query.filter || 'vandaag' },
+        });
+
+        if (!Error && data) analytics.value = data.data;
+
+        else {
+            error.value = Error;
+            addToast({
+                message: "Er is een fout opgetreden bij het vernieuwen van de analytics gegevens.",
+                type: "error",
+            });
+        }
+    }
 
     const initialPayload = async () => {
 
@@ -32,6 +50,7 @@ export const useAnalytics = defineStore("useAnalytics", () => {
         metrics,
         error,
         initialPayload,
+        refresh,
     };
 
 });

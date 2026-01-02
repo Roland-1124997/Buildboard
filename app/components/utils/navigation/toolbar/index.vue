@@ -64,6 +64,7 @@
 		fallbackFilter: fallbackFilter,
 		callback: async (params) => {
 			if (store && store.refresh) await store.refresh(params);
+			else await initilizeStore(params);
 		},
 	});
 
@@ -79,4 +80,16 @@
 			input.value = "";
 		}
 	};
+
+	const initilizeStore = async (params: { filter?: string; page?: number }) => {
+		const storeName = toolbar?.store;
+
+		if (storeName) {
+			const pinia = useNuxtApp().$pinia;
+			const currentStore = (pinia as any)._s.get(storeName) as StoreType;
+			if (currentStore && currentStore.refresh) await currentStore.refresh(params);
+		}
+	};
+
+
 </script>
