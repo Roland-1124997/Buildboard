@@ -29,7 +29,9 @@ export const useAnalytics = defineStore("useAnalytics", () => {
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch<ApiResponse<any>>(uri);
+        const { data, error: Error } = await useFetch<ApiResponse<any>>(uri, {
+            query: { filter: useRoute().query.filter || 'vandaag' },
+        });
 
         if (!Error.value && data.value) {
             analytics.value = data.value.data;

@@ -1,27 +1,47 @@
 export default defineSupabaseEventHandler(async (event) => {
 
+    const filter = String(getQuery(event).filter || 'vandaag');
     const nowDate = new Date();
-    const endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
-    const startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 7, 0, 0, 0, 0).getTime(); // 7 dagen geleden
 
-    const limit = getQuery(event).limit ? Number(getQuery(event).limit) : 5;
+    let endAt = 0
+    let startAt = 0
 
-    const { data, error } = await useFetchAnalytics("stats", {
+    if (filter === 'vandaag') {
+        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
+        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0).getTime();
+    }
+
+    if (filter === 'week') {
+        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
+        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 7, 0, 0, 0, 0).getTime(); 
+    }
+
+    if (filter === 'maand') {
+        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
+        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 30, 0, 0, 0, 0).getTime(); 
+    }
+
+    if (filter === 'jaar') {
+        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
+        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 365, 0, 0, 0, 0).getTime(); 
+    }
+
+
+    const { data, error } = await useFetchAnalytics(`stats:${filter}`, {
         startAt, endAt, unit: 'day',
         timezone: 'Europe/Amsterdam'
     });
 
     if (error || !data) return useReturnResponse(event, internalServerError);
 
-
-    const { data: devices, error: devicesError } = await useFetchMetrics("device", {
+    const { data: devices, error: devicesError } = await useFetchMetrics(`device:${filter}`, {
         startAt, endAt, unit: 'day',
         timezone: 'Europe/Amsterdam', type: 'device'
     });
 
     if (devicesError || !devices) return useReturnResponse(event, internalServerError);
 
-    const { data: pages, error: pagesError } = await useFetchMetrics("path", {
+    const { data: pages, error: pagesError } = await useFetchMetrics(`path:${filter}`, {
         startAt, endAt, unit: 'day',
         timezone: 'Europe/Amsterdam', type: 'path'
     });

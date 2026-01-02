@@ -99,5 +99,4 @@
 	};
 
 	const store = useAnalytics();
-	await store.initialPayload();
 </script>

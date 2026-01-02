@@ -9,6 +9,10 @@
 </template>
 
 <script setup lang="ts">
+
+	const store = useAnalytics();
+	await store.initialPayload();
+
 	useSearch();
 	useFilter()
 </script>
