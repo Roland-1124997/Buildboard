@@ -15,8 +15,6 @@ export const useAnalytics = defineStore("useAnalytics", () => {
 
         loading.value = true;
 
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
         const { data, error: Error } = await Request.Get({
             query: { filter: params?.filter || useRoute().query.filter || 'vandaag' },
         });
