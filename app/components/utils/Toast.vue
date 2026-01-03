@@ -12,7 +12,7 @@
 						</div>
 					</div>
 				</div>
-				<button @click="toast.id !== undefined && removeToast(toast.id)" class="text-gray-800 hover:text-gray-900">
+				<button @click="toast.id !== undefined && removeToast(toast.id)" class="flex items-center justify-center text-gray-800 hover:text-gray-900">
 					<Icon name="ri:close-fill" size="1.5rem" />
 				</button>
 			</div>
