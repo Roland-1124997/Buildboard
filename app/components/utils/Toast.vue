@@ -24,10 +24,10 @@
 	const { toasts, removeToast } = useToast();
 
 	const iconMap = {
-		info: "ri:information-2-fill",
-		success: "ri:checkbox-circle-fill",
-		error: "ri:close-circle-fill",
-		warning: "ri:alert-fill",
+		info: "akar-icons:info-fill",
+		success: "akar-icons:circle-check-fill",
+		error: "akar-icons:circle-x-fill",
+		warning: "akar-icons:circle-x-fill",
 	};
 
 	const toastStyles = (type: string) => {

@@ -37,5 +37,6 @@
 	const isMobileMenuOpen = ref(false);
 
 	onUnmounted(() => close());
+	
 </script>
 

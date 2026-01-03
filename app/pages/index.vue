@@ -10,7 +10,7 @@
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
 				<h2 class="mb-1 text-xl font-bold">Meest bezochte pagina's</h2>
 
-				<ClientOnly>
+				<ClientOnly v-if="store.metrics">
 					<div class="md:hidden">
 						<ChartsGroup :data="store.metrics.pages.values.slice(0, 3)" :categories="store.metrics.pages.categories" :height="250" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
 					</div>
@@ -20,9 +20,29 @@
 					</div>
 
 					<template #fallback>
-						<div aria-hidden class="flex text-center items-center justify-center h-[268px] md:h-[428px]"></div>
+						<div aria-hidden class="flex flex-col gap-3 h-[248px] mt-10 md:h-[388px] animate-pulse">
+							<div class="flex h-full gap-2">
+								<div class="flex-1 bg-gray-200 rounded"></div>
+								<div class="flex-1 bg-gray-200 rounded"></div>
+								<div class="flex-1 bg-gray-200 rounded"></div>
+								<div class="flex-1 hidden bg-gray-200 rounded md:flex"></div>
+								<div class="flex-1 hidden bg-gray-200 rounded md:flex"></div>
+							</div>
+						</div>
 					</template>
 				</ClientOnly>
+
+				<template v-else>
+					<div aria-hidden class="flex flex-col gap-3 h-[248px] mt-10 md:h-[388px] animate-pulse">
+						<div class="flex h-full gap-2">
+							<div class="flex-1 bg-gray-200 rounded"></div>
+							<div class="flex-1 bg-gray-200 rounded"></div>
+							<div class="flex-1 bg-gray-200 rounded"></div>
+							<div class="flex-1 hidden bg-gray-200 rounded md:flex"></div>
+							<div class="flex-1 hidden bg-gray-200 rounded md:flex"></div>
+						</div>
+					</div>
+				</template>
 			</article>
 
 			<article class="w-full col-span-1 p-6 bg-white border rounded-lg">
@@ -43,19 +63,48 @@
 					</button>
 				</nav>
 
-				<ClientOnly>
+				<ClientOnly v-if="store.metrics">
 					<ChartsDonut :active="activedDevice" :data="store.metrics.devices.values" :categories="store.metrics.devices.categories" :height="300" :arc-width="40" />
 					<template #fallback>
-						<div aria-hidden class="flex text-center items-center justify-center h-[300px] md:h-[300px]"></div>
+						<div aria-hidden class="flex items-center justify-center mt-16 h-[300px]">
+							<div class="relative w-[19rem] h-[19rem]">
+								<div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+									<div class="w-20 h-4 bg-gray-300 rounded-md"></div>
+									<div class="w-10 h-4 bg-gray-200 rounded-md"></div>
+								</div>
+								<div class="absolute inset-0 border-[40px] border-gray-200 rounded-full"></div>
+								<div class="absolute inset-0 border-[40px] rounded-full border-t-gray-300 animate-spin"></div>
+							</div>
+						</div>
 					</template>
 				</ClientOnly>
+
+				<template v-else>
+					<div aria-hidden class="flex items-center justify-center mt-16 h-[300px]">
+						<div class="relative w-[19rem] h-[19rem]">
+							<div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+								<div class="w-20 h-4 bg-gray-300 rounded-md"></div>
+								<div class="w-10 h-4 bg-gray-200 rounded-md"></div>
+							</div>
+							<div class="absolute inset-0 border-[40px] border-gray-200 rounded-full"></div>
+							<div class="absolute inset-0 border-[40px] rounded-full border-t-gray-300 animate-spin"></div>
+						</div>
+					</div>
+				</template>
 			</article>
 
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
 				<h2 class="mb-1 text-xl font-bold">Algemene breakdown</h2>
 				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina.</p>
 
-				<ChartsCards :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
+				<ChartsCards v-if="store.metrics" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
+				<template v-else>
+					<div aria-hidden class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
+						<div class="h-[12.65rem] bg-gray-200 rounded-lg"></div>
+						<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+						<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+					</div>
+				</template>
 			</article>
 		</section>
 	</div>

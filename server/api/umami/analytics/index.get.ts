@@ -1,31 +1,8 @@
 export default defineSupabaseEventHandler(async (event) => {
 
     const filter = String(getQuery(event).filter || 'vandaag');
-    const nowDate = new Date();
-
-    let endAt = 0
-    let startAt = 0
-
-    if (filter === 'vandaag') {
-        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
-        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0).getTime();
-    }
-
-    if (filter === 'week') {
-        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
-        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 7, 0, 0, 0, 0).getTime(); 
-    }
-
-    if (filter === 'maand') {
-        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
-        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 30, 0, 0, 0, 0).getTime(); 
-    }
-
-    if (filter === 'jaar') {
-        endAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 23, 59, 59, 999).getTime();
-        startAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 365, 0, 0, 0, 0).getTime(); 
-    }
-
+    
+    const { startAt, endAt } = formulateDates(filter);
 
     const { data, error } = await useFetchAnalytics(`stats:${filter}`, {
         startAt, endAt, unit: 'day',
@@ -141,6 +118,28 @@ export default defineSupabaseEventHandler(async (event) => {
         }
     });
 })
+
+
+const formulateDates = (filter: string) => {
+
+    const nowDate = new Date();
+
+    const year = nowDate.getFullYear();
+    const month = nowDate.getMonth();
+    const day = nowDate.getDate();
+
+    const endAt = new Date(year, month, day, 23, 59, 59, 999).getTime();
+    
+    let startAt = 0
+
+    if (filter === 'vandaag') startAt = new Date(year, month, day, 0, 0, 0, 0).getTime();
+    if (filter === 'week') startAt = new Date(year, month, day - 7, 0, 0, 0, 0).getTime();
+    if (filter === 'maand') startAt = new Date(year, month, day - 30, 0, 0, 0, 0).getTime();
+    if (filter === 'jaar') startAt = new Date(year, month, day - 365, 0, 0, 0, 0).getTime();
+    
+    return { startAt, endAt };
+
+}
 
 
 const calculateMetrics = (metrics: Record<string, any>) => {
