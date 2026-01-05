@@ -32,7 +32,7 @@
 					{{ props.message.name }}
 				</h2>
 
-				<p class="mt-1 text-sm text-gray-700 text-balance line-clamp-3">Grootte: {{ (props.message.metadata.size / 1024).toFixed(2) }} KB</p>
+				<p class="mt-1 text-sm text-gray-700 text-balance line-clamp-3">Grootte: {{ props.message.metadata.size }}</p>
 			</div>
 		</div>
 

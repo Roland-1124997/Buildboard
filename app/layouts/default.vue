@@ -13,6 +13,9 @@
 	const store = useAnalytics();
 	await store.initialPayload();
 
+	const storageStore = useStorage();
+	await storageStore.initialPayload();
+
 	useSearch();
 	useFilter()
 </script>

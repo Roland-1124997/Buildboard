@@ -1,4 +1,3 @@
-
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const articleId = getQuery(event).articleId as string | undefined;
@@ -22,7 +21,8 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
             name: data?.path, 
             published: published,
             article_id: articleId,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            label: getTypeLabel(types, file.filename?.split('.').pop() || '')
         }, {
             onConflict: 'id'
         });
@@ -52,4 +52,5 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     });
 
 });
+
 

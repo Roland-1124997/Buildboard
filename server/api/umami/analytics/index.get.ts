@@ -173,7 +173,7 @@ const calculateValues = (options: { label: string, value: number, previous: numb
         label: options.label,
         value: options.value,
         difference: difference,
-        percentage: `${percentage}%`,
+        percentage: percentage,
         positive: isPositive,
         color: options.color,
         icon: options.icon,

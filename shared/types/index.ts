@@ -16,19 +16,21 @@ export type MethodOptions = Omit<SendOptions, 'method'>
 
 export type MetaData = {
     size: number;
+    label: string;
     mimetype: string;
     created_at: string;
     updated_at: string;
-    extension: string;
+    icon: {
+        color: string;
+        background: string;
+    }
 }
 
 export type FileData = {
     id: string;
     name: string;
     published: boolean;
-    media: {
-        preview: string;
-    };
+    media: string;
     metadata: MetaData
 }
 

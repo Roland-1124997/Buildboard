@@ -29,9 +29,11 @@
 	const { history, setSearch } = useSearch({
 		localSearch,
 		callback: async (params) => {
-			if (route.path === "/berichten") {
+
+			// if (route.path === "/berichten") {
 				if (store && store.refresh) await store.refresh(params);
-			}
+				else await initilizeStore(params);
+			// }
 		},
 	});
 
@@ -39,11 +41,22 @@
 
 	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
 
-	watchDebounced(
-		localSearch,
-		async (newValue) => {
-			await setSearch(newValue, localHistory.value);
-		},
-		{ debounce: 1000, maxWait: 5000 }
+	watchDebounced(localSearch, async (newValue) => {
+
+			await setSearch(newValue);
+		},{ debounce: 1000, maxWait: 5000 }
 	);
+
+	const initilizeStore = async (params: { filter?: string; page?: number }) => {
+		
+		const { toolbar } = await useApiRoutes();
+		const storeName = toolbar.value?.store;
+
+		if (storeName) {
+			const pinia = useNuxtApp().$pinia;
+			const currentStore = (pinia as any)._s.get(storeName) as StoreType;
+			if (currentStore && currentStore.refresh) await currentStore.refresh(params);
+		}
+	};
+
 </script>

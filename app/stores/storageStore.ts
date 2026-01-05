@@ -15,10 +15,7 @@ const createBlobLink = (blob: Blob, filename: string, mimetype?: string) => {
     window.URL.revokeObjectURL(blobUrl);
 };
 
-const getProperty = (types: FileType[], extension: string, property: "label" | "color" | "background"): string => {
-    const type = types.find((type) => type.extension === extension.toLowerCase());
-    return type ? type[property] : property === "label" ? "Onbekend bestandstype" : property === "color" ? "text-gray-600" : "bg-gray-50";
-};
+
 
 export const useStorage = defineStore("useStorage", () => {
 
@@ -31,13 +28,17 @@ export const useStorage = defineStore("useStorage", () => {
     const files = ref<FileData[]>([]);
     const error = ref<ErrorResponse | null | any>(null);
 
-    const getIconColor = (types: FileType[], extension: string): string => getProperty(types, extension, "color");
-    const getIconBackground = (types: FileType[], extension: string): string => getProperty(types, extension, "background");
-    const getTypeLabel = (types: FileType[], extension: string): string => getProperty(types, extension, "label");
+    const refresh = async (params?: {
+        filter?: string; page?: number, search?: string
+    }) => {
 
-    const refresh = async () => {
-
-        const { data, error: Error } = await Request.Get();
+        const { data, error: Error } = await Request.Get({
+            query: {
+                page: params?.page || useRoute().query.page || 1,
+                filter: params?.filter || useRoute().query.filter || 'alles',
+                search: params?.search !== undefined ? params.search : (useRoute().query.search || '')
+            },
+        });
 
         if (!Error && data) files.value = data.data ?? [];
 
@@ -52,7 +53,13 @@ export const useStorage = defineStore("useStorage", () => {
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>(uri);
+        const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>(uri, {
+            query: {
+                page: useRoute().query.page || 1,
+                filter: useRoute().query.filter || 'alles',
+                search: useRoute().query.search || ''
+            },
+        });
 
         if (!Error.value && data.value) files.value = data.value?.data || [];
 
@@ -154,8 +161,21 @@ export const useStorage = defineStore("useStorage", () => {
         });
     };
 
+    const preview = async (file: FileData) => {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.platform);
+
+
+        if (isMobile) return await download(file, { mimetype: file.metadata.mimetype });
+
+        navigateTo(file.media, {
+            open: {
+                target: "_blank",
+            },
+        });
+    };
+
     const download = async (file: FileData, options?: { mimetype?: string }) => {
-        const { data, error } = await fetchBlob(file.media.preview);
+        const { data, error } = await fetchBlob(file.media);
 
         if (error || !data) return addToast({
             message: "Failed to download file.",
@@ -164,43 +184,6 @@ export const useStorage = defineStore("useStorage", () => {
         });
 
         createBlobLink(data, file.name, options?.mimetype);
-    };
-
-    const preview = async (file: FileData) => {
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.platform);
-
-
-        if (isMobile) return await download(file, { mimetype: file.metadata.mimetype });
-
-        navigateTo(file.media.preview, {
-            open: {
-                target: "_blank",
-            },
-        });
-    };
-
-    const formatSize = (bytes: number): string => {
-        if (bytes === 0) return "0 Bytes";
-
-        const units = ["Bytes", "KB", "MB", "GB"];
-        const base = 1024;
-
-        const unitIndex = Math.floor(Math.log(bytes) / Math.log(base));
-        const size = bytes / Math.pow(base, unitIndex);
-
-        return `${size.toFixed(2)} ${units[unitIndex]}`;
-    };
-
-    const filter = (query: string, types: FileType[],): FileData[] => {
-        if (!query) return files.value;
-
-        return files.value.filter((file: FileData) => {
-            const nameLower = file.name.toLowerCase().split(".")[0] || "";
-            const queryLower = query.toLowerCase();
-            const labelLower = getTypeLabel(types, file.metadata.extension).toLowerCase();
-
-            return nameLower.includes(queryLower) || labelLower.startsWith(queryLower);
-        });
     };
 
     return {
@@ -213,11 +196,6 @@ export const useStorage = defineStore("useStorage", () => {
         remove,
         download,
         preview,
-        formatSize,
-        getIconColor,
-        getIconBackground,
-        getTypeLabel,
-        filter,
     };
 });
 

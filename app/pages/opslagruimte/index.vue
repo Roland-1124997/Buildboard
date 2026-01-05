@@ -1,16 +1,16 @@
 <template>
 	<div class="">
 		<div class=" pb-[5.5rem] md:pb-0">
-			<div v-if="filteredFiles.length > 0" class="space-y-3">
+			<div v-if="store.files.length > 0" class="space-y-3">
 				<div class="mb-3">
-					<h2 class="text-sm font-bold text-gray-800">{{ filteredFiles.length }} {{ filteredFiles.length === 1 ? "document" : "documenten" }}</h2>
+					<h2 class="text-sm font-bold text-gray-800">{{ store.files.length }} {{ store.files.length === 1 ? "document" : "documenten" }}</h2>
 				</div>
 
 				<div class="grid gap-3 md:grid-cols-2">
-					<div v-for="(file, index) in filteredFiles" :key="index" class="z-10 flex items-center w-full gap-3 p-3 transition-all bg-white border border-gray-200 rounded-lg hover:bg-gray-50 group hover:border-gray-300">
+					<div v-for="(file, index) in store.files" :key="index" class="z-10 flex items-center w-full gap-3 p-3 transition-all bg-white border border-gray-200 rounded-lg hover:bg-gray-50 group hover:border-gray-300">
 						<div class="flex-shrink-0">
-							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :class="store.getIconBackground(types, file.metadata.extension)">
-								<icon name="akar-icons:file" size="1.45rem" :class="store.getIconColor(types, file.metadata.extension)" />
+							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :class="file.metadata.icon.background">
+								<icon name="akar-icons:file" size="1.45rem" :class="file.metadata.icon.color" />
 							</div>
 						</div>
 
@@ -20,9 +20,9 @@
 									{{ file.name.charAt(0).toUpperCase() + file.name.slice(1).split(".")[0] }}
 								</p>
 								<div class="flex items-center gap-1 text-[0.73rem] md:text-sm -mt-[0.10rem]">
-									<span :class="store.getIconColor(types, file.metadata.extension)" class="font-semibold">{{ store.getTypeLabel(types, file.metadata.extension) }}</span>
+									<span :class="file.metadata.icon.color" class="font-semibold">{{ file.metadata.label }}</span>
 									<span aria-hidden class="text-gray-500">•</span>
-									<span class="text-gray-500">{{ store.formatSize(file.metadata.size) }}</span>
+									<span class="text-gray-500">{{ file.metadata.size }}</span>
 								</div>
 								<div class="flex items-center gap-2 text-xs text-gray-500 capitalize">
 									<NuxtTime locale="nl" weekday="long" year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit" :datetime="file.metadata.updated_at" />
@@ -93,29 +93,8 @@
 		],
 	});
 
-	const types: FileType[] = [
-		{ extension: "png", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-		{ extension: "jpg", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-		{ extension: "jpeg", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-		{ extension: "gif", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-		{ extension: "webp", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-		{ extension: "pdf", label: "PDF Document", color: "text-red-800", background: "bg-red-50" },
-		{ extension: "doc", label: "Word Document", color: "text-indigo-800", background: "bg-blue-50" },
-		{ extension: "docx", label: "Word Document", color: "text-indigo-800", background: "bg-blue-50" },
-		{ extension: "xls", label: "Excel Sheet", color: "text-green-800", background: "bg-green-50" },
-		{ extension: "xlsx", label: "Excel Sheet", color: "text-green-800", background: "bg-green-50" },
-		{ extension: "ppt", label: "PowerPoint", color: "text-orange-800", background: "bg-orange-50" },
-		{ extension: "pptx", label: "PowerPoint", color: "text-orange-800", background: "bg-orange-50" },
-		{ extension: "txt", label: "Tekstbestand", color: "text-gray-800", background: "bg-gray-50" },
-		{ extension: "zip", label: "ZIP Archief", color: "text-purple-800", background: "bg-purple-50" },
-	];
+	useSearch();
 
 	const store = useStorage();
-	const { search } = useSearch();
 
-	await store.initialPayload();
-
-	const filteredFiles = computed(() => {
-		return store.filter(search.value as string, types);
-	});
 </script>

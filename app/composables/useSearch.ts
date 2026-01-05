@@ -1,7 +1,7 @@
 import type { LocationQueryValue } from 'vue-router';
 
 const search = ref<string | null>(null);
-const { clear, get, LastEntry, set } = useHistory<{ search: string | null }>();
+const { clear, get, LastEntry, set } = useHistory<{ search: string | null, filter: string | null }>();
 
 export const useSearch = (
     options?: {
@@ -25,7 +25,7 @@ export const useSearch = (
 
         if (options?.callback) {
             await options.callback({
-                filter: route.query.filter as string || 'all',
+                filter: route.query.filter as string || 'alles',
                 search: value,
                 page: 1
             });
@@ -38,12 +38,16 @@ export const useSearch = (
         if (options?.localSearch) options.localSearch.value = search.value;
     });
 
-    const setSearch = async (value: string | LocationQueryValue[] | null, latestEntry: string) => {
+    const setSearch = async (value: string | LocationQueryValue[] | null) => {
 
         const query = { ...route.query };
-
+        const lastEntry = LastEntry(route.path);
+        
         set(route.path, [
-            { search: value as string || null }
+            { 
+                search: value as string || null,
+                filter: route.query.filter as string || null
+            }
         ]);
 
         if (!value) {
@@ -51,8 +55,8 @@ export const useSearch = (
             delete query.search;
 
             router.replace({ query });
-            
-            if(value === latestEntry) return;
+
+            if(value === lastEntry?.search) return
             await execute('');
         }
 
@@ -62,7 +66,7 @@ export const useSearch = (
 
             router.replace({ query });
             
-            if(value === latestEntry) return;
+            if(value === lastEntry?.search) return
             await execute(value as string);
         }
     }

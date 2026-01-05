@@ -2,7 +2,7 @@
 	<div>
 		<div class="hidden">
 			<label class="sr-only" for="file">file</label>
-			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" @change="handleFileSelect" class="sr-only" />
+			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" @change="handleFileSelect" class="sr-only" />
 		</div>
 
 		<div v-if="selected" :class="selected ? ' md:hidden' : ''" class="z-40 flex items-center h-16 gap-2 px-4 bg-white border-b lg:px-4">
@@ -16,9 +16,7 @@
 			</button>
 		</div>
 
-
 		<div v-if="toolbar" class="z-40">
-
 			<div v-if="toolbar?.groupWithFilters" :class="[selected ? ' hidden md:flex' : '', !toolbar?.groupWithFilters ? '' : 'flex-wrap']" class="flex items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
 				<UtilsInputSearch v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :store />
 
@@ -26,17 +24,15 @@
 					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
 					<UtilsButtonFilter v-if="toolbar.filters" :setFilter :filter :store v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
 				</div>
-
 			</div>
 
 			<div v-else class="flex flex-col items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
-
-				<div class="flex items-center justify-between w-full gap-2 " >
+				<div class="flex items-center justify-between w-full gap-2">
 					<UtilsInputSearch v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :store />
 					<UtilsButtonImportant v-if="toolbar.buttons" v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
 				</div>
 
-				<div v-if="toolbar.filters" class="flex items-center justify-between w-full gap-2 ">
+				<div v-if="toolbar.filters" class="flex items-center justify-between w-full gap-2">
 					<UtilsButtonFilter :setFilter :filter :store v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
 				</div>
 			</div>
@@ -45,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-	
 	const storageStore = useStorage();
 	const notificationsStore = useNotifications();
 
@@ -90,6 +85,4 @@
 			if (currentStore && currentStore.refresh) await currentStore.refresh(params);
 		}
 	};
-
-
 </script>

@@ -25,9 +25,9 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                 fallbackFilter: 'vandaag',
                 filters: [
                     createFilter("vandaag", "akar-icons:clock", "Vandaag", "Toon statistieken van vandaag", "neutral", "Vandaag", false, false),
-                    createFilter("week", "akar-icons:calendar", "Deze week", "Toon statistieken van deze week", "neutral", "Week", true, true),
-                    createFilter("maand", "akar-icons:calendar", "Deze maand", "Toon statistieken van deze maand", "neutral", "Maand", true, true),
-                    createFilter("jaar", "akar-icons:calendar", "Dit jaar", "Toon statistieken van dit jaar", "neutral", "Jaar",true, true),
+                    createFilter("week", "akar-icons:calendar", "Deze week", "Toon statistieken van deze week", "blue", "Week", true, true),
+                    createFilter("maand", "akar-icons:calendar", "Deze maand", "Toon statistieken van deze maand", "blue", "Maand", true, true),
+                    createFilter("jaar", "akar-icons:calendar", "Dit jaar", "Toon statistieken van dit jaar", "blue", "Jaar",true, true),
                 ],
                 store: 'useAnalytics',
             },
@@ -38,7 +38,6 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             iconName: "akar-icons:inbox",
             alert: true,
             toolbar: {
-                groupWithFilters: true,
                 fallbackFilter: 'alles',
                 buttons: [
                     createButton({
@@ -75,6 +74,7 @@ const routes = cachedFunction((): Record<string, RouteType> => {
             label: "Opslagruimte",
             iconName: "akar-icons:folder",
             toolbar: {
+                fallbackFilter: 'alles',
                 buttons: [
                     createButton({
                         iconName: "akar-icons:cloud-upload",
@@ -83,11 +83,16 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                         onClick: "triggerFileSelect",
                     }),
                     createButton({
-                        iconName: "akar-icons:arrow-right-left",
+                        iconName: "akar-icons:cloud-download",
                         description: "Bestanden synchroniseren",
                         isButton: true,
                         onClick: "refresh",
                     }),
+                ],
+                filters: [
+                    createFilter("alles", "akar-icons:filter", "Alles", "Toon alle bestanden", "neutral", "Alles", false, false),
+                    createFilter("afbeelding", "akar-icons:image", "Afbeeldingen", "Toon alleen afbeeldingen", "blue", "Afbeeldingen", true),
+                    createFilter("document", "akar-icons:file", "Documenten", "Toon alleen documenten", "blue", "Documenten", true),
                 ],
                 search: createSearch("bestanden"),
                 store: 'useStorage',
