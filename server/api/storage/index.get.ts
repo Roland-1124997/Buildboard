@@ -1,43 +1,34 @@
-interface FileMetadata {
-    size: number;
-    mimetype: string;
-    created_at: string;
-    updated_at: string;
-    extension: string;
-}
-
-
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const files: any[] = [];
 
     const { data, error } = await server.from('attachments').select('*').order('updated_at', { ascending: false });
+    if (error) return useReturnResponse(event, internalServerError);
 
-    if (data) {
+    const { data: meta, error: metaError } = await server.storage.from('stores').list()
+    if (metaError) return useReturnResponse(event, internalServerError);
 
-        for (const file of data) {
+    for (const file of data) {
 
-            const { data: meta, error: metaError } = await server.storage.from('stores').info(file.name);
-            if (metaError || !meta) continue;
+        const fileMeta = meta.find((m) => m.name === file.name)
+        if (!fileMeta || !meta) continue;
 
-            files.push({
-                id: file.id,
-                name: file.name,
-                published: file.published,
-                media: {
-                    preview: `/attachments/${file.name}`
-                },
-                metadata: {
-                    size: meta.size,
-                    mimetype: meta.contentType,
-                    created_at: meta.createdAt,
-                    updated_at: meta.lastModified,
-                    extension: meta.name.split('.').pop() as string
-                }
-            });
-        }
+        files.push({
+            id: file.id,
+            name: file.name,
+            published: file.published,
+            media: {
+                preview: `/attachments/${file.name}`
+            },
+            metadata: {
+                size: fileMeta.metadata.size,
+                mimetype: fileMeta.metadata.mimetype,
+                created_at: fileMeta.created_at,
+                updated_at: fileMeta.updated_at,
+                extension: fileMeta.name.split('.').pop() as string
+            }
+        });
     }
-
 
     if (error) return useReturnResponse(event, internalServerError);
 
