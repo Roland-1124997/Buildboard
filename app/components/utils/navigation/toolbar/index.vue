@@ -2,7 +2,7 @@
 	<div>
 		<div class="hidden">
 			<label class="sr-only" for="file">file</label>
-			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" @change="handleFileSelect" class="sr-only" />
+			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.jpg,.jpeg,.png,.gif,.webp" @change="handleFileSelect" class="sr-only" />
 		</div>
 
 		<div v-if="selected" :class="selected ? ' md:hidden' : ''" class="z-40 flex items-center h-16 gap-2 px-4 bg-white border-b lg:px-4">

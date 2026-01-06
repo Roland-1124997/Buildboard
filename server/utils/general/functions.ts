@@ -9,20 +9,20 @@ export const useMakePagination = (itemsPerPage: number = 16, page: number = 1) =
 }
 
 export const types: FileType[] = [
-    { extension: "png", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-    { extension: "jpg", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-    { extension: "jpeg", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-    { extension: "gif", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-    { extension: "webp", label: "Afbeelding", color: "text-blue-800", background: "bg-blue-50" },
-    { extension: "pdf", label: "PDF Document", color: "text-red-800", background: "bg-red-50" },
-    { extension: "doc", label: "Word Document", color: "text-indigo-800", background: "bg-blue-50" },
-    { extension: "docx", label: "Word Document", color: "text-indigo-800", background: "bg-blue-50" },
-    { extension: "xls", label: "Excel Sheet", color: "text-green-800", background: "bg-green-50" },
-    { extension: "xlsx", label: "Excel Sheet", color: "text-green-800", background: "bg-green-50" },
-    { extension: "ppt", label: "PowerPoint", color: "text-orange-800", background: "bg-orange-50" },
-    { extension: "pptx", label: "PowerPoint", color: "text-orange-800", background: "bg-orange-50" },
-    { extension: "txt", label: "Tekstbestand", color: "text-gray-800", background: "bg-gray-50" },
-    { extension: "zip", label: "ZIP Archief", color: "text-purple-800", background: "bg-purple-50" },
+    { extension: "png",     label: "Afbeelding",        color: "#1e40af",   background: "#eff6ff" },
+    { extension: "jpg",     label: "Afbeelding",        color: "#1e40af",   background: "#eff6ff" },
+    { extension: "jpeg",    label: "Afbeelding",        color: "#1e40af",   background: "#eff6ff" },
+    { extension: "gif",     label: "Afbeelding",        color: "#1e40af",   background: "#eff6ff" },
+    { extension: "webp",    label: "Afbeelding",        color: "#1e40af",   background: "#eff6ff" },
+    { extension: "pdf",     label: "PDF Document",      color: "#991b1b",   background: "#fef2f2" },
+    { extension: "doc",     label: "Word Document",     color: "#3730a3",   background: "#eef2ff" },
+    { extension: "docx",    label: "Word Document",     color: "#3730a3",   background: "#eef2ff" },
+    { extension: "xls",     label: "Excel Document",    color: "#166534",   background: "#f0fdf4" },
+    { extension: "xlsx",    label: "Excel Document",    color: "#166534",   background: "#f0fdf4" },
+    { extension: "ppt",     label: "PowerPoint",        color: "#9a3412",   background: "#fff7ed" },
+    { extension: "pptx",    label: "PowerPoint",        color: "#9a3412",   background: "#fff7ed" },
+    { extension: "txt",     label: "Tekst Document",     color: "#1f2937",   background: "#f9fafb" },
+    { extension: "zip",     label: "ZIP Archief",       color: "#6b21a8",   background: "#faf5ff" },
 ];
 
 const getProperty = (types: FileType[], extension: string, property: "label" | "color" | 'background'): string => {

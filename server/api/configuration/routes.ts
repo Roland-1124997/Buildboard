@@ -91,8 +91,10 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                 ],
                 filters: [
                     createFilter("alles", "akar-icons:filter", "Alles", "Toon alle bestanden", "neutral", "Alles", false, false),
-                    createFilter("afbeelding", "akar-icons:image", "Afbeeldingen", "Toon alleen afbeeldingen", "blue", "Afbeeldingen", true),
-                    createFilter("document", "akar-icons:file", "Documenten", "Toon alleen documenten", "blue", "Documenten", true),
+                    createFilter("afbeelding", "akar-icons:image", "Afbeeldingen", "Toon alleen afbeeldingen", "blue", "Afbeeldingen", true, false),
+                    createFilter("document", "akar-icons:file", "Documenten", "Toon alleen documenten", "blue", "Documenten", true, false),
+                    createFilter("zip", "akar-icons:data", "Archieven", "Toon alleen archieven", "blue", "Archieven", true, false),
+                    createFilter("PowerPoint", "akar-icons:product-hunt-fill", "PowerPoint", "Toon alleen PowerPoint bestanden", "blue", "PowerPoint", true),
                 ],
                 search: createSearch("bestanden"),
                 store: 'useStorage',

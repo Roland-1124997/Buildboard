@@ -12,8 +12,8 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
         .order('updated_at', { ascending: false })
         .range(start, end);
 
-    if (search)  query.or(`name.ilike.%${search}%,label.ilike.%${search}%`);
-    if (filter && filter !== 'alles') query.or(`label.ilike.%${filter}%`);
+    if (search)  query.ilike('name', `%${search}%`);
+    if (filter && filter !== 'alles') query.ilike('label', `%${filter}%`);
     
     const { count, data, error } = await query;
     if (error) return useReturnResponse(event, internalServerError);

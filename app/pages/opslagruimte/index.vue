@@ -2,15 +2,16 @@
 	<div class="">
 		<div class=" pb-[5.5rem] md:pb-0">
 			<div v-if="store.files.length > 0" class="space-y-3">
-				<div class="mb-3">
-					<h2 class="text-sm font-bold text-gray-800">{{ store.files.length }} {{ store.files.length === 1 ? "document" : "documenten" }}</h2>
+				<div class="sticky top-0 z-20 flex items-center justify-between px-4 py-2 mb-3 text-blue-800 border rounded-lg bg-blue-50 w-fit md:px-4">
+					{{  }}
+					<h2 class="text-sm font-bold">{{ store.files.length }} {{ store.files.length === 1 ? "document" : "documenten" }}</h2>
 				</div>
 
 				<div class="grid gap-3 md:grid-cols-2">
 					<div v-for="(file, index) in store.files" :key="index" class="z-10 flex items-center w-full gap-3 p-3 transition-all bg-white border border-gray-200 rounded-lg hover:bg-gray-50 group hover:border-gray-300">
 						<div class="flex-shrink-0">
-							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :class="file.metadata.icon.background">
-								<icon name="akar-icons:file" size="1.45rem" :class="file.metadata.icon.color" />
+							<div class="flex items-center justify-center w-12 h-12 rounded-lg" :style="{ background: file.metadata.icon.background}">
+								<icon name="akar-icons:file" size="1.45rem" :style="{ color: file.metadata.icon.color}" />
 							</div>
 						</div>
 
@@ -20,7 +21,7 @@
 									{{ file.name.charAt(0).toUpperCase() + file.name.slice(1).split(".")[0] }}
 								</p>
 								<div class="flex items-center gap-1 text-[0.73rem] md:text-sm -mt-[0.10rem]">
-									<span :class="file.metadata.icon.color" class="font-semibold">{{ file.metadata.label }}</span>
+									<span :style="{ color: file.metadata.icon.color}" class="font-semibold">{{ file.metadata.label }}</span>
 									<span aria-hidden class="text-gray-500">•</span>
 									<span class="text-gray-500">{{ file.metadata.size }}</span>
 								</div>
@@ -94,7 +95,6 @@
 	});
 
 	useSearch();
-
 	const store = useStorage();
 
 </script>
