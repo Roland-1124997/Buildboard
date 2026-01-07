@@ -10,13 +10,22 @@
 
 <script setup lang="ts">
 
-	const store = useAnalytics();
-	await store.initialPayload();
-
-	const storageStore = useStorage();
-	await storageStore.initialPayload();
-
 	useSearch();
 	useFilter()
+
+	const store = useAnalytics();
+	const articles = useArticles();
+	const storageStore = useStorage();
+	const notifications = useNotifications();
+
+	await store.initialPayload();
+	await articles.initialPayload();
+	await storageStore.initialPayload();
+	await notifications.initialPayload();
+	
+	const { close } = await notifications.realTime();
+
+	onUnmounted(() => close());
+	
 </script>
 

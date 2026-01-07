@@ -11,6 +11,10 @@
         <div v-else-if="component == 'Confirm'">
             <FormSelectChoices :props="props" />
         </div>
+
+        <div v-else-if="component == 'Email'">
+            <FormEmailPreview :props="props" />
+        </div>
     </div>
 </template>
 

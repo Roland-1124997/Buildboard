@@ -1,8 +1,9 @@
 interface ModalOptions {
     name: string;
     description: string;
-    component: "FormSelect" | "FormInputUrl" | "Confirm";
+    component: "FormSelect" | "FormInputUrl" | "Confirm" | "Email"
     props: Record<string, any>;
+    hideOnDesktop?: boolean;
 }
 
 
@@ -11,6 +12,8 @@ const opened = ref(false);
 
 const isVisible = ref(false);
 const isFullyVisible = ref(false);
+
+const hideOnDesktop = ref(false);
 
 watch(opened, (value) => {
     
@@ -39,15 +42,18 @@ export const useModal = () => {
             props: options.props || {},
         }
 
+        if(options.hideOnDesktop) hideOnDesktop.value = true;
+        else hideOnDesktop.value = false;
+        
         opened.value = true;
     };
 
-    
     const close = () => {
         opened.value = false;
     };
 
     return {
+        hideOnDesktop,
         content,
         isVisible,
         isFullyVisible,

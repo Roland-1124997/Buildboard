@@ -251,6 +251,25 @@ export const useNotifications = defineStore("useNotifications", () => {
 
 
         await markAsSeen(message);
+
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            create({
+                hideOnDesktop: true,
+                name: message.subject || "Geen onderwerp",
+                description: "",
+                component: "Email",
+                props: {
+                    message,
+                    onConfirm: (payload: Record<string, any>) => {
+                        compose(payload)
+                        backToList();
+                        close();
+                    },
+                }
+            });
+        }
     };
 
     const backToList = () => {

@@ -85,7 +85,6 @@
 	const { search } = useSearch();
 	const store = useArticles();
 
-	await store.initialPayload();
 	const filteredArticles = computed(() => {
 		return store.filter(search.value as string);
 	});

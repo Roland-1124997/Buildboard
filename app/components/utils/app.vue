@@ -4,7 +4,9 @@
         <UtilsToast />
 		<div class="fixed z-[100] w-screen h-screen pointer-events-none">
 			<div class="pointer-events-auto">
-				<Modal />
+				<ClientOnly>
+					<Modal/>
+				</ClientOnly>
 			</div>
 		</div>
     </div>

@@ -1,6 +1,6 @@
 <template>
 	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[77dvh] md:h-[74dvh] md:grid-cols-2">
-		<div class="z-10 md:pr-4 md:border-r" :class="{ 'hidden md:block': store.selected }">
+		<div class="z-10 md:pr-4 md:border-r">
 			<div class="flex-1 h-full overflow-y-auto">
 
 				<div v-if="store.messages.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
@@ -44,7 +44,7 @@
 					</div>
 				</div>
 
-				<div type="button" v-for="inbox in store.messages" :key="inbox.id" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full md:p-4 p-3 px-4 text-left mb-2 border cursor-pointer transition-all duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
+				<div type="button" v-for="inbox in store.messages" :key="inbox.id" @click="store.selectMessage(inbox)" @keydown.enter="store.selectMessage(inbox)" :class="['w-full md:p-4 p-3 px-4 text-left mb-2 border cursor-pointer transition-colors duration-150 rounded-lg', store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100']">
 					<div class="flex items-start gap-3 select-none">
 						<div class="flex-1">
 							<div class="flex items-center justify-between">
@@ -100,7 +100,7 @@
 			</div>
 		</div>
 
-		<main v-if="store.selected" class="z-10 flex flex-col -mt-3 overflow-hidden bg-white" :class="{ 'md:hidden': !store.selected }">
+		<main v-if="store.selected" class="z-10 flex-col hidden -mt-3 overflow-hidden bg-white md:flex">
 			<header class="flex-shrink-0 py-2 pb-3 bg-white border-b border-gray-200 md:p-4">
 				<div class="z-40 items-center hidden gap-2 pb-3 border-b md:flex">
 					<button @click="store.compose(store.selected)" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg w-fit hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Beantwoord dit bericht">

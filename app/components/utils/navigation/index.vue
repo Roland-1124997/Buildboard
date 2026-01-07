@@ -30,13 +30,7 @@
 	const { routes, toolbar, store } = await useApiRoutes();
 	
 	const notifications = useNotifications();
-	await notifications.initialPayload();
-
-	const { close } = await notifications.realTime();
-	
 	const isMobileMenuOpen = ref(false);
 
-	onUnmounted(() => close());
-	
 </script>
 
