@@ -249,9 +249,6 @@ export const useNotifications = defineStore("useNotifications", () => {
             },
         });
 
-
-        await markAsSeen(message);
-
         const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
@@ -270,6 +267,8 @@ export const useNotifications = defineStore("useNotifications", () => {
                 }
             });
         }
+
+        await markAsSeen(message);
     };
 
     const backToList = () => {
