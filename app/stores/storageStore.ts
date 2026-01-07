@@ -23,9 +23,10 @@ export const useStorage = defineStore("useStorage", () => {
     const { addToast } = useToast();
 
     const uri = "/api/storage";
-    const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
+    const Request = useApiHandler<ApiResponse<Record<string, FileData[]>>>(uri);
 
-    const files = ref<FileData[]>([]);
+    const count = ref<Number>();
+    const files = ref<Record<string, FileData[]>>({});
     const error = ref<ErrorResponse | null | any>(null);
 
     const refresh = async (params?: {
@@ -40,7 +41,10 @@ export const useStorage = defineStore("useStorage", () => {
             },
         });
 
-        if (!Error && data) files.value = data.data ?? [];
+        if (!Error && data) {
+            files.value = data.data ?? {};
+            count.value = Object.values(data.data ?? {}).flat().length;
+        }
 
         else {
             error.value = Error;
@@ -53,7 +57,7 @@ export const useStorage = defineStore("useStorage", () => {
 
     const initialPayload = async () => {
 
-        const { data, error: Error } = await useFetch<ApiResponse<FileData[]>>(uri, {
+        const { data, error: Error } = await useFetch<ApiResponse<Record<string, FileData[]>>>(uri, {
             query: {
                 page: useRoute().query.page || 1,
                 filter: useRoute().query.filter || 'alles',
@@ -61,7 +65,10 @@ export const useStorage = defineStore("useStorage", () => {
             },
         });
 
-        if (!Error.value && data.value) files.value = data.value?.data || [];
+        if (!Error.value && data.value) {
+            files.value = data.value?.data || {};
+            count.value = Object.values(data.value?.data || {}).flat().length;
+        }
 
         else {
             error.value = Error.value;
@@ -187,6 +194,7 @@ export const useStorage = defineStore("useStorage", () => {
     };
 
     return {
+        count,
         files,
         error,
         refresh,
