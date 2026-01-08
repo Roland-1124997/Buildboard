@@ -1,3 +1,5 @@
+const error = ref<any | null>(null);
+
 export const useApiRoutes = async () => {
 
     const routes = useState<Record<string, RouteType>>('api-routes', () => ({}));
@@ -18,16 +20,31 @@ export const useApiRoutes = async () => {
         return (pinia as any)._s.get(name) as StoreType;
     });
 
-    const { data, error } = await useFetch<Record<string, RouteType>>("/api/configuration/routes", {
+
+    const refresh = async () => {
+
+        const request = useApiHandler<Record<string, RouteType>>("/api/configuration/routes");
+
+        const { data, error: Error } = await request.Get();
+
+        if (!Error && data) routes.value = data;
+        else error.value = Error;
+
+    }
+
+    const { data, error: Error } = await useFetch<Record<string, RouteType>>("/api/configuration/routes", {
         key: 'api-routes-fetch',
     });
 
-    if (!error.value && data.value) routes.value = data.value;
+    if (!Error.value && data.value) routes.value = data.value;
+    else error.value = Error.value;
 
     return {
+        error,
         routes,
         toolbar,
-        store
+        store,
+        refresh
     };
 }
 

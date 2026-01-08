@@ -8,15 +8,15 @@
 							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[85vh] rounded-2xl">
 								<div class="flex items-start justify-between">
 									<h1 class="text-2xl font-bold text-black">{{ content?.name }}</h1>
-									<button class="flex items-center justify-center " aria-label="sluit modal" @click="close">
-										<Icon name="ri:close-fill" size="2em"></Icon>
-										<span class="sr-only ">Sluit modal</span>
+									<button class="flex items-center justify-center" aria-label="sluit modal" @click="close">
+										<Icon name="akar-icons:x-small" size="2em"></Icon>
+										<span class="sr-only">Sluit modal</span>
 									</button>
 								</div>
 								<div class="mb-4 text-gray-600 text-balance">
 									{{ content?.description }}
 								</div>
-								
+
 								<div v-if="content">
 									<FormHandeler :props="content?.props" :component="content?.component" />
 								</div>
@@ -30,19 +30,19 @@
 </template>
 
 <script setup lang="ts">
-	import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-	
-	const modal = ref(null);
-	const target = useTemplateRef<HTMLDivElement>('target')
+	import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 
-	const { activate, deactivate } = useFocusTrap(target)
+	const modal = ref(null);
+	const target = useTemplateRef<HTMLDivElement>("target");
+
+	const { activate, deactivate } = useFocusTrap(target);
 	const { hideOnDesktop, content, isVisible, isFullyVisible, close } = useModal();
 
 	watch(isFullyVisible, async (visible) => {
-		if (visible) await nextTick(), activate()
+		if (visible) await nextTick(), activate();
 		else deactivate();
 	});
-	
+
 	onClickOutside(modal, () => close());
 </script>
 

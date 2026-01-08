@@ -27,8 +27,12 @@
 
 <script setup lang="ts">
 
-	const { routes, toolbar, store } = await useApiRoutes();
-	
+	const { error, routes, toolbar, store, refresh } = await useApiRoutes();
+
+	onMounted(async () => {
+		if(error.value) await refresh();
+	});
+
 	const notifications = useNotifications();
 	const isMobileMenuOpen = ref(false);
 

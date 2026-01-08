@@ -93,10 +93,10 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         else {
             error.value = Error.value;
-            addToast({
-                message: "Er is een fout opgetreden bij het ophalen van berichten.",
-                type: "error",
-            });
+            // addToast({
+            //     message: "Er is een fout opgetreden bij het ophalen van berichten.",
+            //     type: "error",
+            // });
         }
     }
 

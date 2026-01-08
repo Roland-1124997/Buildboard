@@ -11,7 +11,7 @@
 				</div>
 
 				<button aria-label="sluit sidebar menu" @click="isMobileMenuOpen = false" class="flex items-center justify-center p-2 rounded-lg lg:hidden hover:bg-gray-100">
-					<Icon name="akar-icons:cross" class="w-5 h-5" />
+					<Icon name="akar-icons:x-small" size="1.6rem" />
 					<span class="sr-only">Sluit menu</span>
 				</button>
 			</div>

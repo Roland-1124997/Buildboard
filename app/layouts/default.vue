@@ -25,6 +25,21 @@
 	
 	const { close } = await notifications.realTime();
 
+	onMounted(async () => {
+
+		if(store.error) await store.refresh()
+		if(articles.error) await articles.refresh()
+		if(storageStore.error) await storageStore.refresh()
+		if(notifications.error) await notifications.refresh()
+		
+		
+	});
+
+
+
+
+
+
 	onUnmounted(() => close());
 	
 </script>

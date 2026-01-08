@@ -9,6 +9,32 @@ export const useArticles = defineStore("useArticles", () => {
     const articles = ref<any[] | any>(null);
     const error = ref<any[] | any>(null);
 
+    const refresh = async (params?: {
+        filter?: string; page?: number, search?: string
+    }) => {
+
+        const { data, error: Error } = await Request.Get({
+            query: {
+                page: params?.page || useRoute().query.page || 1,
+                filter: params?.filter || useRoute().query.filter || 'all',
+                search: params?.search !== undefined ? params.search : (useRoute().query.search || '')
+            },
+        });
+
+        if (!Error && data) {
+            articles.value = data.data;
+        }
+
+        else {
+            error.value = Error;
+            addToast({
+                message: "Er is een fout opgetreden bij het vernieuwen van de artikelen.",
+                type: "error",
+            });
+        }
+
+    }
+
     const initialPayload = async () => {
 
         const { data, error: Error } = await useFetch<ApiResponse<any>>(uri);
@@ -19,10 +45,10 @@ export const useArticles = defineStore("useArticles", () => {
 
         else {
             error.value = Error.value;
-            addToast({
-                message: "Er is een fout opgetreden bij het ophalen van artikelen.",
-                type: "error",
-            });
+            // addToast({
+            //     message: "Er is een fout opgetreden bij het ophalen van artikelen.",
+            //     type: "error",
+            // });
         }
     };
 
@@ -53,13 +79,12 @@ export const useArticles = defineStore("useArticles", () => {
 
             close();
 
-            if (error)
-                return addToast({
+            if (error) return addToast({
                     message: "Er is een fout opgetreden bij het verwijderen van het artikel",
                     type: "error",
                 });
 
-            articles.value = articles.value?.filter((art: any) => art.id !== id);
+            await refresh();
 
             addToast({
                 message: "Artikel succesvol verwijderd",
@@ -89,6 +114,7 @@ export const useArticles = defineStore("useArticles", () => {
         initialPayload,
         filter,
         remove,
+        refresh,
     };
 
 });

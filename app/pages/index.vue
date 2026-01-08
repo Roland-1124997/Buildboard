@@ -148,4 +148,5 @@
 	};
 
 	const store = useAnalytics();
+
 </script>
