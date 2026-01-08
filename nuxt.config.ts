@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: {
-    enabled: false,
+    enabled: true,
 
     timeline: {
       enabled: true
@@ -18,8 +18,14 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     "nuxt-umami",
     "nuxt-charts",
-    "@vee-validate/nuxt"
+    "@vee-validate/nuxt",
+    "@nuxt/a11y",
   ],
+
+  a11y: {
+    defaultHighlight: false,
+    logIssues: true,
+  },
 
   veeValidate: {
     autoImports: true,
@@ -95,7 +101,6 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', href: '/icons/icon_512.png' },
       ],
       charset: 'utf-8',
-      viewport: 'viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no',
     }
   },
 

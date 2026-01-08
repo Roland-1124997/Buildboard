@@ -9,7 +9,7 @@
 								<TiptapMenu class="flex items-center p-1 py-1 mb-2 overflow-x-auto underline border rounded-lg bg-gray-50" :editor="editor" />
 							</div>
 
-							<TiptapEditor :editor="editor" />
+							<TiptapEditor :editor="editor" aria-label="Artkel inhoud" />
 						</div>
 
 						<div class="z-10 -mt-2 bg-white">

@@ -10,13 +10,13 @@
 					<h1 class="text-xl font-bold text-gray-800">Buildboard</h1>
 				</div>
 
-				<button @click="isMobileMenuOpen = false" class="flex items-center justify-center p-2 rounded-lg lg:hidden hover:bg-gray-100">
+				<button aria-label="sluit sidebar menu" @click="isMobileMenuOpen = false" class="flex items-center justify-center p-2 rounded-lg lg:hidden hover:bg-gray-100">
 					<Icon name="akar-icons:cross" class="w-5 h-5" />
 					<span class="sr-only">Sluit menu</span>
 				</button>
 			</div>
 
-			<nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+			<nav id="sidebar-menu" aria-label="Hoofdnavigatie" class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
 				<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
 					<Icon :name="route.iconName" class="w-5 h-5" />
 					<span class="flex-1">{{ route.label }}</span>
@@ -27,7 +27,7 @@
 			</nav>
 
 			<div class="p-3 mb-3 border-t md:mb-0">
-				<button @click="logout" class="flex items-center w-full gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-red-50 hover:text-red-600">
+				<button aria-label="uitlogen" @click="logout" class="flex items-center w-full gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-red-50 hover:text-red-600">
 					<Icon name="akar-icons:door" class="w-5 h-5" />
 					<span>Uitloggen</span>
 				</button>

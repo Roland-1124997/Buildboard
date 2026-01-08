@@ -1,5 +1,5 @@
 <template>
-	<button type="button" @click="setFilter(type)" :class="['flex items-center justify-center gap-2 px-4 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', large ? 'w-full' : 'w-fit', alwaysShowLabel ? 'py-2' : 'py-[0.68rem] md:py-2', getColorClasses(color, filter === type)]" :aria-pressed="filter === type">
+	<button type="button" @click="setFilter(type)" :class="['flex items-center justify-center gap-2 px-4 text-sm font-medium transition-colors duration-200 border rounded-lg outline-none focus:outline-none focus:ring-2', large ? 'w-full' : 'w-fit', alwaysShowLabel ? 'py-2' : 'py-[0.68rem] md:py-2', getColorClasses(color, filter === type)]" :aria-label="label" :aria-pressed="filter === type">
 		<Icon :name="iconName" class="w-4 h-4" aria-hidden="true" />
 		<span :class="alwaysShowLabel ? 'flex' : 'hidden md:flex'">
 			<span class="hidden md:inline">{{ label }}</span>

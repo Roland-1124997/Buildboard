@@ -5,7 +5,7 @@
 
 				<div v-if="store.messages.length === 0" class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
 					<icon name="akar-icons:inbox" class="w-16 h-16 mb-4 text-gray-300" aria-hidden="true" />
-					<h3 class="mb-2 text-lg font-medium">Geen berichten</h3>
+					<h2 class="mb-2 text-lg font-medium">Geen berichten</h2>
 					<p class="text-sm text-center">
 						{{ displayMessage() }}
 					</p>
@@ -91,7 +91,7 @@
 								{{ inbox.subject || "(Geen onderwerp)" }}
 							</p>
 
-							<p :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-500'" class="text-sm leading-relaxed line-clamp-2">
+							<p :class="store.selected?.id == inbox.id ? 'text-blue-950' : 'text-gray-700'" class="text-sm leading-relaxed line-clamp-2">
 								{{ inbox.preview || 'Geen preview beschikbaar' }}
 							</p>
 						</div>
@@ -100,7 +100,7 @@
 			</div>
 		</div>
 
-		<main v-if="store.selected" class="z-10 flex-col hidden -mt-3 overflow-hidden bg-white md:flex">
+		<div v-if="store.selected" class="z-10 flex-col hidden overflow-hidden bg-white md:flex">
 			<header class="flex-shrink-0 py-2 pb-3 bg-white border-b border-gray-200 md:p-4">
 				<div class="z-40 items-center hidden gap-2 pb-3 border-b md:flex">
 					<button @click="store.compose(store.selected)" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg w-fit hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Beantwoord dit bericht">
@@ -134,7 +134,7 @@
 					</div>
 				</article>
 			</div>
-		</main>
+		</div>
 
 		<div v-else class="z-10 items-center justify-center hidden rounded-lg md:flex bg-gray-50">
 			<div class="max-w-sm text-center">

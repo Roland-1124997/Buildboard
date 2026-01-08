@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<Transition name="modal">
-			<div v-if="isVisible" ref="target" :class="hideOnDesktop ? ' md:hidden' : ''" class="fixed top-0 left-0 z-50 flex items-end justify-center w-screen h-full bg-black md:justify-center md:items-center bg-opacity-60 backdrop-blur-sm">
+			<section v-if="isVisible" ref="target" :class="hideOnDesktop ? ' md:hidden' : ''" class="fixed top-0 left-0 z-50 flex items-end justify-center w-screen h-full bg-black md:justify-center md:items-center bg-opacity-60 backdrop-blur-sm">
 				<div tabindex="0" class="mx-6 outline-none md:mb-0 rounded-xl" ref="modal">
 					<Transition name="modalDelay">
 						<div ref="modalDelay" v-if="isFullyVisible">
 							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[85vh] rounded-2xl">
 								<div class="flex items-start justify-between">
-									<h1 class="text-3xl font-bold">{{ content?.name }}</h1>
+									<h1 class="text-2xl font-bold text-black">{{ content?.name }}</h1>
 									<button class="flex items-center justify-center " aria-label="sluit modal" @click="close">
 										<Icon name="ri:close-fill" size="2em"></Icon>
 										<span class="sr-only ">Sluit modal</span>
@@ -24,7 +24,7 @@
 						</div>
 					</Transition>
 				</div>
-			</div>
+			</section>
 		</Transition>
 	</div>
 </template>

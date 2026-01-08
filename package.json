@@ -12,6 +12,7 @@
 		"postinstall": "nuxt prepare"
 	},
 	"dependencies": {
+		"@nuxt/a11y": "^1.0.0-alpha.1",
 		"@nuxt/cli": "^3.30.0",
 		"@nuxt/icon": "^2.1.0",
 		"@nuxt/image": "^2.0.0",
