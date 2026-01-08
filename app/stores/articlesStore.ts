@@ -45,10 +45,10 @@ export const useArticles = defineStore("useArticles", () => {
 
         else {
             error.value = Error.value;
-            // addToast({
-            //     message: "Er is een fout opgetreden bij het ophalen van artikelen.",
-            //     type: "error",
-            // });
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van artikelen.",
+                type: "error",
+            });
         }
     };
 

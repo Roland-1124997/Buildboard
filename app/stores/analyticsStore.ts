@@ -52,10 +52,10 @@ export const useAnalytics = defineStore("useAnalytics", () => {
             loading.value = false;
             error.value = Error.value;
 
-            // addToast({
-            //     message: "Er is een fout opgetreden bij het ophalen van de analytics gegevens.",
-            //     type: "error",
-            // });
+            addToast({
+                message: "Er is een fout opgetreden bij het ophalen van de analytics gegevens.",
+                type: "error",
+            });
         }
     };
 
