@@ -10,9 +10,7 @@
 
 <script setup lang="ts">
 
-	
 	defineProps<{
-		store: StoreType | undefined,
 		filter: string | null,
 		setFilter: (filter: string) => void,
 		type: string,

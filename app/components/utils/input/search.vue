@@ -9,8 +9,7 @@
 </template>
 
 <script setup lang="ts">
-	const { store, name, initialValue } = defineProps({
-		store: { type: Object as () => StoreType | undefined, default: undefined, required: false },
+	const { name, initialValue } = defineProps({
 		name: { type: String, required: true },
 		label: { type: String, default: "text" },
 		placeholder: { type: String, default: "" },
@@ -29,31 +28,15 @@
 	const { history, setSearch } = useSearch({
 		localSearch,
 		callback: async (params) => {
-			if (store && store.refresh) await store.refresh(params);
-			else await initilizeStore(params);
+			await useInitilizeStore(params);
 		},
 	});
 
 	localHistory.value = history.LastEntry(route.path)?.search || "";
-
+	
 	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
-
 	watchDebounced(localSearch, async (newValue) => {
-
-			await setSearch(newValue);
-		},{ debounce: 1000, maxWait: 5000 }
-	);
-
-	const initilizeStore = async (params: { filter?: string; page?: number }) => {
-		
-		const { toolbar } = await useApiRoutes();
-		const storeName = toolbar.value?.store;
-
-		if (storeName) {
-			const pinia = useNuxtApp().$pinia;
-			const currentStore = (pinia as any)._s.get(storeName) as StoreType;
-			if (currentStore && currentStore.refresh) await currentStore.refresh(params);
-		}
-	};
+		await setSearch(newValue);
+	}, { immediate: true, debounce: 1000, maxWait: 5000 });
 
 </script>

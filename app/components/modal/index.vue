@@ -8,7 +8,7 @@
 							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[85vh] rounded-2xl">
 								<div class="flex items-start justify-between">
 									<h1 class="text-2xl font-bold text-black">{{ content?.name }}</h1>
-									<button class="flex items-center justify-center" aria-label="sluit modal" @click="close">
+									<button class="flex items-center justify-center" aria-label="sluit modal" @click="onclose(content?.props)">
 										<Icon name="akar-icons:x-small" size="2em"></Icon>
 										<span class="sr-only">Sluit modal</span>
 									</button>
@@ -43,7 +43,12 @@
 		else deactivate();
 	});
 
-	onClickOutside(modal, () => close());
+	const onclose = (props: Record<string, any> | undefined) => {
+		if (props && props.onclose) props.onclose();
+		else close();
+	}
+
+	onClickOutside(modal, () => onclose(content.value?.props));
 </script>
 
 <style scoped>

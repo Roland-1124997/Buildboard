@@ -264,6 +264,10 @@ export const useNotifications = defineStore("useNotifications", () => {
                         backToList();
                         close();
                     },
+                    onclose: () => {
+                        backToList();
+                        close();
+                    }
                 }
             });
         }

@@ -11,16 +11,7 @@ export const useApiRoutes = async () => {
         return routes.value[current.value]?.toolbar;
     });
 
-    const store = computed(() => {
-        current.value = route.path;
-
-        const name = routes.value[current.value]?.toolbar?.store;
-        const pinia = useNuxtApp().$pinia;
-
-        return (pinia as any)._s.get(name) as StoreType;
-    });
-
-
+    
     const refresh = async () => {
 
         const request = useApiHandler<Record<string, RouteType>>("/api/configuration/routes");
@@ -43,7 +34,6 @@ export const useApiRoutes = async () => {
         error,
         routes,
         toolbar,
-        store,
         refresh
     };
 }
