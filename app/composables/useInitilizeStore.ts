@@ -1,9 +1,8 @@
 
 
-export const useInitilizeStore = async (params: { filter?: string; page?: number }) => {
+export const useInitilizeStore = async (toolbar: ToolBar, params: { filter?: string; page?: number }) => {
     
-    const { toolbar } = await useApiRoutes();
-    const storeName = toolbar.value?.store;
+    const storeName = toolbar?.store;
 
     if (storeName) {
         const pinia = useNuxtApp().$pinia;

@@ -79,6 +79,8 @@
 
 	const { addToast } = useToast();
 
+	const store = useArticles();
+
 	const content = ref<Record<string, any>>();
 	const activeId: any = ref(null);
 	const editable = ref(true);
@@ -90,9 +92,11 @@
 
 	if (editId.value) {
 		const { data } = await useFetch(`/api/articles/${editId.value}`);
-		if (data.value) content.value = data.value.data.content;
-	}
-
+		if (data.value) content.value = store.getSavedPayload() || data.value.data.content;
+	} 
+	
+	else content.value = store.getSavedPayload()
+	
 	const title = ref("");
 	const description = ref("");
 	const Anchors: any = ref([]);
@@ -113,7 +117,10 @@
 	};
 
 	const populateFields = (editor: Editor) => {
+
 		content.value = editor.getJSON();
+		store.savePayload(content.value);
+
 		words.value = editor.storage.characterCount.words();
 		title.value = editor.$doc.firstChild?.textContent || "Ongetiteld Artikel";
 
@@ -132,6 +139,8 @@
 		Anchors.value = uniqueAnchors;
 	};
 
+	const { wait } = useDebounce();
+
 	const editor = useEditor({
 		content: content.value,
 		editable: editable.value,
@@ -142,11 +151,15 @@
 			}),
 		],
 		onCreate: ({ editor }) => populateFields(editor),
-		onUpdate: ({ editor }) => populateFields(editor),
+		onUpdate: ({ editor }) => wait(() => populateFields(editor), 2000),
 	});
 
 	onUnmounted(() => {
 		if (editor.value) editor.value.destroy();
+	});
+
+	onBeforeRouteLeave(() => {
+		store.clearSavedPayload();
 	});
 
 	const toggleEditable = () => {

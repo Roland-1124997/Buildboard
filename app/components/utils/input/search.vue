@@ -9,7 +9,9 @@
 </template>
 
 <script setup lang="ts">
-	const { name, initialValue } = defineProps({
+
+	const { name, initialValue, toolbar } = defineProps({
+		toolbar: { type: Object as PropType<ToolBar>, required: true },
 		name: { type: String, required: true },
 		label: { type: String, default: "text" },
 		placeholder: { type: String, default: "" },
@@ -28,15 +30,18 @@
 	const { history, setSearch } = useSearch({
 		localSearch,
 		callback: async (params) => {
-			await useInitilizeStore(params);
+			await useInitilizeStore(toolbar, params);
 		},
 	});
 
 	localHistory.value = history.LastEntry(route.path)?.search || "";
-	
-	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
-	watchDebounced(localSearch, async (newValue) => {
-		await setSearch(newValue);
-	}, { immediate: true, debounce: 1000, maxWait: 5000 });
 
+	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
+	watchDebounced(
+		localSearch,
+		async (newValue) => {
+			await setSearch(newValue);
+		},
+		{ immediate: true, debounce: 1000, maxWait: 5000 }
+	);
 </script>
