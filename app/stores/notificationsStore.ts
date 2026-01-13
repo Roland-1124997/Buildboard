@@ -105,7 +105,17 @@ export const useNotifications = defineStore("useNotifications", () => {
         const event_id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         const { data: events, error: Error, close } = useEventSource(`/realtime/${event_id}/notifications/`, [], {
-            autoReconnect: true,
+            autoReconnect: {
+                retries: 10,
+                onFailed: () => {
+
+                    addToast({
+                        message: "Verbinding met notificatie server verbroken.",
+                        type: "error",
+                    });
+
+                }
+            },
         });
 
         watch(events, async () => await refresh());

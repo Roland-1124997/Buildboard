@@ -18,16 +18,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         key: `user-session-${identity}`,
     })
 
-
     store.setSession(data.value, error.value)
 
-    const isAuthPage = to.path.startsWith("/auth")
-
-    if (isAuthPage && data.value) {
-        if (to.path == from.path) return navigateTo("/")
-        return navigateTo(from.path || "/")
-    }
-
-    if (!isAuthPage && !data.value) return navigateTo("/auth/login")
-    if (data.value?.data?.mfa_needs_to_verified) return navigateTo("/auth/totp")
+    if (!data.value?.data?.mfa_needs_to_verified) return navigateTo("/")
+    
 })

@@ -67,6 +67,13 @@ const articleField = {
 
 }
 
+const mulfiFactorField = {
+    code: zod
+        .string({ message: defaultMessage })
+        .nonempty({ message: defaultMessage })
+        .length(6, { message: "De code moet uit 6 cijfers bestaan" }),
+}
+
 export const schema = {
 
     login: {
@@ -82,6 +89,11 @@ export const schema = {
     article: {
         backend: zod.object(articleField),
         frontend: toTypedSchema(zod.object(articleField)),
+    },
+
+    totp: {
+        backend: zod.object(mulfiFactorField),
+        frontend: toTypedSchema(zod.object(mulfiFactorField)),
     },
 
 };

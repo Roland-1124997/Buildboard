@@ -245,12 +245,32 @@ li::marker {
     @apply hover:text-gray-300 
 }
 
-
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     @apply border outline-none appearance-none autofill;
+}
+
+.btn-Input-Error {
+    @apply border-red-300 text-[#262626] bg-red-50
+}
+
+.btn-Input-Error-without-bg {
+    @apply border-red-300 text-[#262626]
+}
+
+.btn-Input-Error-without-bg:focus {
+    @apply border-red-300 outline-none ring-1 ring-red-300;
+}
+
+.btn-Input-Error:focus {
+    @apply border-red-300 outline-none ring-1 ring-red-300;
+}
+
+.btn-Input-Error:-webkit-autofill,
+.btn-Input-Error:-webkit-autofill:hover,
+.btn-Input-Error:-webkit-autofill:focus {
+    @apply border outline-none appearance-none autofill-error;
 }
 
 @layer utilities {
@@ -265,6 +285,13 @@ input:-webkit-autofill:focus {
         -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
         -webkit-text-fill-color: #000000 !important;
         box-shadow: 0 0 0 30px #ffffff inset !important;
+        background-clip: content-box !important;
+    }
+
+    .autofill-error {
+        -webkit-box-shadow: 0 0 0 30px #fef2f2 inset !important;
+        -webkit-text-fill-color: #262626 !important;
+        box-shadow: 0 0 0 30px #fef2f2 inset !important;
         background-clip: content-box !important;
     }
 

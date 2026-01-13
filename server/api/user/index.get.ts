@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     return useReturnResponse(event, {
         status: {
             success: true,
-            message: "Gberuiker succesvol opgehaald",
+            message: "gebruiker gevonden",
             code: 200
         },
         data: await useSetSessionData(event, data.user)

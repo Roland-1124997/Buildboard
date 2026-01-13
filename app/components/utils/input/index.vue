@@ -1,5 +1,5 @@
 <template>
-	<field :name="name" v-slot="{ field, meta }: any">
+	<field :name="name" v-slot="{ field, meta }">
 		<div class="group">
 			<label :class="hideLabel ? ' sr-only' : ''" class="flex items-center justify-between mb-2 text-sm font-medium text-gray-700" :for="name">
 

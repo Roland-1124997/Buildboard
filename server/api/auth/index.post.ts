@@ -14,8 +14,7 @@ export default defineEventHandler(async (event) => {
   });
 
   const client: SupabaseClient = await serverSupabaseClient(event);
-  const server: SupabaseClient = serverSupabaseServiceRole(event)
-  
+
   const { data, error } = await client.auth.signInWithPassword({
     email: request.email, password: request.password,
   });
@@ -31,17 +30,11 @@ export default defineEventHandler(async (event) => {
     }
   });
 
-  await useStorage(`sessions`).setItem("session", { ...data.user });
 
-
+  
   if (data.user.factors) {
 
     useSetCookies(event, data.session);
-    deleteCookie(event, "opt-verified")
-
-    await server.from("factor_sessions").insert({
-      user_id: data.user.id,
-    })
 
     return useReturnResponse(event, {
       status: {
@@ -52,7 +45,6 @@ export default defineEventHandler(async (event) => {
       }
     });
   }
-
 
   useSetCookies(event, data.session);
 

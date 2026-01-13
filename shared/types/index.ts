@@ -2,9 +2,10 @@ import type { ZodIssue } from 'zod';
 import type { AuthError } from '@supabase/auth-js';
 
 import type { Store } from "pinia";
+import type { FormActions } from 'vee-validate';
 
 export type { SupabaseClient } from '@supabase/supabase-js';
-export type { SubmissionHandler, FormActions } from 'vee-validate';
+export type { SubmissionHandler } from 'vee-validate';
 export type { Editor } from "@tiptap/core";
 
 export type FetchUrl = Parameters<typeof $fetch>[0];
@@ -78,7 +79,7 @@ export type requestOptions<T = unknown> = {
     method: SendOptions['method'];
     successMessage?: string;
     onsuccess?: (response: ApiResponse<T>) => Promise<void> | void;
-    onfailure?: (error: ErrorResponse) => void
+    onfailure?: (error: ErrorResponse, actions: FormActions<any>) => void
 }
 
 export type Anchor = {

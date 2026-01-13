@@ -60,9 +60,9 @@
 		],
 	});
 
-	const request = {
-		url: "/api/auth" as FetchUrl,
-		method: "POST" as SendOptions["method"],
+	const request: requestOptions = {
+		url: "/api/auth",
+		method: "POST",
 		successMessage: "Je bent succesvol ingelogd! en wordt doorgestuurd...",
 	};
 </script>

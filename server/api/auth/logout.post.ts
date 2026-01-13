@@ -1,12 +1,11 @@
-export default defineSupabaseEventHandler(async (event, { server }) => {
+export default defineEventHandler(async (event) => {
 
-    const { error } = await server.auth.signOut();
+    const server: SupabaseClient = await serverSupabaseClient(event);
+    const { error } = await useDeleteSession(server)
 
     if (error) return useReturnResponse(event, internalServerError);
 
     await useDeleteCookies(event);
-    await useStorage(`sessions`).removeItem("session");
-    
     return useReturnResponse(event, {
         status: {
             success: true,

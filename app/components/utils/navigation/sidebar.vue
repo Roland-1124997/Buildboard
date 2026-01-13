@@ -27,7 +27,7 @@
 			</nav>
 
 			<div class="p-3 mb-3 border-t md:mb-0">
-				<button aria-label="uitlogen" @click="logout" class="flex items-center w-full gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-red-50 hover:text-red-600">
+				<button aria-label="uitlogen" @click="store.logout" class="flex items-center w-full gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-red-50 hover:text-red-600">
 					<Icon name="akar-icons:door" class="w-5 h-5" />
 					<span>Uitloggen</span>
 				</button>
@@ -49,8 +49,7 @@
     const route = useRoute();
 
     const isMobileMenuOpen = defineModel<boolean>("isMobileMenuOpen");
-    const Request = useApiHandler<ApiResponse<any>>("/api/auth/logout");
-
+    
     defineProps<{
         routes: Record<string, RouteType>;
         notifications: { unseen: number }
@@ -66,25 +65,7 @@
 		return isRelated ? className : "";
 	};
 
-    const logout = async () => {
-		const { data, error } = await Request.Post();
-
-		if (error || !data)
-			return addToast({
-				message: "Er is een fout opgetreden bij het uitloggen",
-				type: "error",
-			});
-
-		const redirect = data.status.redirect;
-		store.clearSession();
-
-		addToast({
-			message: "Je bent succesvol uitgelogd",
-			type: "success",
-		});
-
-		return navigateTo(redirect);
-	};
+    
 
 </script>
 
