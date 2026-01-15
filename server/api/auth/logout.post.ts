@@ -1,4 +1,6 @@
-export default defineSupabaseEventHandler(async (event, { user, server}) => {
+export default defineAuthEventHandler(async (event, { user, server}) => {
+
+    if (!user) return useReturnResponse(event, unauthorizedError);
 
     const { error } = await useDeleteSession(server, user);
 
