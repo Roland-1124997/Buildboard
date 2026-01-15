@@ -1,7 +1,6 @@
-export default defineEventHandler(async (event) => {
+export default defineSupabaseEventHandler(async (event, { user, server}) => {
 
-    const server: SupabaseClient = await serverSupabaseClient(event);
-    const { error } = await useDeleteSession(server)
+    const { error } = await useDeleteSession(server, user);
 
     if (error) return useReturnResponse(event, internalServerError);
 

@@ -1,7 +1,9 @@
 import type { H3Event } from "h3";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { SupabaseClient, User } from "@supabase/supabase-js";
 
-export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: User, server: SupabaseClient }) => any) => {
+type SupaBaseUser = User & { current_session_id?: string };
+
+export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient }) => any) => {
     return defineEventHandler(async (event: H3Event) => {
 
         const client: SupabaseClient = await serverSupabaseClient(event);
@@ -10,15 +12,15 @@ export const defineSupabaseEventHandler = (callback: (event: H3Event, options: {
         const { data: user, error } = await useSessionExists(event, client);
         if (!user || error) return useReturnResponse(event, unauthorizedError)
 
-        if(user.factors) {
+        if (user.factors && user.factors[0].status === 'verified') {
 
             const { data } = await client.auth.mfa.getAuthenticatorAssuranceLevel()
 
-            if(data && data.currentLevel != 'aal2') {
+            if (data && data.currentLevel != 'aal2') {
                 return useReturnResponse(event, {
                     status: {
                         success: false,
-                        redirect: "/auth/totp",
+                        redirect: "/auth/verify",
                         message: "MFA verification required",
                         code: 401
                     }
@@ -26,11 +28,25 @@ export const defineSupabaseEventHandler = (callback: (event: H3Event, options: {
             }
 
         }
-        return callback(event, { client, user, server })
+        return callback(event, { client, user: user as SupaBaseUser, server })
     })
 }
 
-export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { user: User | null, server: SupabaseClient }) => any) => {
+export const defineAuthEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient }) => any) => {
+    return defineEventHandler(async (event: H3Event) => {
+
+        const client: SupabaseClient = await serverSupabaseClient(event);
+        const server: SupabaseClient = serverSupabaseServiceRole(event)
+
+        const { data: user, error } = await useSessionExists(event, client);
+        if (!user || error) return useReturnResponse(event, unauthorizedError)
+
+        return callback(event, { client, user: user as SupaBaseUser, server })
+    })
+}
+
+
+export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { user: SupaBaseUser | null, server: SupabaseClient }) => any) => {
     return defineEventHandler(async (event: H3Event) => {
 
         const client: SupabaseClient = await serverSupabaseClient(event);
@@ -38,6 +54,6 @@ export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { 
 
         const { data: user } = await useSessionExists(event, client);
 
-        return callback(event, { user, server })
+        return callback(event, { user: user as SupaBaseUser, server })
     })
 }

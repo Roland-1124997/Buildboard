@@ -64,5 +64,23 @@
 		url: "/api/auth",
 		method: "POST",
 		successMessage: "Je bent succesvol ingelogd! en wordt doorgestuurd...",
+		onsuccess: async () => {
+			const ipRequest = useApiHandler<{ ip: string }>("https://api.ipify.org?format=json");
+
+			const { data, error } = await ipRequest.Get();
+			if (error || !data) return;
+
+			const { screen: { width, height }, navigator: { language } } = window;
+
+			const request = useApiHandler("/api/auth/account/sessions");
+
+			request.Post({
+				body: {
+					screen: `${width}x${height}`,
+					language,
+					ip: data.ip,
+				},
+			});
+		},
 	};
 </script>

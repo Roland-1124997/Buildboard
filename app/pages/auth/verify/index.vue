@@ -54,7 +54,7 @@
 		description: "Verifieer je identiteit met een authenticatie code.",
 		ogTitle: "Twee-factor authenticatie - Dashboard",
 		ogDescription: "Verifieer je identiteit met een authenticatie code.",
-		ogUrl: "/auth/totp",
+		ogUrl: "/auth/verify",
 		ogImage: "/icons/icon_512.png",
 		twitterTitle: "Twee-factor authenticatie - Dashboard",
 		twitterDescription: "Verifieer je identiteit met een authenticatie code.",
@@ -88,7 +88,6 @@
 
 			await new Promise((resolve) => setTimeout(resolve, 3000));
 			actions.resetForm();
-
 		},
 	};
 </script>

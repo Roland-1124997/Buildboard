@@ -1,11 +1,9 @@
 
 
-export default defineEventHandler(async (event) => {
+export default defineAuthEventHandler(async (event, { client}) => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    const client: SupabaseClient = await serverSupabaseClient(event);
-
     const currentSession = await useGetCookies(event);
     const { error: userError } = await useGetSession(client, currentSession);
 
@@ -40,10 +38,12 @@ export default defineEventHandler(async (event) => {
         }
     });
 
+    const isSetup = getQuery(event).context === "setup";
+
     return useReturnResponse(event, {
         status: {
             success: true,
-            redirect: "/",
+            redirect: isSetup ? "/account" : '/',
             message: "Ok",
             code: 200
         }

@@ -29,5 +29,5 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
 
     if (!isAuthPage && !data.value) return navigateTo("/auth/login")
-    if (data.value?.data?.mfa_needs_to_verified) return navigateTo("/auth/totp")
+    if (data.value?.data?.mfa_needs_to_verified) return navigateTo("/auth/verify")
 })

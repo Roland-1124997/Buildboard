@@ -1,21 +1,27 @@
 <template>
-    <div>
-        <div v-if="component == 'FormSelect'">
+   
+        <template v-if="component == 'FormSelect'">
 			<FormSelect :editor="props.editor" :content="props.repositories" />
-		</div>
+		</template>
 
-        <div v-else-if="component == 'FormInputUrl'">
+        <template v-else-if="component == 'FormInputUrl'">
             <FormInputUrl :props="props" />
-        </div>
+        </template>
 
-        <div v-else-if="component == 'Confirm'">
+        <template v-else-if="component == 'Confirm'">
             <FormSelectChoices :props="props" />
-        </div>
+        </template>
 
-        <div v-else-if="component == 'Email'">
+        <template v-else-if="component == 'Email'">
             <FormEmailPreview :props="props" />
-        </div>
-    </div>
+        </template>
+
+        <template v-else-if="component == 'Totp'">
+            <FormToptSetup :props="props" />
+        </template>
+
+
+    
 </template>
 
 <script lang="ts" setup>

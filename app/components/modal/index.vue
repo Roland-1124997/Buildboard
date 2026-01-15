@@ -17,7 +17,7 @@
 									{{ content?.description }}
 								</div>
 
-								<div v-if="content">
+								<div class="overflow-scroll max-h-[63vh] " v-if="content">
 									<FormHandeler :props="content?.props" :component="content?.component" />
 								</div>
 							</div>

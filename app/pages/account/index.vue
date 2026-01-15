@@ -1,27 +1,159 @@
 <template>
-	<div class="relative z-10">
-		<button v-if="user?.data?.data?.factors" @click="deleteData" class="px-4 py-2 ml-4 text-white bg-red-500 rounded">Verwijder TOTP Gegevens</button>
+	<div>
+		<section class="relative grid grid-cols-1 gap-3 md:grid-cols-3">
+			<article class="z-10 flex items-center w-full col-span-2 gap-2 p-2 border rounded-lg bg-gray-50 md:gap-3 md:p-3">
+				<div class="flex items-center justify-center p-2 text-white bg-blue-600 rounded-lg shrink-0 md:p-3">
+					<icon name="akar-icons:people-multiple" class="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
+				</div>
+				<div class="flex-1 min-w-0">
+					<h2 class="text-xs font-semibold text-gray-600 truncate md:text-sm">Gebruikersnaam</h2>
+					<div class="flex items-center justify-between gap-2">
+						<h3 class="text-base font-extrabold text-gray-900 truncate md:text-xl">
+							{{ user?.email }}
+						</h3>
+					</div>
+				</div>
+			</article>
 
-		<button v-else @click="postData" class="px-4 py-2 text-white bg-blue-500 rounded">Genereer TOTP Gegevens</button>
+			<article class="z-10 flex items-center w-full gap-2 p-2 border rounded-lg bg-gray-50 md:gap-3 md:p-3">
+				<div class="flex items-center justify-center p-2 text-white bg-blue-600 rounded-lg shrink-0 md:p-3">
+					<icon name="akar-icons:shield" class="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
+				</div>
+				<div class="flex-1 min-w-0">
+					<h2 class="text-xs font-semibold text-gray-600 truncate md:text-sm">Tweefactorauthenticatie</h2>
 
-		<div>
-			<div v-if="result" class="p-4 mt-6 border border-gray-200 rounded bg-gray-50">
-				<h2 class="mb-4 text-lg font-medium text-gray-900">TOTP Informatie:</h2>
-				<p><strong>Secret:</strong> {{ result.secret }}</p>
-				<p class="mt-2">
-					<strong>URI:</strong>
-					<a :href="result.uri" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">{{ result.uri }}</a>
-				</p>
+					<div class="flex items-center justify-between gap-2">
+						<button @click="deleteTotp" v-if="user?.factors.enabled" class="text-base font-extrabold text-gray-900 truncate md:text-xl">Ingeschakeld</button>
+						<button @click="postTopt" v-else class="text-base font-extrabold text-gray-900 truncate md:text-xl">Uitgeschakeld</button>
+					</div>
+				</div>
+			</article>
+		</section>
 
-				<img v-if="result.qr_code" :src="result.qr_code" alt="QR Code" class="mt-4 border rounded" />
+		<section class="grid w-full grid-cols-1 mt-3 gap-y-3 md:gap-3 md:grid-cols-2 h-fit pb-[5.5rem] md:pb-0">
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
+				<div class="flex items-center justify-between mb-4">
+					<div>
+						<h2 class="text-xl font-bold text-gray-900">Actieve Sessies</h2>
+						<p class="mt-1 text-sm text-gray-600">{{ sessions?.length || 0 }} actieve {{ sessions?.length === 1 ? "sessie" : "sessies" }}</p>
+					</div>
+				</div>
 
-				<NuxtLink to="/auth/totp" class="inline-block px-4 py-2 mt-4 text-white bg-green-500 rounded"> Verifieer TOTP Code </NuxtLink>
-			</div>
-		</div>
+				<div v-if="sessions && sessions.length" class="space-y-3">
+					<div v-for="(session, index) in sessions" :key="session.id" class="relative pt-5 bg-white border-t md:border md:p-5 md:rounded-xl">
+						<div class="flex items-start justify-between mb-4">
+							<div class="flex items-start gap-3">
+								<div>
+									<div class="flex items-center gap-2 mb-1">
+										<h3 class="text-lg font-bold text-gray-900">
+											{{ getLocationString(session) }}
+										</h3>
+									</div>
+
+									<div class="flex flex-wrap items-center gap-2">
+										<span v-if="isCurrentSession(session.id)" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">
+											<icon name="akar-icons:circle-fill" class="w-2 h-2 mr-1.5" />
+											Huidige sessie
+										</span>
+										<span v-if="session.timezone" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+											<icon name="akar-icons:clock" class="w-3 h-3 mr-1" />
+											{{ session.timezone }}
+										</span>
+										<span v-if="session.screen" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+											<icon name="akar-icons:devices" class="w-3 h-3 mr-1" />
+											{{ deviceType(session.screen) }}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-200 md:grid-cols-3">
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:network" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">IP Adres</p>
+									<p class="text-sm font-semibold text-gray-900">
+										{{ session.ip_address || "Onbekend" }}
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:clock" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Laatste activiteit</p>
+									<p class="text-xs font-semibold text-gray-500 mt-0.5">
+										<NuxtTime :datetime="session.updated_at" :relative="true" locale="nl-NL" />
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:door" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Ingelogd op</p>
+									<p class="text-xs font-semibold text-gray-500 mt-0.5">
+										<NuxtTime :datetime="session.created_at" :relative="true" locale="nl-NL" />
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:location" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
+									<p class="text-sm font-semibold text-gray-900">
+										{{ getCounryName(session.country_code) }}
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:home-alt1" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Regio</p>
+									<p class="text-sm font-semibold text-gray-900">
+										{{ getRegionName(session.region_code) }}
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="flex flex-wrap items-center justify-between gap-2 pt-4 mt-4 text-xs text-gray-500 border-t border-gray-200">
+							<span class="flex items-center gap-1">
+								<icon name="akar-icons:key" class="w-3.5 h-3.5" />
+								<span class="font-mono">{{ session.id.substring(0, 8) }}...</span>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div v-else class="p-12 text-center text-gray-500">
+					<div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full">
+						<icon name="akar-icons:laptop-device" class="w-8 h-8 text-gray-400" />
+					</div>
+					<p class="text-lg font-medium">Geen actieve sessies gevonden</p>
+					<p class="mt-1 text-sm">Log opnieuw in om een sessie te starten</p>
+				</div>
+			</article>
+		</section>
 	</div>
 </template>
 
 <script setup lang="ts">
+import { on } from 'events';
+
 	definePageMeta({
 		middleware: "authorized",
 	});
@@ -52,60 +184,142 @@
 		],
 	});
 
-	const store = useSessions();
-	const user = ref();
-
-	user.value = await store.getSession();
-
-	const uri = "/api/auth/totp";
-	const Request = useApiHandler<ApiResponse<Record<string, any>>>(uri);
-	const result = ref();
-
-	const { addToast } = useToast();
-	const UserRequest = useApiHandler<ApiResponse<null>>("/api/user");
-
-	const postData = async () => {
-		const { data, error } = await Request.Post();
-		if (!error && data && data.data) {
-			addToast({
-				message: "TOTP gegevens succesvol gegenereerd.",
-				type: "success",
-			});
-
-			result.value = data.data.totp;
-
-			const { data: userData, error: userError } = await UserRequest.Get();
-			if (!userError && userData && userData.data) {
-				store.setSession(userData.data, false);
-				user.value = await store.getSession();
-			}
-		} 
-		
-		else addToast({
-			message: "Er is een fout opgetreden bij het genereren van TOTP gegevens.",
-			type: "error",
-		});
+	type Session = {
+		id: string;
+		created_at: string;
+		updated_at: string;
+		ip_address: string | null;
+		continent_code: string | null;
+		timezone: string | null;
+		country_code: string | null;
+		region_code: string | null;
+		city: string | null;
+		screen: string | null;
 	};
 
-	const deleteData = async () => {
-		const { error } = await Request.Delete();
+	const store = useSessions();
+	const user = ref();
+	const sessions = ref<Session[]>([]);
 
-		if (!error) {
-			addToast({
-				message: "TOTP gegevens succesvol verwijderd.",
-				type: "success",
-			});
+	const failure = ref(false);
 
-			const { data: userData, error: userError } = await UserRequest.Delete();
-			if (!userError && userData && userData.data) {
-				store.setSession(userData.data, false);
-				user.value = await store.getSession();
+	
+	const { data: userData } = await store.getSession();
+	user.value = userData.data;
+
+
+	const { data: sessionData, error } = await useFetch("/api/auth/account/sessions");
+	
+	if (error.value) failure.value = true;
+	else if (sessionData.value) sessions.value = sessionData.value.data;
+
+
+
+	onMounted(async () => {
+
+		if(failure.value) {
+
+			const request = useApiHandler<ApiResponse<Session[]>>("/api/auth/account/sessions");
+			const { data, error } = await request.Get();
+
+			if(!error && data && data.data) {
+				sessions.value = data.data;
+				failure.value = false;
 			}
-		} 
+		}
 		
-		else addToast({
-			message: "Er is een fout opgetreden bij het verwijderen van TOTP gegevens.",
-			type: "error",
+	});
+
+	const current_active_session = computed(() => {
+		return user.value?.session || "";
+	});
+
+	const isCurrentSession = (sessionId: string) => {
+		return sessionId === current_active_session.value;
+	};
+
+	const getLocationString = (session: Session) => `${session.city}, ${session.country_code}`;
+
+	const getCounryName = (countryCode: string | null) => {
+		if (!countryCode) return "Onbekend";
+		const regionNames = new Intl.DisplayNames(["nl"], { type: "region" });
+		return regionNames.of(countryCode) || "Onbekend";
+	};
+
+	const getRegionName = (regionCode: string | null) => {
+		if (!regionCode) return "Onbekend";
+
+		const dutchProvinces: Record<string, string> = {
+			DR: "Drenthe",
+			FL: "Flevoland",
+			FR: "Friesland",
+			GE: "Gelderland",
+			GR: "Groningen",
+			LI: "Limburg",
+			NB: "Noord-Brabant",
+			NH: "Noord-Holland",
+			OV: "Overijssel",
+			UT: "Utrecht",
+			ZE: "Zeeland",
+			ZH: "Zuid-Holland",
+		};
+
+		return dutchProvinces[regionCode.toUpperCase()] || regionCode;
+	};
+
+	const deviceType = (screen: string) => {
+		const width = parseInt(screen.split("x")[0] || "0");
+		if (width <= 768) return "Mobiel";
+		if (width <= 1024) return "Tablet";
+		return "Desktop";
+	};
+
+	const resetFunction = async () => {
+		const Request = useApiHandler<ApiResponse<Record<string, any>>>("/api/user");
+		const { data, error } = await Request.Get();
+		if (!error && data && data.data) {
+			store.setSession(data.data, false);
+			user.value = data.data;
+		}
+	};
+
+	const { create, close } = useModal();
+	const Request = useApiHandler<ApiResponse<{ uri: string, secret: string, qr_code: string }>>("/api/auth/totp");
+
+	const postTopt = async () => {
+		const { data, error } = await Request.Post();
+		if (error) return;
+
+		create({
+			name: "Tweefactorauthenticatie Instellen",
+			description: "Stel tweefactorauthenticatie in om je account beter te beveiligen.",
+			component: "Totp",
+			props: {
+				content: data?.data,
+				onComplete: async () => {
+					await resetFunction();
+					close();
+				}
+			},
+		})
+		await resetFunction();
+	};
+
+	const deleteTotp = async () => {
+		create({
+			name: "Tweefactorauthenticatie Uitschakelen",
+			description: "Weet je zeker dat je tweefactorauthenticatie wilt uitschakelen? Dit vermindert de beveiliging van je account.",
+			component: "Confirm",
+			props: {
+				message: "Dit zal alle tweefactorauthenticatie-instellingen van je account verwijderen.",
+				type: "2FA",
+				onConfirm: async () => {
+					const { error } = await Request.Delete();
+					if (!error) await resetFunction()
+					close();
+				},
+				onCancel: () => close()
+			},
 		});
 	};
 </script>

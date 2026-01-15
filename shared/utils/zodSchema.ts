@@ -74,6 +74,13 @@ const mulfiFactorField = {
         .length(6, { message: "De code moet uit 6 cijfers bestaan" }),
 }
 
+
+const navigatorField = {
+    ip: zod.string(),
+    screen: zod.string(),
+    language: zod.string(),
+}
+
 export const schema = {
 
     login: {
@@ -94,6 +101,11 @@ export const schema = {
     totp: {
         backend: zod.object(mulfiFactorField),
         frontend: toTypedSchema(zod.object(mulfiFactorField)),
+    },
+
+    navigator: {
+        backend: zod.object(navigatorField),
+        frontend: toTypedSchema(zod.object(navigatorField)),
     },
 
 };

@@ -1,5 +1,5 @@
 
-export default defineEventHandler(async (event) => {
+export default defineAuthEventHandler(async (event, { client }) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const request = await readBody(event);
@@ -12,8 +12,6 @@ export default defineEventHandler(async (event) => {
       details: zodError.issues
     }
   });
-
-  const client: SupabaseClient = await serverSupabaseClient(event);
 
   const { data, error } = await client.auth.signInWithPassword({
     email: request.email, password: request.password,
@@ -30,24 +28,21 @@ export default defineEventHandler(async (event) => {
     }
   });
 
+  useSetCookies(event, data.session);
 
-  
-  if (data.user.factors) {
-
-    useSetCookies(event, data.session);
+  if (data.user.factors && data.user.factors[0].status === 'verified') {
 
     return useReturnResponse(event, {
       status: {
         success: true,
-        redirect: "/auth/totp",
+        redirect: "/auth/verify",
         message: "Ok",
         code: 200
       }
     });
   }
 
-  useSetCookies(event, data.session);
-
+  
   return useReturnResponse(event, {
     status: {
       success: true,

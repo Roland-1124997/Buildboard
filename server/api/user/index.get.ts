@@ -1,3 +1,6 @@
+import { User } from "@supabase/supabase-js";
+type SupaBaseUser = User & { current_session_id?: string };
+
 export default defineEventHandler(async (event) => {
 
     const client = await serverSupabaseClient(event);
@@ -10,11 +13,6 @@ export default defineEventHandler(async (event) => {
         if (!data.session || error) return useReturnResponse(event, unauthorizedError);
 
         useSetCookies(event, data.session);
-
-        if (data.user?.factors) setCookie(event, "opt-verified", "true", {
-            maxAge: 60 * 60 * 24 * 14,
-            httpOnly: true,
-        })
 
         return useReturnResponse(event, {
             status: {
@@ -32,6 +30,8 @@ export default defineEventHandler(async (event) => {
             message: "gebruiker gevonden",
             code: 200
         },
-        data: await useSetSessionData(event, data.user)
+        data: await useSetSessionData(event, data.user as SupaBaseUser)
     });
 });
+
+

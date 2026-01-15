@@ -1,9 +1,11 @@
 
 import type { H3Event } from "h3";
-import { SupabaseClient, Session, User, AuthError } from "@supabase/supabase-js";
+import { SupabaseClient, Session, AuthError, User } from "@supabase/supabase-js";
+
+type SupaBaseUser = User & { current_session_id?: string };
 
 export const useRefreshSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => await client.auth.refreshSession(currentSession);
-export const useDeleteSession = async (client: SupabaseClient) => await client.auth.signOut();
+export const useDeleteSession = async (client: SupabaseClient, user: SupaBaseUser) => await client.rpc("delete_sessions_by_id", { p_session_id: user.current_session_id})
 
 export const useGetSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
     
@@ -12,14 +14,26 @@ export const useGetSession = async (client: SupabaseClient, currentSession: Sess
         error: new AuthError('The user does not have an active session',)
     };
 
-    return await client.auth.getUser(currentSession?.access_token);
+    const sesson_id = extractSessionId(currentSession)
+
+    const { data, error } =  await client.auth.getUser(currentSession?.access_token);
+
+    return { 
+        data: {
+            user: {
+                ...data.user,
+                current_session_id: sesson_id
+            }
+        },
+        error
+    }
 }
 
-export const useSetSessionData = async (event: H3Event, user: User | null) => {
+export const useSetSessionData = async (event: H3Event, user: SupaBaseUser | null) => {
     if (user) {
 
         const client: SupabaseClient = await serverSupabaseClient(event);
-        const hasMFA = !!user.factors;
+        const hasMFA = !!(user.factors && user.factors[0].status === 'verified')
 
         if (hasMFA) {
 
@@ -31,8 +45,12 @@ export const useSetSessionData = async (event: H3Event, user: User | null) => {
 
         return {
             id: user.id,
+            session: user.current_session_id,
             email: user.email,
-            factors: hasMFA,
+            factors: {
+                verified: hasMFA,
+                enabled: !!user.factors,
+            },
         };
     }
 
@@ -46,3 +64,21 @@ export const useSessionExists = async (event: H3Event, client: SupabaseClient) =
 
     return { data: data?.user, error };
 }
+
+
+const extractSessionId = (session: Omit<Session, "user">): string | undefined => {
+    if (session?.access_token) {
+        try {
+            const sessionTokenParts = session.access_token.split('.');
+            if (sessionTokenParts.length >= 2) {
+                const token = JSON.parse(
+                    Buffer.from(sessionTokenParts[1], 'base64').toString('ascii'),
+                );
+                return token.session_id;
+            }
+        } catch {
+            return;
+        }
+    }
+    return;
+};

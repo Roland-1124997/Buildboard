@@ -1,7 +1,7 @@
 interface ModalOptions {
     name: string;
     description: string;
-    component: "FormSelect" | "FormInputUrl" | "Confirm" | "Email"
+    component: "FormSelect" | "FormInputUrl" | "Confirm" | "Email" | "Totp"
     props: Record<string, any>;
     hideOnDesktop?: boolean;
 }
