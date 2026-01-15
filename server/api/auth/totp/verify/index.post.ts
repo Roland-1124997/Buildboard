@@ -1,6 +1,8 @@
 
 
-export default defineAuthEventHandler(async (event, { client}) => {
+export default defineAuthEventHandler(async (event, { user, client }) => {
+
+    if (!user) return useReturnResponse(event, unauthorizedError);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
     

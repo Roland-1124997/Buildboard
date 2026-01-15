@@ -39,8 +39,7 @@ export const defineAuthEventHandler = (callback: (event: H3Event, options: { cli
         const server: SupabaseClient = serverSupabaseServiceRole(event)
 
         const { data: user, error } = await useSessionExists(event, client);
-        if (!user || error) return useReturnResponse(event, unauthorizedError)
-
+        
         return callback(event, { client, user: user as SupaBaseUser, server })
     })
 }

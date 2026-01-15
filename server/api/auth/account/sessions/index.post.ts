@@ -12,6 +12,8 @@ const kownIps = new Map<string, NavigatorRequest>();
 
 export default defineAuthEventHandler(async (event, { user, client, server }) => {
 
+    if (!user) return useReturnResponse(event, unauthorizedError);
+
     const request = await readBody(event);
     const { error: zodError } = await schema.navigator.backend.safeParseAsync(request);
 
