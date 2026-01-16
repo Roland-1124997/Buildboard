@@ -299,6 +299,11 @@ import { on } from 'events';
 				onComplete: async () => {
 					await resetFunction();
 					close();
+				},
+				onclose: async () => {
+					const { error } = await Request.Delete();
+					if (!error) await resetFunction()
+					close();
 				}
 			},
 		})
@@ -311,8 +316,10 @@ import { on } from 'events';
 			description: "Weet je zeker dat je tweefactorauthenticatie wilt uitschakelen? Dit vermindert de beveiliging van je account.",
 			component: "Confirm",
 			props: {
-				message: "Dit zal alle tweefactorauthenticatie-instellingen van je account verwijderen.",
-				type: "2FA",
+				message: {
+					confirm: "Ja, schakel uit",
+					cancel: "Nee, behoud",
+				},
 				onConfirm: async () => {
 					const { error } = await Request.Delete();
 					if (!error) await resetFunction()

@@ -4,6 +4,7 @@ interface ModalOptions {
     component: "FormSelect" | "FormInputUrl" | "Confirm" | "Email" | "Totp"
     props: Record<string, any>;
     hideOnDesktop?: boolean;
+    hideCloseButton?: boolean;
 }
 
 
@@ -39,6 +40,7 @@ export const useModal = () => {
             name: options.name,
             description: options.description || '',
             component: options.component,
+            hideCloseButton: options.hideCloseButton || false,
             props: options.props || {},
         }
 

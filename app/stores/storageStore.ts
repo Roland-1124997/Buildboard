@@ -161,10 +161,17 @@ export const useStorage = defineStore("useStorage", () => {
         };
 
         create({
-            name: "Confirmatie-Modal",
+            name: file.name,
             description: "Weet je zeker dat je dit bestand wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { onConfirm, onCancel, message: file, type: "bestand" },
+            props: { 
+                onConfirm, 
+                onCancel, 
+                message: {
+                    confirm: "Ja, verwijder het bestand",
+                    cancel: "Nee, behoud het bestand",
+                }
+            },
         });
     };
 

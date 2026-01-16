@@ -159,24 +159,22 @@
 					message: "Ophalen van repositories...",
 				});
 
-				let repositories: Array<{ name: string; id: string }> = [];
-				let error: any = null;
+				const uri = "/api/integrations/github/repositories";
+				const request = useApiHandler<ApiResponse<{ name: string; id: string }>>(uri);
 
-				const response = await $fetch<{ data: Array<{ name: string; id: string }>; error?: any }>("/api/repositories");
-				repositories = response.data;
-				error = response.error;
+				const { data: repositories, error } = await request.Get();
 
-				if (!error) {
+				if (!error && repositories?.data) {
 					create({
 						name: "Verbind met GitHub",
 						description: "Kies een repository om mee te verbinden",
 						component: "FormSelect",
-						props: { repositories, editor },
+						props: { repositories: repositories.data, editor },
 					});
 				} else
 					addToast({
 						type: "error",
-						message: error.message || "Er is een onbekende fout opgetreden.",
+						message: 'er is een fout opgetreden bij het ophalen van repositories',
 					});
 			},
 		},

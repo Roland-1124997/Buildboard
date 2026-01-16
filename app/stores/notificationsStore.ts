@@ -226,10 +226,18 @@ export const useNotifications = defineStore("useNotifications", () => {
         };
 
         create({
-            name: "Confirmatie-Modal",
+            name: message.subject || "Geen onderwerp",
             description: "Weet je zeker dat je dit bericht wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { onConfirm, onCancel, message, type: "bericht" },
+            props: { 
+                onConfirm, 
+                onCancel,
+                message: {
+                    confirm: "Ja, verwijder het bericht",
+                    cancel: "Nee, behoud het bericht",
+                },
+
+            },
         });
     };
 
@@ -265,7 +273,7 @@ export const useNotifications = defineStore("useNotifications", () => {
             create({
                 hideOnDesktop: true,
                 name: message.subject || "Geen onderwerp",
-                description: "",
+                description: "Bekijk de volledige inhoud van dit bericht.",
                 component: "Email",
                 props: {
                     message,

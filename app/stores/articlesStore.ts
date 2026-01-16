@@ -110,10 +110,17 @@ export const useArticles = defineStore("useArticles", () => {
         };
 
         create({
-            name: "Confirmatie-Modal",
+            name: `Verwijder artikel ${content.title}`,
             description: "Weet je zeker dat je dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { onConfirm, onCancel, message: content, type: "artikel" },
+            props: { 
+                onConfirm, 
+                onCancel,
+                message: {
+                    confirm: "Ja, verwijder het artikel",
+                    cancel: "Nee, behoud het artikel",
+                }
+            },
         });
     };
 

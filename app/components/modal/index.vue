@@ -5,19 +5,21 @@
 				<div tabindex="0" class="mx-6 outline-none md:mb-0 rounded-xl" ref="modal">
 					<Transition name="modalDelay">
 						<div ref="modalDelay" v-if="isFullyVisible">
-							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[85vh] rounded-2xl">
-								<div class="flex items-start justify-between">
-									<h1 class="text-2xl font-bold text-black">{{ content?.name }}</h1>
-									<button class="flex items-center justify-center" aria-label="sluit modal" @click="onclose(content?.props)">
-										<Icon name="akar-icons:x-small" size="2em"></Icon>
-										<span class="sr-only">Sluit modal</span>
-									</button>
-								</div>
-								<div class="mb-4 text-gray-600 text-balance">
-									{{ content?.description }}
+							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[85vh] rounded-2xl flex flex-col items-start justify-between">
+								<div class="w-full mb-8 ">
+									<div class="flex items-start justify-between w-full">
+										<h1 class="text-2xl font-bold text-black text-balance">{{ content?.name }}</h1>
+										<button v-if="!content?.hideCloseButton" class="flex items-center justify-center" aria-label="sluit modal" @click="onclose(content?.props)">
+											<Icon name="akar-icons:x-small" size="2em"></Icon>
+											<span class="sr-only">Sluit modal</span>
+										</button>
+									</div>
+									<p class="mt-1 text-gray-600">
+										{{ content?.description }}
+									</p>
 								</div>
 
-								<div class="overflow-scroll max-h-[63vh] " v-if="content">
+								<div :class="pwa?.isPWAInstalled ? ' pb-6' : ''" class="w-full" v-if="content">
 									<FormHandeler :props="content?.props" :component="content?.component" />
 								</div>
 							</div>
@@ -32,6 +34,8 @@
 <script setup lang="ts">
 	import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 
+	const pwa = ref(useNuxtApp().$pwa);
+
 	const modal = ref(null);
 	const target = useTemplateRef<HTMLDivElement>("target");
 
@@ -44,9 +48,10 @@
 	});
 
 	const onclose = (props: Record<string, any> | undefined) => {
+		if(content.value?.hideCloseButton) return
 		if (props && props.onclose) props.onclose();
 		else close();
-	}
+	};
 
 	onClickOutside(modal, () => onclose(content.value?.props));
 </script>
