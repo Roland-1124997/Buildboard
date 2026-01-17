@@ -68,17 +68,23 @@ const useFetchRepositories = async (token: string): Promise<{ data: Repositories
 };
 
 
-export const useGetRepositories =async (token: string, per_page: number, page: number) => {
+export const useGetRepositories = async (token: string, per_page: number, page: number) => {
+    const cacheKey = `repos-${token}`;
+    const stored = useStorage(cacheKey);
 
-    const stored = useStorage(`repos-${token}`);
-
-    const cached = await stored.getItem<Repositories>(`repos-${token}`)
+    const cached = await stored.getItem<Repositories>(cacheKey);
     if (cached) return { data: cached, error: null };
 
     const { data, error } = await useFetchRepositories(token);
     const paginated = data ? paginate(data, per_page, page) : null;
 
-    if (paginated) await stored.setItem(`repos-${token}`, paginated, { ttl: 60 * 5 }); 
+    if (paginated) {
+        await stored.setItem(cacheKey, paginated, { ttl: 60 * 5 });
+        
+        setTimeout(async () => {
+            await stored.removeItem(cacheKey);
+        }, 60 * 5 * 1000);
+    }
 
     return { data: paginated, error };
 };
