@@ -106,7 +106,7 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         const { data: events, error: Error, close } = useEventSource(`/realtime/${event_id}/notifications/`, [], {
             autoReconnect: {
-                retries: 10,
+                retries: 5,
                 onFailed: () => {
 
                     addToast({

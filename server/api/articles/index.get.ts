@@ -1,4 +1,4 @@
-export default defineSupabaseFileHandler(async (event, { server }) => {
+export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const { data: articles, error } = await server.from('artikelen').select('*').order('updated_at', { ascending: false });
 

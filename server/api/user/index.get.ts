@@ -1,12 +1,12 @@
 import { User } from "@supabase/supabase-js";
-type SupaBaseUser = User & { current_session_id?: string };
+type SupaBaseUser = User & { current_session_id?: string, aal?: string };
 
 export default defineEventHandler(async (event) => {
 
     const client = await serverSupabaseClient(event);
     const currentSession = await useGetCookies(event);
 
-    const { data, error } = await useGetSession(client, currentSession);
+    const { data, error } = await useGetSession(event, client, currentSession);
 
     if (error) {
         const { data, error } = await useRefreshSession(client, currentSession);

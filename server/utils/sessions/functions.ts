@@ -2,12 +2,21 @@
 import type { H3Event } from "h3";
 import { SupabaseClient, Session, AuthError, User } from "@supabase/supabase-js";
 
-type SupaBaseUser = User & { current_session_id?: string };
+type SupaBaseUser = User & { current_session_id?: string, aal?: string };
 
-export const useRefreshSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => await client.auth.refreshSession(currentSession);
+export const useRefreshSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
+    
+    if(!currentSession?.refresh_token) return {
+        data: { user: null, session: null },
+        error: new AuthError('The user does not have a refresh token',)
+    };
+
+    return await client.auth.refreshSession(currentSession);
+
+}
 export const useDeleteSession = async (client: SupabaseClient, user: SupaBaseUser) => await client.rpc("delete_sessions_by_id", { p_session_id: user.current_session_id})
 
-export const useGetSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
+export const useGetSession = async (event: H3Event, client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
     
     if(!currentSession?.access_token) return {
         data: { user: null }, 
@@ -17,12 +26,14 @@ export const useGetSession = async (client: SupabaseClient, currentSession: Sess
     const sesson_id = extractSessionId(currentSession)
 
     const { data, error } =  await client.auth.getUser(currentSession?.access_token);
+    const user = await serverSupabaseUser(event)
 
     return { 
         data: {
             user: {
                 ...data.user,
-                current_session_id: sesson_id
+                current_session_id: sesson_id,
+                aal: user?.aal
             }
         },
         error
@@ -37,9 +48,7 @@ export const useSetSessionData = async (event: H3Event, user: SupaBaseUser | nul
 
         if (hasMFA) {
 
-            const { data } = await client.auth.mfa.getAuthenticatorAssuranceLevel();
-
-            const needsVerification = hasMFA && data?.currentLevel !== 'aal2';
+            const needsVerification = hasMFA && user?.aal !== 'aal2';
             if (needsVerification) return { mfa_needs_to_verified: true };
         }
 
@@ -60,7 +69,7 @@ export const useSetSessionData = async (event: H3Event, user: SupaBaseUser | nul
 export const useSessionExists = async (event: H3Event, client: SupabaseClient) => {
 
     const currentSession: any = await serverSupabaseSession(event);
-    const { data, error } = await useGetSession(client, currentSession);
+    const { data, error } = await useGetSession(event, client, currentSession);
 
     return { data: data?.user, error };
 }

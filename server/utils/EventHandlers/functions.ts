@@ -1,7 +1,7 @@
 import type { H3Event } from "h3";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 
-type SupaBaseUser = User & { current_session_id?: string };
+type SupaBaseUser = User & { current_session_id?: string, aal?: string };
 
 export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient }) => any) => {
     return defineEventHandler(async (event: H3Event) => {
@@ -14,9 +14,7 @@ export const defineSupabaseEventHandler = (callback: (event: H3Event, options: {
 
         if (user.factors && user.factors[0].status === 'verified') {
 
-            const { data } = await client.auth.mfa.getAuthenticatorAssuranceLevel()
-
-            if (data && data.currentLevel != 'aal2') {
+            if (user && user.aal != 'aal2') {
                 return useReturnResponse(event, {
                     status: {
                         success: false,

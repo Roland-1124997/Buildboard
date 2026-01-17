@@ -1,59 +1,158 @@
+import { consola } from "consola";
 import { EventEmitter } from 'events';
-import type { ImapFlow } from 'imapflow';
 import { setTimeout as wait } from 'timers/promises';
-
 import { randomUUID } from "crypto";
 
+import type { ImapFlow } from 'imapflow';
 
 let started = false;
 let stopped = false;
+let currentClient: ImapFlow | null = null;
 
 let events = [
     'flags', 'exists', 'expunge'
 ]
 
 const imapEmitter = new EventEmitter();
+const IDLE_TIMEOUT = 25 * 60 * 1000; // 25 minutes (IMAP spec is 29 min, we reconnect earlier)
+const MAX_RETRY_DELAY = 30_000;
 
 export const startImapWatcher = async () => {
-    if (started) return;
+    if (started) {
+        consola.info('[IMAP Watcher] Already started, skipping...');
+        return;
+    }
 
     started = true;
     stopped = false;
 
-    let client: ImapFlow
+    const eventHandlers = new Map<string, (...args: any[]) => void>();
 
-    const connectAndWatch = async () => {
+    const cleanupClient = async (client: ImapFlow | null) => {
+        if (!client) return;
 
-        client = await useConnectClient();
-        await useGetImapMailbox(client, 'INBOX');
-
-        events.forEach((event: any) => {
-            client.on(event, async () => {
-                imapEmitter.emit('new', randomUUID());
+        try {
+        
+            events.forEach((event) => {
+                const handler = eventHandlers.get(event);
+                if (handler) {
+                    client.off(event, handler);
+                }
             });
-        });
+            eventHandlers.clear();
 
-        while (!stopped) await (client as any).idle?.();
-
-        await useCloseImapClient(client);
+            if (client.authenticated) {
+                await client.logout();
+            }
+        } catch (error) {
+            consola.error('[IMAP Watcher] Cleanup error:', error);
+        }
     };
 
+    const connectAndWatch = async () => {
+        let client: ImapFlow | null = null;
+        let idleTimer: NodeJS.Timeout | null = null;
+
+        try {
+        
+            client = await useConnectClient();
+            currentClient = client;
+
+            await useGetImapMailbox(client, 'INBOX');
+            
+            // Setup event listeners
+            events.forEach((event: string) => {
+                const handler = () => {
+                    imapEmitter.emit('new', randomUUID());
+                };
+                eventHandlers.set(event, handler);
+                client!.on(event as any, handler);
+            });
+
+            // Handle connection errors
+            client.on('error', (err: Error) => {
+                consola.error('[IMAP Watcher] Client error:', err);
+                stopped = true; // Trigger reconnect
+            });
+
+            client.on('close', () => {
+                consola.warn('[IMAP Watcher] Connection closed');
+            });
+
+            // IDLE loop with timeout protection
+            while (!stopped && client.authenticated) {
+                try {
+                    // Set timeout to force reconnect before IMAP timeout
+                    const idlePromise = (client as any).idle?.();
+                    const timeoutPromise = wait(IDLE_TIMEOUT).then(() => {
+                        consola.warn('[IMAP Watcher] IDLE timeout reached, reconnecting...');
+                        return 'timeout';
+                    });
+
+                    const result = await Promise.race([idlePromise, timeoutPromise]);
+
+                    if (result === 'timeout') {
+                        break; // Break to reconnect
+                    }
+                } catch (error) {
+                    consola.error('[IMAP Watcher] IDLE error:', error);
+                    break; // Break to reconnect
+                }
+            }
+
+        } catch (error) {
+        } finally {
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+            }
+            await cleanupClient(client);
+            currentClient = null;
+        }
+    };
+
+    // Main reconnection loop
     (async () => {
         let attempt = 0;
         while (!stopped) {
+            try {
+                await connectAndWatch();
 
-            await connectAndWatch();
-            if (stopped) break;
+                if (stopped) {
+                    consola.info('[IMAP Watcher] Stopped, not reconnecting');
+                    break;
+                }
 
-            attempt++;
-            const delay = Math.min(30_000, 1000 * Math.pow(2, Math.min(6, attempt))); // max 30s
-            await wait(delay);
+                // Calculate exponential backoff delay
+                attempt++;
+                const delay = Math.min(MAX_RETRY_DELAY, 1000 * Math.pow(2, Math.min(6, attempt)));
+                consola.info(`[IMAP Watcher] Reconnecting in ${delay / 1000} seconds...`);
+                await wait(delay);
+
+            } catch (error) {
+                consola.error('[IMAP Watcher] Connection error:', error);
+                await wait(5000); // Wait before retry
+            }
         }
+
+        started = false;
+        consola.info('[IMAP Watcher] Exited reconnection loop');
     })();
 };
 
 export const stopImapWatcher = async () => {
+    consola.info('[IMAP Watcher] Stopping watcher...');
     stopped = true;
+
+    // Force close current client if exists
+    if (currentClient) {
+        try {
+            await currentClient.logout();
+        } catch (error) {
+            consola.error('[IMAP Watcher] Error during logout:', error);
+        }
+        currentClient = null;
+    }
+
     started = false;
 };
 
@@ -65,9 +164,9 @@ const getFilteredMessageUids = async (client: ImapFlow, filter: string, search: 
     const unseen_filter = filter === "ongelezen"
     const has_search = !!search;
 
-    
+
     if ((unseen_filter || seen_filter) && has_search) {
-        
+
         const uids = await client.search({
             seen: seen_filter,
             or: [
@@ -91,7 +190,7 @@ const getFilteredMessageUids = async (client: ImapFlow, filter: string, search: 
     }
 
     if (has_search) {
-        const uids = await client.search({ 
+        const uids = await client.search({
             or: [
                 { subject: search },
                 { from: search },

@@ -15,6 +15,7 @@
 
 	const store = useAnalytics();
 	const articles = useArticles();
+	const session = useSessions();
 	const storageStore = useStorage();
 	const notifications = useNotifications();
 
@@ -22,17 +23,23 @@
 	await articles.initialPayload();
 	await storageStore.initialPayload();
 	await notifications.initialPayload();
-	
+
 	const { close } = await notifications.realTime();
 
 	onMounted(async () => {
+		
+		session.setCloseFunction(close);
+
 		if(store.error) await store.refresh()
 		if(articles.error) await articles.refresh()
 		if(storageStore.error) await storageStore.refresh()
 		if(notifications.error) await notifications.refresh()
+
+		onUnmounted(() => close());
+
 	});
 
-	onUnmounted(() => close());
+	
 	
 </script>
 

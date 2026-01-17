@@ -1,8 +1,6 @@
 
 export default defineSupabaseEventHandler(async (event) => {
 
-    await startImapWatcher();
-
     const emitter = getImapEmitter();
 
     const eventStream = createEventStream(event);

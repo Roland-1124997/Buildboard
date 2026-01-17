@@ -1,3 +1,6 @@
+
+let closeSession: Function | null = null;
+
 export const useSessions = defineStore("useSessions", () => {
 
     const Request = useApiHandler<ApiResponse<any>>("/api/auth/logout");
@@ -9,7 +12,10 @@ export const useSessions = defineStore("useSessions", () => {
         error: true,
     });
 
-    
+    const setCloseFunction = (callback: Function) => {
+        closeSession = callback;
+    }
+
     const setSession = (data: any, error: any) => session.value = { data, error };
     const clearSession = () => session.value = { data: null, error: null };
     const getSession = async () => session.value;
@@ -23,6 +29,8 @@ export const useSessions = defineStore("useSessions", () => {
         });
 
         const redirect = data.status.redirect;
+
+        if (closeSession) closeSession();
         clearSession();
 
         addToast({
@@ -34,6 +42,7 @@ export const useSessions = defineStore("useSessions", () => {
     };
 
     return {
+        setCloseFunction,
         setSession,
         getSession,
         clearSession,

@@ -7,7 +7,7 @@ export default defineAuthEventHandler(async (event, { user, client }) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
     const currentSession = await useGetCookies(event);
-    const { error: userError } = await useGetSession(client, currentSession);
+    const { error: userError } = await useGetSession(event, client, currentSession);
 
     if (userError) return useReturnResponse(event, unauthorizedError);
 
