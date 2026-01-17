@@ -3,7 +3,7 @@
 		<div v-for="(item, index) in list" :key="index">
 			<div class="divider" v-if="item.type === 'divider'" :key="`divider${index}`"></div>
 			<TiptapMenuList v-else :action="item.action ?? (() => {})"
-				:icon="item.icon || ''" :title="item.title || ''" :key="index" v-bind="item"
+				:icon="item.icon || ''" :title="item.title || ''" :key="index" v-bind="item" :editable
 			/>
 		</div>
 	</div>
@@ -18,6 +18,8 @@
 	const { editor, hidden } = defineProps<{
 		editor: Editor;
 		hidden?: Array<string>;
+		editable?: boolean;
+		
 	}>();
 
 	const list = ref([
