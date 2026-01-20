@@ -96,15 +96,28 @@
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
 				<h2 class="mb-1 text-xl font-bold">Algemene breakdown</h2>
 				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina.</p>
+				<div :class="displayAll ? '' : 'h-[36rem]  md:h-[12.65rem]'" class="overflow-hidden ">
+					<ChartsCards v-if="store.metrics" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
+				
+					<template v-else>
+						<div aria-hidden class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
+							<div class="h-[12.65rem] bg-gray-200 rounded-lg"></div>
+							<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+							<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+						</div>
+					</template>
+				
+				
+				</div>
+				
+				
+				
+				
 
-				<ChartsCards v-if="store.metrics" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
-				<template v-else>
-					<div aria-hidden class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
-						<div class="h-[12.65rem] bg-gray-200 rounded-lg"></div>
-						<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
-						<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
-					</div>
-				</template>
+				<div class="flex justify-center mt-2 ">
+					<UtilsButtonAction @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true}"/>
+				</div>
+
 			</article>
 		</section>
 	</div>
@@ -140,13 +153,16 @@
 			},
 		],
 	});
+	const store = useAnalytics();
+
+	const displayAll = ref(false);
+	const toggleDisplayAll = () => {
+		displayAll.value = !displayAll.value;
+	};
 
 	const activedDevice = ref("bezoekers");
-
 	const updateActiveDevice = (device: string) => {
 		activedDevice.value = device;
 	};
-
-	const store = useAnalytics();
 
 </script>
