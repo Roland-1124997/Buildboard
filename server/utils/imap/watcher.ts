@@ -82,10 +82,10 @@ export const startImapWatcher = async () => {
             // IDLE loop with timeout protection
             while (!stopped && client.authenticated) {
                 try {
+                    
                     // Set timeout to force reconnect before IMAP timeout
                     const idlePromise = (client as any).idle?.();
                     const timeoutPromise = wait(IDLE_TIMEOUT).then(() => {
-                        consola.warn('[IMAP Watcher] IDLE timeout reached, reconnecting...');
                         return 'timeout';
                     });
 
