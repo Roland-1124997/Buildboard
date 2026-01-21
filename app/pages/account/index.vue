@@ -50,7 +50,11 @@
 										</h3>
 									</div>
 
-									<div class="flex flex-wrap items-center gap-2">
+									<div class="flex flex-wrap items-center gap-2 select-none">
+										<button v-if="!isCurrentSession(session.id)" @click="deleteSession(session.id)" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-red-300" aria-label="Verwijder sessie">
+											<icon name="akar-icons:circle-fill" class="w-2 h-2 mr-1.5" />
+											Sessie verwijderen
+										</button>
 										<span v-if="isCurrentSession(session.id)" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full">
 											<icon name="akar-icons:circle-fill" class="w-2 h-2 mr-1.5" />
 											Huidige sessie
@@ -152,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { on } from 'events';
+	import { on } from "events";
 
 	definePageMeta({
 		middleware: "authorized",
@@ -203,36 +207,68 @@ import { on } from 'events';
 
 	const failure = ref(false);
 
-	
 	const { data: userData } = await store.getSession();
 	user.value = userData.data;
 
+	const { data: sessionData, error, refresh } = await useFetch("/api/auth/account/sessions");
 
-	const { data: sessionData, error } = await useFetch("/api/auth/account/sessions");
-	
 	if (error.value) failure.value = true;
 	else if (sessionData.value) sessions.value = sessionData.value.data;
 
+	watch(sessionData, (newData) => {
+		if (newData) sessions.value = newData.data;
+	});
 
+	const request = useApiHandler<ApiResponse<Session[]>>("/api/auth/account/sessions");
 
 	onMounted(async () => {
-
-		if(failure.value) {
-
-			const request = useApiHandler<ApiResponse<Session[]>>("/api/auth/account/sessions");
+		if (failure.value) {
 			const { data, error } = await request.Get();
 
-			if(!error && data && data.data) {
+			if (!error && data && data.data) {
 				sessions.value = data.data;
 				failure.value = false;
 			}
 		}
-		
 	});
 
 	const current_active_session = computed(() => {
 		return user.value?.session || "";
 	});
+
+	const { addToast } = useToast();
+	const { create, close } = useModal();
+
+	const deleteSession = async (sessionId: string) => {
+
+		create({
+			name: "Sessie Verwijderen",
+			description: "Weet je zeker dat je deze sessie wilt verwijderen? Hierdoor wordt de sessie onmiddellijk afgemeld.",
+			component: "Confirm",
+			props: {
+				message: {
+					confirm: "Ja, verwijder sessie",
+					cancel: "Nee, behoud sessie",
+				},
+				onConfirm: async () => {
+					const { error } = await request.Delete({ extends: `/${sessionId}` });
+
+					close();
+
+					if (!error) await refresh();
+
+					else {
+						await new Promise((resolve) => setTimeout(resolve, 500));
+						addToast({
+							type: "error",
+							message: "Je hebt geen toestemming om deze sessie te verwijderen.",
+						});
+					}
+				},
+				onCancel: () => close(),
+			},
+		});
+	};
 
 	const isCurrentSession = (sessionId: string) => {
 		return sessionId === current_active_session.value;
@@ -283,8 +319,7 @@ import { on } from 'events';
 		}
 	};
 
-	const { create, close } = useModal();
-	const Request = useApiHandler<ApiResponse<{ uri: string, secret: string, qr_code: string }>>("/api/auth/totp");
+	const Request = useApiHandler<ApiResponse<{ uri: string; secret: string; qr_code: string }>>("/api/auth/totp");
 
 	const postTopt = async () => {
 		const { data, error } = await Request.Post();
@@ -302,11 +337,11 @@ import { on } from 'events';
 				},
 				onclose: async () => {
 					const { error } = await Request.Delete();
-					if (!error) await resetFunction()
+					if (!error) await resetFunction();
 					close();
-				}
+				},
 			},
-		})
+		});
 		await resetFunction();
 	};
 
@@ -322,10 +357,10 @@ import { on } from 'events';
 				},
 				onConfirm: async () => {
 					const { error } = await Request.Delete();
-					if (!error) await resetFunction()
+					if (!error) await resetFunction();
 					close();
 				},
-				onCancel: () => close()
+				onCancel: () => close(),
 			},
 		});
 	};
