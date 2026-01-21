@@ -106,18 +106,13 @@
 							<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
 						</div>
 					</template>
-				
-				
 				</div>
-				
-				
-				
-				
-
-				<div class="flex justify-center mt-2 ">
+				<div v-if="displayAll" class="flex justify-center mt-2 ">
+					<UtilsButtonAction @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Beperk weergave', always: true}"/>
+				</div>
+				<div v-else class="flex justify-center mt-2 ">
 					<UtilsButtonAction @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true}"/>
 				</div>
-
 			</article>
 		</section>
 	</div>
