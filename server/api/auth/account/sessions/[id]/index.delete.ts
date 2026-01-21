@@ -11,8 +11,7 @@ export default defineSupabaseEventHandler(async (event, { user, client, server})
     const sessionToDelete = filtered.find((session: any) => session.id === id);
     if (!sessionToDelete) return useReturnResponse(event, unauthorizedError);
     
-    console.log(sessionToDelete)
-    // await useDeleteSession(client, { ...user, current_session_id: id });
+    await useDeleteSession(client, { ...user, current_session_id: id });
 
     return useReturnResponse(event, {
         status: {
