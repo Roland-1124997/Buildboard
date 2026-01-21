@@ -136,6 +136,7 @@
 		Anchors.value = uniqueAnchors;
 	};
 
+	// Debounce for future syncing or autosaving features
 	const { wait } = useDebounce();
 
 	const editor = useEditor({
@@ -148,7 +149,7 @@
 			}),
 		],
 		onCreate: ({ editor }) => populateFields(editor),
-		onUpdate: ({ editor }) => wait(() => populateFields(editor), 1000),
+		onUpdate: ({ editor }) => populateFields(editor),
 	});
 
 	onUnmounted(() => {
@@ -202,28 +203,3 @@
 		};
 	};
 </script>
-
-<!-- <div class="z-10 -mt-2 bg-white">
-							<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
-								<div class="sr-only" aria-hidden>
-									<UtilsInput name="title" :initial-value="title" />
-									<UtilsInput name="description" :initial-value="description" />
-									<UtilsInput name="words" :initial-value="words" type="number" />
-									<UtilsInput name="topics" :initial-value="topics" type="array" />
-								</div>
-
-								<div class="flex items-center gap-2 p-1 py-1 overflow-x-auto text-sm border rounded-lg bg-gray-50">
-									<p class="p-1 px-2 text-blue-600 border border-blue-600 rounded-md w-fit">{{ words }} woorden</p>
-									<p v-if="Object.keys(errors).length" class="p-1 px-2 text-blue-600 border border-blue-600 rounded-md w-fit">{{ Object.keys(errors).length }} fouten</p>
-
-									<div @click.stop="toggleEditable" class="flex items-center justify-center gap-1 p-1 px-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none cursor-pointer hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-										<span class="">{{ !editable ? "Bewerken" : "Voorbeeld" }}</span>
-									</div>
-
-									<button v-if="Object.keys(errors).length < 1" class="flex items-center justify-center gap-1 p-1 px-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-										<icon name="akar-icons:save" class="w-4 h-4" aria-hidden="true" />
-										<span class="">{{ editId ? "Artikel bijwerken" : "Artikel aanmaken" }}</span>
-									</button>
-								</div>
-							</FormBase>
-						</div> -->

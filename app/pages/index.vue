@@ -107,12 +107,11 @@
 						</div>
 					</template>
 				</div>
-				<div v-if="displayAll" class="flex justify-center mt-2 ">
-					<UtilsButtonAction @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Beperk weergave', always: true}"/>
+				<div ref="display_button" class="flex justify-center mt-2 ">
+					<UtilsButtonAction v-if="displayAll" @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Beperk weergave', always: true}"/>
+					<UtilsButtonAction v-else @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true}"/>
 				</div>
-				<div v-else class="flex justify-center mt-2 ">
-					<UtilsButtonAction @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true}"/>
-				</div>
+				
 			</article>
 		</section>
 	</div>
@@ -150,9 +149,13 @@
 	});
 	const store = useAnalytics();
 
+	const button = useTemplateRef('display_button');
 	const displayAll = ref(false);
-	const toggleDisplayAll = () => {
+	const toggleDisplayAll = async () => {
 		displayAll.value = !displayAll.value;
+
+		await nextTick();
+		button.value?.scrollIntoView({ behavior: 'smooth' })
 	};
 
 	const activedDevice = ref("bezoekers");
