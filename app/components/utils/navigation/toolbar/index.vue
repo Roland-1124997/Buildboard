@@ -11,7 +11,7 @@
 
 				<div class="flex items-center w-full gap-[0.35rem]">
 					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="btn.onClick === 'triggerFileSelect' ? triggerFileSelect() : btn.onClick === 'refresh' ? storageStore.refresh() : undefined" />
-					<UtilsButtonFilter v-if="toolbar.filters" :setFilter :filter v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
+					<UtilsButtonFilter v-if="toolbar.filters" v-for="filterItem in toolbar.filters" :activeType :loading :setFilter :filter :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
 				</div>
 			</div>
 
@@ -22,7 +22,7 @@
 				</div>
 
 				<div v-if="toolbar.filters" class="flex items-center justify-between w-full gap-2">
-					<UtilsButtonFilter :setFilter :filter v-for="filterItem in toolbar.filters" :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
+					<UtilsButtonFilter v-for="filterItem in toolbar.filters" :activeType :loading :setFilter :filter :always-show-label="filterItem.alwaysShowLabel" :key="filterItem.type" :type="filterItem.type" :iconName="filterItem.iconName" :label="filterItem.label" :short-label="filterItem.shortLabel" :color="filterItem.color" :large="filterItem.large" />
 				</div>
 			</div>
 		</div>
@@ -38,7 +38,7 @@
 
 	const fallbackFilter = computed(() => toolbar?.fallbackFilter || null);
 
-	const { filter, setFilter } = useFilter({
+	const { activeType, loading, filter, setFilter } = useFilter({
 		enableWatch: true,
 		fallbackFilter: fallbackFilter,
 		callback: async (params) => {

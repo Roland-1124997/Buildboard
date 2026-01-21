@@ -14,6 +14,9 @@ export const useFilter = (options?: {
     ) => Promise<void>,
 }) => {
 
+    const loading = ref(false);
+    const activeType = computed(() => filter.value);
+
     const router = useRouter();
     const route = useRoute();
 
@@ -22,10 +25,18 @@ export const useFilter = (options?: {
     const execute = async (value: string) => {
 
         if (options?.callback) {
+
+            loading.value = true;
+
+            // Simulate minimum loading time for better UX
+            await new Promise(resolve => setTimeout(resolve, 300));
+
             await options.callback({
                 filter: value,
                 page: 1
             });
+
+            loading.value = false;
         }
     }
 
@@ -63,10 +74,9 @@ export const useFilter = (options?: {
         filter.value = value as string;
         query.filter = filter.value;
 
-        
         router.replace({ query });
-        
         if(value === lastEntry?.filter) return
+
         await execute(value as string);
         
     }
@@ -78,6 +88,8 @@ export const useFilter = (options?: {
             clear: (path: string) => clear(path),
         },
         setFilter,
+        loading,
+        activeType,
     };
 };
 
