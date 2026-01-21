@@ -153,8 +153,8 @@
 	const displayAll = ref(false);
 	const toggleDisplayAll = async () => {
 		displayAll.value = !displayAll.value;
-
-		await nextTick();
+		
+		if (displayAll.value) await nextTick();
 		button.value?.scrollIntoView({ behavior: 'smooth' })
 	};
 
