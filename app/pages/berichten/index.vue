@@ -24,7 +24,7 @@
 					</div>
 
 					<div class="flex items-center justify-center w-full gap-2 px-5 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-						<icon v-if="store.loading" name="akar-icons:arrow-cycle" class="w-4 h-4 py-[0.60rem] animate-spin" aria-hidden="true" />
+						<icon v-if="store.loading" name="akar-icons:arrow-cycle" class="w-4 h-4 py-[0.635rem] animate-spin" aria-hidden="true" />
 						<p v-else> {{ store.pagination.page }} </p>
 					</div>
 
