@@ -32,7 +32,7 @@ export const startImapWatcher = async () => {
         if (!client) return;
 
         try {
-        
+
             events.forEach((event) => {
                 const handler = eventHandlers.get(event);
                 if (handler) {
@@ -54,12 +54,12 @@ export const startImapWatcher = async () => {
         let idleTimer: NodeJS.Timeout | null = null;
 
         try {
-        
+
             client = await useConnectClient();
             currentClient = client;
 
             await useGetImapMailbox(client, 'INBOX');
-            
+
             // Setup event listeners
             events.forEach((event: string) => {
                 const handler = () => {
@@ -82,7 +82,7 @@ export const startImapWatcher = async () => {
             // IDLE loop with timeout protection
             while (!stopped && client.authenticated) {
                 try {
-                    
+
                     // Set timeout to force reconnect before IMAP timeout
                     const idlePromise = (client as any).idle?.();
                     const timeoutPromise = wait(IDLE_TIMEOUT).then(() => {
@@ -159,48 +159,24 @@ export const stopImapWatcher = async () => {
 export const getImapEmitter = () => imapEmitter;
 
 const getFilteredMessageUids = async (client: ImapFlow, filter: string, search: string) => {
-
-    const seen_filter = filter === "gelezen"
-    const unseen_filter = filter === "ongelezen"
+    const seen_filter = filter === "gelezen";
+    const unseen_filter = filter === "ongelezen";
     const has_search = !!search;
 
-
-    if ((unseen_filter || seen_filter) && has_search) {
-
-        const uids = await client.search({
-            seen: seen_filter,
-            or: [
-                { subject: search },
-                { from: search },
-                { body: search }
-            ]
-
-        });
-        return uids === false ? [] : uids;
-    }
-
-    if (unseen_filter) {
-        const uids = await client.search({ seen: false });
-        return uids === false ? [] : uids;
-    }
-
-    if (seen_filter) {
-        const uids = await client.search({ seen: true });
-        return uids === false ? [] : uids;
-    }
-
-    if (has_search) {
-        const uids = await client.search({
-            or: [
-                { subject: search },
-                { from: search },
-                { body: search }
-            ]
-        });
-        return uids === false ? [] : uids;
-    }
-
-    return [];
+    
+    if (!has_search && !seen_filter && !unseen_filter) return [];
+    
+    const searchQuery: any = {};
+    if (seen_filter || unseen_filter) searchQuery.seen = seen_filter;
+    
+    if (has_search) searchQuery.or = [
+        { subject: search },
+        { from: search },
+        { body: search }
+    ];
+    
+    const uids = await client.search(searchQuery);
+    return uids === false ? [] : uids;
 };
 
 const buildFetchCriteria = (uids: number[], page: number, limit: number, start: number, end: number) => {
@@ -230,21 +206,20 @@ export const fetchImapMessages = async (client: ImapFlow, options: {
     filter?: string,
     search?: string
 }) => {
-
-    let totalMessages = 0;
-
-    const mailbox = await useGetImapMailbox(client, 'INBOX');
-    const unseen = await unseenMessagesCount(client);
     const filter = options.filter as string;
     const search = options.search as string;
-
-    const seen_filter = filter === "gelezen"
-    const unseen_filter = filter === "ongelezen"
+    const seen_filter = filter === "gelezen";
+    const unseen_filter = filter === "ongelezen";
     const has_search = !!search;
-    const messageUids = await getFilteredMessageUids(client, filter, search);
+    const hasFilterOrSearch = seen_filter || unseen_filter || has_search;
 
-    if (seen_filter || unseen_filter || has_search) totalMessages = messageUids.length;
-    else totalMessages = mailbox.exists || 0;
+    const [mailbox, unseen, messageUids] = await Promise.all([
+        useGetImapMailbox(client, 'INBOX'),
+        unseenMessagesCount(client),
+        hasFilterOrSearch ? getFilteredMessageUids(client, filter, search) : Promise.resolve([])
+    ]);
+
+    const totalMessages = hasFilterOrSearch ? messageUids.length : (mailbox.exists || 0);
 
     const { page, total, start, end } = makeImapPagination(
         totalMessages,

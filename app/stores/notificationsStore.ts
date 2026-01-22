@@ -379,7 +379,7 @@ export const useNotifications = defineStore("useNotifications", () => {
     const navigateToPage = async (page: number) => {
 
         loading.value = true;
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 500));
         await refresh({ page: page });
 
         loading.value = false;
