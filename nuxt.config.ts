@@ -22,6 +22,29 @@ export default defineNuxtConfig({
     "@nuxt/a11y",
   ],
 
+  // Include Supabase dependencies because of issues with supabase
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@supabase/supabase-js',
+        '@supabase/realtime-js',
+        '@supabase/auth-js'
+      ]
+    }
+  },
+
+
+  // Include Supabase dependencies because of issues with supabase
+  nitro: {
+    externals: {
+      inline: [
+        '@supabase/realtime-js',
+        '@supabase/auth-js',
+        'tslib'
+      ]
+    }
+  },
+
   a11y: {
     enabled: false, //disable for mobile testing
     defaultHighlight: false,

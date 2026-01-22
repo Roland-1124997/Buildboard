@@ -273,7 +273,7 @@ export const useNotifications = defineStore("useNotifications", () => {
             },
         });
 
-        const isMobile = window.innerWidth <= 768;
+        const isMobile = (import.meta.client && window.innerWidth <= 768);
 
         if (isMobile) {
             create({

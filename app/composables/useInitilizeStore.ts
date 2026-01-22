@@ -1,6 +1,8 @@
 
 
 export const useInitilizeStore = async (toolbar: ToolBar, params: { filter?: string; page?: number }) => {
+
+    if(import.meta.server) return;
     
     const storeName = toolbar?.store;
 
