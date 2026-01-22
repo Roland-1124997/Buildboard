@@ -1,3 +1,11 @@
+const pagination = ref<{
+    page: number;
+    total: number;
+}>({
+    page: 1,
+    total: 1,
+});
+
 export const useNotifications = defineStore("useNotifications", () => {
 
     const { create, close } = useModal();
@@ -7,14 +15,7 @@ export const useNotifications = defineStore("useNotifications", () => {
     const uri = "/api/notifications";
     const Request = useApiHandler<ApiResponse<any>>(uri);
 
-    const pagination = ref<{
-        page: number;
-        total: number;
-    }>({
-        page: 1,
-        total: 1,
-    });
-
+    const loading = ref<boolean>(false);
     const selected = ref<any | null>(null);
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
@@ -45,7 +46,7 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         const { data, error: Error } = await Request.Get({
             query: { 
-                page: params?.page || useRoute().query.page || 1,
+                page: params?.page || useRoute().query.page || pagination.value.page || 1,
                 filter: params?.filter || useRoute().query.filter || 'all',
                 search: params?.search !== undefined ? params.search : (useRoute().query.search || '')
             },
@@ -73,12 +74,17 @@ export const useNotifications = defineStore("useNotifications", () => {
 
     const initialPayload = async () => {
 
+        const route = useRoute();
+        const activePage = route.path === '/berichten'
+
+        const params = {
+            page: activePage ? (route.query.page || pagination.value.page || 1) : 1,
+            filter: activePage ? (route.query.filter || 'all') : 'all',
+            search: activePage ? (route.query.search || '') : ''
+        }
+
         const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications', {
-            query: { 
-                page: useRoute().query.page || 1,
-                filter: useRoute().query.filter || 'all',
-                search: useRoute().query.search || ''
-            },
+            query: { ...params },
         });
 
         if (!Error.value && data.value) {
@@ -318,13 +324,9 @@ export const useNotifications = defineStore("useNotifications", () => {
     const nextPage = async () => {
         if (pagination.value.page < pagination.value.total) {
 
-            const router = useRouter();
             pagination.value.page += 1;
 
-            await refresh({
-                page: pagination.value.page
-            });
-
+            const router = useRouter();
             router.replace({
                 query: {
                     ...useRoute().query,
@@ -332,26 +334,25 @@ export const useNotifications = defineStore("useNotifications", () => {
                 },
             });
 
-            
+            await navigateToPage(pagination.value.page);
+
         }
     };
 
     const previousPage = async () => {
         if (pagination.value.page > 1) {
+            
             pagination.value.page -= 1;
 
             const router = useRouter();
-
-            await refresh({
-                page: pagination.value.page
-            });
-
             router.replace({    
                 query: {
                     ...useRoute().query,
                     page: pagination.value.page,
                 },
             });
+
+            await navigateToPage(pagination.value.page);
 
         }
     };
@@ -361,11 +362,6 @@ export const useNotifications = defineStore("useNotifications", () => {
             pagination.value.page = page;
 
             const router = useRouter();
-
-            await refresh({
-                page: pagination.value.page
-            });
-
             router.replace({
                 query: {
                     ...useRoute().query,
@@ -373,11 +369,24 @@ export const useNotifications = defineStore("useNotifications", () => {
                 },
             });
 
+            await navigateToPage(pagination.value.page);
+
         }
 
     };
 
+
+    const navigateToPage = async (page: number) => {
+
+        loading.value = true;
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await refresh({ page: page });
+
+        loading.value = false;
+    }
+
     return {
+        loading,
         messages,
         selected,
         unseen,

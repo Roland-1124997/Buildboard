@@ -19,10 +19,12 @@
 	const storageStore = useStorage();
 	const notifications = useNotifications();
 
-	await store.initialPayload();
-	await articles.initialPayload();
-	await storageStore.initialPayload();
-	await notifications.initialPayload();
+	articles.initialPayload();
+	storageStore.initialPayload();
+	notifications.initialPayload();
+
+	store.initialPayload();
+	
 
 	const { close } = await notifications.realTime();
 
@@ -30,16 +32,16 @@
 		
 		session.setCloseFunction(close);
 
-		if(store.error) await store.refresh()
-		if(articles.error) await articles.refresh()
-		if(storageStore.error) await storageStore.refresh()
-		if(notifications.error) await notifications.refresh()
+		if(articles.error) articles.refresh()
+		if(storageStore.error) storageStore.refresh()
+		if(notifications.error) notifications.refresh()
 
-		onUnmounted(() => close());
+		if(store.error) store.refresh()
+		
 
 	});
 
-	
-	
+	onUnmounted(() => close());
+
 </script>
 

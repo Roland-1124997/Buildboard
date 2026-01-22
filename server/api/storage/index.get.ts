@@ -25,9 +25,11 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     if (filter && filter !== 'alles') query.ilike('label', `%${filter}%`);
 
     const { count, data, error } = await query;
+
     if (error) return useReturnResponse(event, internalServerError);
 
     const { data: meta, error: metaError } = await server.storage.from('stores').list()
+    
     if (metaError) return useReturnResponse(event, internalServerError);
 
     for (const file of data) {
@@ -56,8 +58,6 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
             }
         });
     }
-
-    if (error) return useReturnResponse(event, internalServerError);
 
     return useReturnResponse(event, {
         status: {

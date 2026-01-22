@@ -1,7 +1,7 @@
 import type { LocationQueryValue } from 'vue-router';
 
 const filter = ref<string | null>(null);
-const { clear, get, LastEntry, set } = useHistory<{ filter: string | null, search: string | null }>();
+const { clear, get, LastEntry, set } = useHistory<{ filter: string | null, search: string | null, page: number | null }>();
 
 export const useFilter = (options?: {
     enableWatch?: boolean;
@@ -66,8 +66,9 @@ export const useFilter = (options?: {
 
         set(route.path, [
             { 
-                filter: value as string || null,
-                search: route.query.search as string || null
+                filter: value as string || "",
+                search: route.query.search as string || "",
+                page: route.query.page ? parseInt(route.query.page as string) : null,
             }
         ]);
 

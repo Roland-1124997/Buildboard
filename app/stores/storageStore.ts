@@ -33,11 +33,13 @@ export const useStorage = defineStore("useStorage", () => {
         filter?: string; page?: number, search?: string
     }) => {
 
+        const route = useRoute();
+
         const { data, error: Error } = await Request.Get({
             query: {
-                page: params?.page || useRoute().query.page || 1,
-                filter: params?.filter || useRoute().query.filter || 'alles',
-                search: params?.search !== undefined ? params.search : (useRoute().query.search || '')
+                page: params?.page || route.query.page || 1,
+                filter: params?.filter || route.query.filter || 'alles',
+                search: params?.search !== undefined ? params.search : (route.query.search || '')
             },
         });
 
@@ -57,12 +59,17 @@ export const useStorage = defineStore("useStorage", () => {
 
     const initialPayload = async () => {
 
+        const route = useRoute();
+        const activePage = route.path === '/storage'
+
+        const params = {
+            page: activePage ? (route.query.page || 1) : 1,
+            filter: activePage ? (route.query.filter || 'alles') : 'alles',
+            search: activePage ? (route.query.search || '') : ''
+        }
+
         const { data, error: Error } = await useFetch<ApiResponse<Record<string, FileData[]>>>(uri, {
-            query: {
-                page: useRoute().query.page || 1,
-                filter: useRoute().query.filter || 'alles',
-                search: useRoute().query.search || ''
-            },
+            query: { ...params },
         });
 
         if (!Error.value && data.value) {

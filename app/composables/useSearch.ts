@@ -1,16 +1,16 @@
 import type { LocationQueryValue } from 'vue-router';
 
 const search = ref<string | null>(null);
-const { clear, get, LastEntry, set } = useHistory<{ search: string | null, filter: string | null }>();
+const { clear, get, LastEntry, set } = useHistory<{ search: string | null, filter: string | null, page: number | null }>();
 
 export const useSearch = (
     options?: {
         localSearch?: Ref<string | null>;
         callback?: (
-            params: { 
+            params: {
                 filter: string;
                 search: string;
-                page: number 
+                page: number
             }
         ) => Promise<void>,
     }) => {
@@ -19,20 +19,23 @@ export const useSearch = (
     const route = useRoute();
 
     search.value = route.query.search as string || null;
-    if(options?.localSearch) options.localSearch.value = search.value;
+    if (options?.localSearch) options.localSearch.value = search.value;
 
     const execute = async (value: string) => {
 
         if (options?.callback) {
+
+            await new Promise(resolve => setTimeout(resolve, 300));
+
             await options.callback({
                 filter: route.query.filter as string || 'alles',
                 search: value,
-                page: 1
+                page: route.query.page ? parseInt(route.query.page as string) : 1,
             });
         }
     }
 
-    watch( () => route.path, async () => {
+    watch(() => route.path, async () => {
         const lastEntry = LastEntry(route.path);
         search.value = lastEntry?.search || null;
         if (options?.localSearch) options.localSearch.value = search.value;
@@ -42,31 +45,33 @@ export const useSearch = (
 
         const query = { ...route.query };
         const lastEntry = LastEntry(route.path);
-        
+
         set(route.path, [
-            { 
-                search: value as string || null,
-                filter: route.query.filter as string || null
+            {
+                search: value as string || "",
+                filter: route.query.filter as string || "",
+                page: route.query.page ? parseInt(route.query.page as string) : null,
             }
         ]);
 
         if (!value) {
-            search.value = null;
+            search.value = '';
             delete query.search;
 
             router.replace({ query });
 
-            if(value === lastEntry?.search) return
+            if (value === lastEntry?.search) return
             await execute('');
         }
 
         else {
             search.value = value as string;
             query.search = search.value;
+            delete query.page;
 
             router.replace({ query });
-            
-            if(value === lastEntry?.search) return
+
+            if (value === lastEntry?.search) return
             await execute(value as string);
         }
     }
