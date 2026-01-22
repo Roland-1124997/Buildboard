@@ -1,34 +1,34 @@
 
 import type { H3Event } from "h3";
-import { SupabaseClient, Session, AuthError, User } from "@supabase/supabase-js";
+import { SupabaseClient, Session, User } from "@supabase/supabase-js";
 
 type SupaBaseUser = User & { current_session_id?: string, aal?: string };
 
 export const useRefreshSession = async (client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
-    
-    if(!currentSession?.refresh_token) return {
+
+    if (!currentSession?.refresh_token) return {
         data: { user: null, session: null },
-        error: new AuthError('The user does not have a refresh token',)
+        error: { message: 'The user does not have a refresh token', status: 401 }
     };
 
     return await client.auth.refreshSession(currentSession);
 
 }
-export const useDeleteSession = async (client: SupabaseClient, user: SupaBaseUser) => await client.rpc("delete_sessions_by_id", { p_session_id: user.current_session_id})
+export const useDeleteSession = async (client: SupabaseClient, user: SupaBaseUser) => await client.rpc("delete_sessions_by_id", { p_session_id: user.current_session_id })
 
 export const useGetSession = async (event: H3Event, client: SupabaseClient, currentSession: Session | Omit<Session, "user">) => {
-    
-    if(!currentSession?.access_token) return {
-        data: { user: null }, 
-        error: new AuthError('The user does not have an active session',)
+
+    if (!currentSession?.access_token) return {
+        data: { user: null },
+        error: { message: 'The user does not have an active session', status: 401 }
     };
 
     const sesson_id = extractSessionId(currentSession)
 
-    const { data, error } =  await client.auth.getUser(currentSession?.access_token);
+    const { data, error } = await client.auth.getUser(currentSession?.access_token);
     const user = await serverSupabaseUser(event)
 
-    return { 
+    return {
         data: {
             user: {
                 ...data.user,
