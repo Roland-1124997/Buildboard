@@ -60,7 +60,7 @@ export const useStorage = defineStore("useStorage", () => {
     const initialPayload = async () => {
 
         const route = useRoute();
-        const activePage = route.path === '/storage'
+        const activePage = route.path === '/opslagruimte'
 
         const params = {
             page: activePage ? (route.query.page || 1) : 1,

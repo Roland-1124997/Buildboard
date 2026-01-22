@@ -38,9 +38,16 @@ export const useAnalytics = defineStore("useAnalytics", () => {
     const initialPayload = async () => {
 
         loading.value = true;
-        
+
+        const route = useRoute();
+        const activePage = route.path === '/'
+
+        const params = {
+            filter: activePage ? (route.query.filter || 'vandaag') : 'vandaag',
+        }
+
         const { data, error: Error } = await useFetch<ApiResponse<any>>(uri, {
-            query: { filter: useRoute().query.filter || 'vandaag' }
+            query: { ...params },
         });
 
         if (!Error.value && data.value) {
