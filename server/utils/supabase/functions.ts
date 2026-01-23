@@ -1,10 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
 
 export { serverSupabaseClient, serverSupabaseUser, serverSupabaseSession, serverSupabaseServiceRole } from '#supabase/server'
 
-let server: SupabaseClient | null = null;
-let client: SupabaseClient | null = null;
+let server: SupabaseClient<Database> | null = null;
+let client: SupabaseClient<Database> | null = null;
 
 export const useSupaBaseServer = () => {
     if (!server) {

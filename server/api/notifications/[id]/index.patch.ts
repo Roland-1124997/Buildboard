@@ -1,12 +1,13 @@
 
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
+    const id = getRouterParam(event, 'id');
+    if (!id) return useReturnResponse(event, badRequestError);
+
     const imap_client = await useConnectClient();
     await useGetImapMailbox(imap_client, 'INBOX');
 
-    const id = getRouterParam(event, 'id');
     const action = getQuery(event).action;
-
     const search = { uid: id };
     const seen = [
         '\\Seen',
@@ -19,7 +20,6 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     await useCloseImapClient(imap_client);
 
     if (error) return useReturnResponse(event, internalServerError);
-   
 
     return useReturnResponse(event, {
         status: {

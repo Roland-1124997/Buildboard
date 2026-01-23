@@ -4,8 +4,9 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
     if (error) return useReturnResponse(event, internalServerError);
 
-    articles?.forEach(article => {
-        const { filtered } = useFilterParagraphs(article.content.content, 'image')
+    articles?.forEach((article: typeof articles[0] & { thumbnail_url?: string, content: any }) => {
+        const content = article.content.content
+        const { filtered } = useFilterParagraphs(content, 'image')
         article.thumbnail_url = filtered.value[0]?.attrs?.src || null;
     });
 

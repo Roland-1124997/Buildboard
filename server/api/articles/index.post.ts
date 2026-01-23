@@ -19,7 +19,7 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
         anchors: request.anchors,
         words: request.words,
         topics: request.topics,
-        read_time: Math.ceil(request.words / 200),
+        read_time: `${Math.ceil(request.words / 200)}`,
     }).select().single();
 
     if (error) return useReturnResponse(event, internalServerError);

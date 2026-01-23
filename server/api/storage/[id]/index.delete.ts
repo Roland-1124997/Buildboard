@@ -2,6 +2,7 @@
 export default defineMultiFactorVerificationEventHandler(async (event, { server }) => {
 
     const id = getRouterParams(event).id;
+    if (!id) return useReturnResponse(event, badRequestError);
 
     const { data, error } = await server.from('attachments').select('*').eq('id', id).single();
     if (error || !data) return useReturnResponse(event, internalServerError);

@@ -48,6 +48,7 @@ export type Database = {
                     id: string
                     read_time: string | null
                     title: string | null
+                    topics: Json | null
                     updated_at: string | null
                     words: number | null
                 }
@@ -59,6 +60,7 @@ export type Database = {
                     id?: string
                     read_time?: string | null
                     title?: string | null
+                    topics?: Json | null
                     updated_at?: string | null
                     words?: number | null
                 }
@@ -70,6 +72,7 @@ export type Database = {
                     id?: string
                     read_time?: string | null
                     title?: string | null
+                    topics?: Json | null
                     updated_at?: string | null
                     words?: number | null
                 }
@@ -79,6 +82,7 @@ export type Database = {
                 Row: {
                     article_id: string | null
                     id: string
+                    label: string | null
                     name: string
                     published: boolean | null
                     updated_at: string
@@ -86,6 +90,7 @@ export type Database = {
                 Insert: {
                     article_id?: string | null
                     id?: string
+                    label?: string | null
                     name: string
                     published?: boolean | null
                     updated_at?: string
@@ -93,6 +98,7 @@ export type Database = {
                 Update: {
                     article_id?: string | null
                     id?: string
+                    label?: string | null
                     name?: string
                     published?: boolean | null
                     updated_at?: string
@@ -107,50 +113,14 @@ export type Database = {
                     },
                 ]
             }
-            berichten: {
-                Row: {
-                    date: string | null
-                    flags: string[] | null
-                    from: Json | null
-                    html: string | null
-                    id: string
-                    origin: string | null
-                    preview: string | null
-                    subject: string | null
-                    uid: string | null
-                }
-                Insert: {
-                    date?: string | null
-                    flags?: string[] | null
-                    from?: Json | null
-                    html?: string | null
-                    id?: string
-                    origin?: string | null
-                    preview?: string | null
-                    subject?: string | null
-                    uid?: string | null
-                }
-                Update: {
-                    date?: string | null
-                    flags?: string[] | null
-                    from?: Json | null
-                    html?: string | null
-                    id?: string
-                    origin?: string | null
-                    preview?: string | null
-                    subject?: string | null
-                    uid?: string | null
-                }
-                Relationships: []
-            }
             github_connections: {
                 Row: {
                     created_at: string
                     expires_at: string | null
                     id: number
-                    installation_id: string | null
-                    token: string | null
-                    user_id: string | null
+                    installation_id: string
+                    token: string
+                    user_id: string
                 }
                 Insert: {
                     created_at?: string
@@ -167,6 +137,39 @@ export type Database = {
                     installation_id?: string | null
                     token?: string | null
                     user_id?: string | null
+                }
+                Relationships: []
+            }
+            navigator_sessions: {
+                Row: {
+                    city: string | null
+                    continent_code: string | null
+                    country_code: string | null
+                    id: string
+                    ip: string | null
+                    region_code: string | null
+                    screen: string | null
+                    timezone: string | null
+                }
+                Insert: {
+                    city?: string | null
+                    continent_code?: string | null
+                    country_code?: string | null
+                    id: string
+                    ip?: string | null
+                    region_code?: string | null
+                    screen?: string | null
+                    timezone?: string | null
+                }
+                Update: {
+                    city?: string | null
+                    continent_code?: string | null
+                    country_code?: string | null
+                    id?: string
+                    ip?: string | null
+                    region_code?: string | null
+                    screen?: string | null
+                    timezone?: string | null
                 }
                 Relationships: []
             }
@@ -175,7 +178,37 @@ export type Database = {
             [_ in never]: never
         }
         Functions: {
-            [_ in never]: never
+            delete_sessions_by_id: {
+                Args: { p_session_id: string }
+                Returns: undefined
+            }
+            get_sessions_by_user: {
+                Args: { p_user_uuid: string }
+                Returns: {
+                    aal: string
+                    auth_ip: string
+                    city: string
+                    continent_code: string
+                    country_code: string
+                    created_at: string
+                    factor_id: string
+                    id: string
+                    navigator_ip: string
+                    not_after: string
+                    oauth_client_id: string
+                    refresh_token_counter: number
+                    refresh_token_hmac_key: string
+                    refreshed_at: string
+                    region_code: string
+                    scopes: string
+                    screen: string
+                    tag: string
+                    timezone: string
+                    updated_at: string
+                    user_agent: string
+                    user_id: string
+                }[]
+            }
         }
         Enums: {
             [_ in never]: never

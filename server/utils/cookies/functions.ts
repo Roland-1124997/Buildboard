@@ -1,6 +1,3 @@
-import { H3Event } from "h3";
-import type { Session } from "@supabase/supabase-js";
-
 export const useGetCookies = async (event: H3Event) => {
 
     const refreshToken = getCookie(event, "refresh-token");
@@ -27,8 +24,6 @@ export const useSetCookies = (event: H3Event, session: Omit<Session, "user"> | n
 }
 
 export const useDeleteCookies = async (event: H3Event) => {
-
     deleteCookie(event, "refresh-token");
     deleteCookie(event, "access-token");
-
 }

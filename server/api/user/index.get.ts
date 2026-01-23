@@ -1,6 +1,3 @@
-import { User } from "@supabase/supabase-js";
-type SupaBaseUser = User & { current_session_id?: string, aal?: string };
-
 export default defineEventHandler(async (event) => {
 
     const client = await serverSupabaseClient(event);
@@ -20,7 +17,7 @@ export default defineEventHandler(async (event) => {
                 message: "Ok",
                 code: 200
             },
-            data: await useSetSessionData(event, data.user)
+            data: await useSetSessionData(event, data.user as SupaBaseUser)
         });
     }
 

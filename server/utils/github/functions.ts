@@ -3,8 +3,6 @@ import { createAppAuth } from "@octokit/auth-app";
 import type { Endpoints } from "@octokit/types";
 import crypto from 'crypto';
 
-import type { User, SupabaseClient } from "@supabase/supabase-js";
-
 const config = useRuntimeConfig()
 
 export const useOctokit = async (InstallID: string) => {
@@ -117,7 +115,7 @@ export const useDecryptValue = (encryptedValue: string) => {
 };
 
 export const useSaveInstall = async (
-    server: SupabaseClient, action: "Create" | "Update", user: User, OctoKitData: any) => {
+    server: SupabaseClient<Database>, action: "Create" | "Update", user: User, OctoKitData: any) => {
     const { token, instalId, createdAt, expiresAt } = OctoKitData
 
     if (action === "Create") {

@@ -25,7 +25,7 @@ export default defineAuthEventHandler(async (event, { user, client }) => {
     const { data: factors, error: factorError } = await client.auth.mfa.listFactors()
     if (factorError) return useReturnResponse(event, internalServerError)
 
-    const { data, error } = await client.auth.mfa.challengeAndVerify({
+    const { error } = await client.auth.mfa.challengeAndVerify({
         factorId: factors.all[0].id,
         code: request.code
     })
@@ -40,6 +40,7 @@ export default defineAuthEventHandler(async (event, { user, client }) => {
         }
     });
 
+    await useDeleteCachedUser(user.current_session_id);
     const isSetup = getQuery(event).context === "setup";
 
     return useReturnResponse(event, {

@@ -4,7 +4,6 @@ import type { AuthError } from '@supabase/auth-js';
 import type { Store } from "pinia";
 import type { FormActions } from 'vee-validate';
 
-export type { SupabaseClient } from '@supabase/supabase-js';
 export type { SubmissionHandler } from 'vee-validate';
 export type { Editor } from "@tiptap/core";
 

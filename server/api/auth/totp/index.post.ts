@@ -1,4 +1,4 @@
-export default defineSupabaseEventHandler(async (event, { client }) => {
+export default defineSupabaseEventHandler(async (event, { user, client }) => {
 
     const { data: factors, error } = await client.auth.mfa.enroll({
         factorType: 'totp',
@@ -6,6 +6,7 @@ export default defineSupabaseEventHandler(async (event, { client }) => {
     })
 
     if (error) return useReturnResponse(event, internalServerError)
+    await useDeleteCachedUser(user.current_session_id);
     
     return {
         status: {

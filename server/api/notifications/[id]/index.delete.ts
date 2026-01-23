@@ -1,11 +1,12 @@
 
 export default defineMultiFactorVerificationEventHandler(async (event) => {
 
+    const id = getRouterParam(event, 'id');
+    if (!id) return useReturnResponse(event, badRequestError);
+
     const imap_client = await useConnectClient();
     await useGetImapMailbox(imap_client, 'INBOX');
     
-    const id = getRouterParam(event, 'id');
-
     const search = { uid: id };
 
     const { error: messageError } = await useDeleteMessage(imap_client, search);

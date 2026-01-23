@@ -1,13 +1,9 @@
-import type { H3Event } from "h3";
-import { SupabaseClient, User } from "@supabase/supabase-js";
 
-type SupaBaseUser = User & { current_session_id?: string, aal?: string };
-
-const defineBaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser | null, server: SupabaseClient }) => any) => {
+const defineBaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser | null, server: SupabaseClient<Database> }) => any) => {
     return defineEventHandler(async (event: H3Event) => {
 
-        const client: SupabaseClient = await serverSupabaseClient(event);
-        const server: SupabaseClient = serverSupabaseServiceRole(event)
+        const client = await serverSupabaseClient(event);
+        const server = serverSupabaseServiceRole(event)
 
         const { data: user } = await useSessionExists(event, client);
 
@@ -15,7 +11,7 @@ const defineBaseEventHandler = (callback: (event: H3Event, options: { client: Su
     })
 };
 
-export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient, IsFactorVerified: boolean }) => any) => {
+export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database>, IsFactorVerified: boolean }) => any) => {
     return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
 
         if (!user) return useReturnResponse(event, unauthorizedError)
@@ -35,7 +31,7 @@ export const defineSupabaseEventHandler = (callback: (event: H3Event, options: {
     });
 }
 
-export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient }) => any) => {
+export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database> }) => any) => {
     return defineSupabaseEventHandler(async (event: H3Event, { user, client, server, IsFactorVerified }) => {
 
         if (IsFactorVerified && user.aal == 'aal2') {
@@ -66,13 +62,13 @@ export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Ev
     })
 }
 
-export const defineAuthEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient, user: SupaBaseUser, server: SupabaseClient }) => any) => {
+export const defineAuthEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database> }) => any) => {
     return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
         return callback(event, { client, user: user as SupaBaseUser, server })
     })
 }
 
-export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { user: SupaBaseUser | null, server: SupabaseClient }) => any) => {
+export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { user: SupaBaseUser | null, server: SupabaseClient<Database> }) => any) => {
     return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
         return callback(event, { user: user as SupaBaseUser, server })
     })

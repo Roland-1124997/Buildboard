@@ -2,6 +2,8 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const id = getRouterParam(event, "id");
 
+    if (!id) return useReturnResponse(event, badRequestError);
+
     const request = await readBody(event);
 
     const { error: zodError } = await schema.article.backend.safeParseAsync(request);
@@ -21,7 +23,7 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
         anchors: request.anchors,
         words: request.words,
         topics: request.topics,
-        read_time: Math.ceil(request.words / 200),
+        read_time: `${Math.ceil(request.words / 200)}`,
         updated_at: new Date().toISOString(),
     }).eq('id', id);
 

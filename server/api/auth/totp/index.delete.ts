@@ -8,6 +8,7 @@ export default defineMultiFactorVerificationEventHandler(async (event, { user, c
     })
 
     if (error) return useReturnResponse(event, internalServerError)
+    await useDeleteCachedUser(user.current_session_id);
 
     return useReturnResponse(event, {
         status: {

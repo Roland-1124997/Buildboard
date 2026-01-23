@@ -1,10 +1,10 @@
 import { computed } from "vue";
 
-export const useFilterParagraphs = (initialNodes: any[], wanted_node_type: string) => {
+export const useFilterParagraphs = (initialNodes: Record<string, any>, wanted_node_type: string) => {
 
     const filtered = computed(() => {
 
-        return initialNodes.filter(node => {
+        return initialNodes.filter((node: { type: string, content: any[]}) => {
 
             if (wanted_node_type === 'paragraph') {
                 const isParagraph = node.type === 'paragraph';

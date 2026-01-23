@@ -1,7 +1,7 @@
 <template>
 	<div class="w-full">
 		<FormBase :schema="validationSchema" :request v-slot="{ loading, errors }">
-			<div v-if="verified" class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+			<div v-if="verified" class="p-4 mb-8 border border-gray-200 rounded-lg bg-gray-50">
 				<h2 class="mb-2 text-sm font-semibold text-gray-700">Bevestig deze actie</h2>
 				<p class="mb-3 text-xs text-gray-600">Voer de 6-cijferige code in van je authenticator-app om deze actie te bevestigen.</p>
 
@@ -10,7 +10,7 @@
 				</div>
 			</div>
 
-			<div class="flex flex-col gap-3 mt-9 sm:flex-row">
+			<div class="flex flex-col gap-3 sm:flex-row">
 				<button type="submit" :disabled="loading" class="flex items-center justify-center flex-1 gap-2 px-5 py-3 text-sm font-medium text-white transition-colors duration-150 bg-red-600 border border-red-600 rounded-lg outline-none md:text-base focus:outline-none focus:ring-2 focus:ring-red-400 hover:bg-red-700" aria-label="Bevestigen">
 					<icon name="akar-icons:check" class="w-4 h-4" aria-hidden="true" />
 					<span> {{ props.message.confirm }} </span>
