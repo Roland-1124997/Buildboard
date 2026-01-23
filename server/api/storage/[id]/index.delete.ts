@@ -1,5 +1,5 @@
 
-export default defineSupabaseEventHandler(async (event, { server }) => {
+export default defineMultiFactorVerificationEventHandler(async (event, { server }) => {
 
     const id = getRouterParams(event).id;
 

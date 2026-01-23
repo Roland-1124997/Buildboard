@@ -49,7 +49,7 @@
 
 	const onclose = (props: Record<string, any> | undefined) => {
 		if(content.value?.hideCloseButton) return
-		if (props && props.onclose) props.onclose();
+		if (props && props.onClose) props.onClose();
 		else close();
 	};
 

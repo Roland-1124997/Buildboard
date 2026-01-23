@@ -1,7 +1,6 @@
-export default defineSupabaseEventHandler(async (event, { server }) => {
+export default defineMultiFactorVerificationEventHandler(async (event, { server }) => {
 
     const id = getRouterParam(event, "id")
-
 
     const { data: attachments, error: fetchError } = await server.from('attachments').select('name').eq('article_id', id)
     const { error } = await server.from('artikelen').delete().eq('id', id);

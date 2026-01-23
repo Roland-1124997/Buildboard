@@ -1,4 +1,4 @@
-export default defineSupabaseEventHandler(async (event, { user, client}) => {
+export default defineMultiFactorVerificationEventHandler(async (event, { user, client}) => {
 
     const { data: factors, error: factorError } = await client.auth.mfa.listFactors()
     if ((factors && !factors.all[0]) || factorError) return useReturnResponse(event, internalServerError)

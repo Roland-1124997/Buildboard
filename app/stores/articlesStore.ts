@@ -83,40 +83,26 @@ export const useArticles = defineStore("useArticles", () => {
 
         const content = articles.value.find((art: any) => art.id === id);
 
-        const onConfirm = async () => {
-            const { error } = await Request.Delete({ extends: `/${id}` });
-
+        const onComplete = async () => {
             close();
-
-            if (error) return addToast({
-                    message: "Er is een fout opgetreden bij het verwijderen van het artikel",
-                    type: "error",
-                });
-
             await refresh();
+        }
 
-            addToast({
-                message: "Artikel succesvol verwijderd",
-                type: "success",
-            });
-        };
-
-        const onCancel = () => {
-            close();
-            addToast({
-                message: "Verwijderen geannuleerd",
-                type: "info",
-            });
-        };
+        const onCancel = () => close();
 
         create({
             name: `Verwijder artikel ${content.title}`,
             description: "Weet je zeker dat je dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
             component: "Confirm",
             props: { 
-                onConfirm, 
                 onCancel,
+                onComplete,
+                request: {
+                    url: `/api/articles/${id}`,
+                    method: "DELETE",
+                },
                 message: {
+                    success: "Artikel succesvol verwijderd.",
                     confirm: "Ja, verwijder het artikel",
                     cancel: "Nee, behoud het artikel",
                 }

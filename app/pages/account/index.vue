@@ -236,36 +236,32 @@
 		return user.value?.session || "";
 	});
 
-	const { addToast } = useToast();
 	const { create, close } = useModal();
-
 	const deleteSession = async (sessionId: string) => {
 
+		const onComplete = async () => {
+            close(); 
+            await refresh();
+        }
+
+		const onCancel = () => close(); 
+			
 		create({
 			name: "Sessie Verwijderen",
 			description: "Weet je zeker dat je deze sessie wilt verwijderen? Hierdoor wordt de sessie onmiddellijk afgemeld.",
 			component: "Confirm",
 			props: {
-				message: {
-					confirm: "Ja, verwijder sessie",
-					cancel: "Nee, behoud sessie",
-				},
-				onConfirm: async () => {
-					const { error } = await request.Delete({ extends: `/${sessionId}` });
-
-					close();
-
-					if (!error) await refresh();
-
-					else {
-						await new Promise((resolve) => setTimeout(resolve, 500));
-						addToast({
-							type: "error",
-							message: "Je hebt geen toestemming om deze sessie te verwijderen.",
-						});
-					}
-				},
-				onCancel: () => close(),
+				onCancel,
+                onComplete,
+                request: {
+                    url: `/api/auth/account/sessions/${sessionId}`,
+                    method: "DELETE",
+                },
+                message: {
+                    success: "Sessie succesvol verwijderd.",
+                    confirm: "Ja, verwijder sessie",
+                    cancel: "Nee, behoud sessie",
+                }
 			},
 		});
 	};
@@ -319,11 +315,23 @@
 		}
 	};
 
-	const Request = useApiHandler<ApiResponse<{ uri: string; secret: string; qr_code: string }>>("/api/auth/totp");
-
+	
 	const postTopt = async () => {
+
+		const Request = useApiHandler<ApiResponse<{ uri: string; secret: string; qr_code: string }>>("/api/auth/totp");
 		const { data, error } = await Request.Post();
 		if (error) return;
+		
+		const onComplete = async () => {
+			close();
+			await resetFunction();
+		}
+
+		const onClose = async () => {
+			const { error } = await Request.Delete();
+			if (!error) await resetFunction();
+			close();
+		}
 
 		create({
 			name: "Tweefactorauthenticatie Instellen",
@@ -331,36 +339,38 @@
 			component: "Totp",
 			props: {
 				content: data?.data,
-				onComplete: async () => {
-					await resetFunction();
-					close();
-				},
-				onclose: async () => {
-					const { error } = await Request.Delete();
-					if (!error) await resetFunction();
-					close();
-				},
+				onComplete,
+				onClose,
 			},
 		});
 		await resetFunction();
 	};
 
 	const deleteTotp = async () => {
+		
+		const onComplete = async () => {
+			close(); 
+			await resetFunction();
+		}
+
+		const onCancel = () => close();
+		
 		create({
 			name: "Tweefactorauthenticatie Uitschakelen",
 			description: "Weet je zeker dat je tweefactorauthenticatie wilt uitschakelen? Dit vermindert de beveiliging van je account.",
 			component: "Confirm",
 			props: {
+				onCancel,
+				onComplete,
+				request: {
+					url: `/api/auth/totp`,
+					method: "DELETE",
+				},
 				message: {
+					success: "Tweefactorauthenticatie succesvol uitgeschakeld.",
 					confirm: "Ja, schakel uit",
 					cancel: "Nee, behoud",
-				},
-				onConfirm: async () => {
-					const { error } = await Request.Delete();
-					if (!error) await resetFunction();
-					close();
-				},
-				onCancel: () => close(),
+				}
 			},
 		});
 	};

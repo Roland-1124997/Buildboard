@@ -200,45 +200,26 @@ export const useNotifications = defineStore("useNotifications", () => {
 
     const deleteMessage = async (message: any) => {
 
-        const onConfirm = async () => {
-
-            const { error } = await Request.Delete({
-                extends: `/${message.uid}`,
-            });
-
-            close();
-
-            if (error) return addToast({
-                type: "error",
-                message: `Fout bij het verwijderen van het bericht`,
-            });
-
-            addToast({
-                type: "success",
-                message: "Bericht succesvol verwijderd",
-            });
-
+        const onComplete = async () => {
+            close(); 
             await refresh({ page: 1 });
+        }
 
-        };
-
-        const onCancel = () => {
-
-            close();
-            addToast({
-                type: "info",
-                message: "Verwijderen geannuleerd",
-            });
-        };
+        const onCancel = () => close();
 
         create({
             name: message.subject || "Geen onderwerp",
             description: "Weet je zeker dat je dit bericht wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
             props: { 
-                onConfirm, 
                 onCancel,
+                onComplete,
+                request: {
+                    url: `/api/notifications/${message.uid}`,
+                    method: "DELETE",
+                },
                 message: {
+                    success: "Bericht succesvol verwijderd",
                     confirm: "Ja, verwijder het bericht",
                     cancel: "Nee, behoud het bericht",
                 },

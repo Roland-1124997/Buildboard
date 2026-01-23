@@ -1,4 +1,4 @@
-export default defineSupabaseEventHandler(async (event, { user, client, server}) => {
+export default defineMultiFactorVerificationEventHandler(async (event, { user, client, server}) => {
 
     const { data, error } = await server.rpc("get_sessions_by_user", { p_user_uuid: user?.id });
     if (error) return useReturnResponse(event, internalServerError);

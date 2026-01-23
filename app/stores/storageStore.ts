@@ -138,46 +138,29 @@ export const useStorage = defineStore("useStorage", () => {
 
     const remove = async (file: FileData) => {
 
-        const onConfirm = async () => {
-
-            const { error } = await Request.Delete({ extends: `/${file.id}` });
-
-            close();
-
-            if (error) return addToast({
-                message: "Er is een fout opgetreden tijdens het verwijderen van het bestand.",
-                type: "error",
-                duration: 5000,
-            });
-
-            addToast({
-                message: "Bestand succesvol verwijderd.",
-                type: "success",
-            });
-
+        const onComplete = async () => {
+            close(); 
             await refresh();
-        };
+        }
 
-        const onCancel = () => {
-
-            close();
-            addToast({
-                message: "Bestand verwijderen geannuleerd.",
-                type: "info",
-            });
-        };
-
+        const onCancel = () => close();
+        
         create({
             name: file.name,
             description: "Weet je zeker dat je dit bestand wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
             props: { 
-                onConfirm, 
                 onCancel, 
+                onComplete,
+                request: {
+                    url: `/api/storage/${file.id}`,
+                    method: "DELETE",
+                },
                 message: {
+                    success: "Bestand succesvol verwijderd.",
                     confirm: "Ja, verwijder het bestand",
                     cancel: "Nee, behoud het bestand",
-                }
+                },
             },
         });
     };

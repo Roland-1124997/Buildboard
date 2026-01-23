@@ -25,7 +25,7 @@
 
 					<div class="flex items-center justify-center w-full gap-2 px-5 py-2 text-sm font-medium text-white transition-colors duration-200 bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
 						<icon v-if="store.loading" name="akar-icons:arrow-cycle" class="w-4 h-4 py-[0.635rem] animate-spin" aria-hidden="true" />
-						<p v-else> {{ store.pagination.page }} </p>
+						<p v-else>{{ store.pagination.page }}</p>
 					</div>
 
 					<div v-if="store.pagination.page + 1 <= store.pagination.total" class="flex items-center w-full gap-2">
@@ -68,25 +68,19 @@
 										</button>
 
 										<div v-if="inbox.showDropdown" class="absolute right-0 z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-52">
-											<button
-												v-if="inbox.flags.includes('\\Seen')"
+											<button v-if="inbox.flags.includes('\\Seen')"
 												@click="
 													store.markAsUnseen(inbox);
 													inbox.showDropdown = false;
-												"
-												class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-											>
+												" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
 												<icon name="akar-icons:envelope" size="1.25rem" aria-hidden="true" />
 												<span>Markeer als ongelezen</span>
 											</button>
-											<button
-												v-else
+											<button v-else
 												@click="
 													store.markAsSeen(inbox);
 													inbox.showDropdown = false;
-												"
-												class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-											>
+												" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
 												<icon name="akar-icons:open-envelope" size="1.25rem" aria-hidden="true" />
 												<span>Markeer als gelezen</span>
 											</button>
@@ -94,9 +88,7 @@
 												@click="
 													store.deleteMessage(inbox);
 													inbox.showDropdown = false;
-												"
-												class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-red-600 transition-colors border-t border-gray-200 hover:bg-red-50 focus:outline-none focus:bg-red-50"
-											>
+												" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-red-600 transition-colors border-t border-gray-200 hover:bg-red-50 focus:outline-none focus:bg-red-50">
 												<icon name="akar-icons:trash-can" size="1.25rem" aria-hidden="true" />
 												<span>Prullenbak</span>
 											</button>

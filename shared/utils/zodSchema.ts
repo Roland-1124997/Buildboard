@@ -74,6 +74,7 @@ const mulfiFactorField = {
         .length(6, { message: "De code moet uit 6 cijfers bestaan" }),
 }
 
+const optionalString = zod.string().optional();
 
 const navigatorField = {
     ip: zod.string(),
@@ -101,6 +102,11 @@ export const schema = {
     totp: {
         backend: zod.object(mulfiFactorField),
         frontend: toTypedSchema(zod.object(mulfiFactorField)),
+        optional: {
+            frontend: toTypedSchema(zod.object({
+                code: optionalString,
+            })),
+        }
     },
 
     navigator: {
@@ -112,4 +118,5 @@ export const schema = {
 
 
 export type SchemaType = typeof schema[keyof typeof schema]['frontend'];
+export type BackendSchemaType = typeof schema[keyof typeof schema]['backend'];
 
