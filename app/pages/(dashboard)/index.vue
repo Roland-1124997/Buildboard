@@ -118,9 +118,6 @@
 </template>
 
 <script setup lang="ts">
-	definePageMeta({
-		middleware: "authorized",
-	});
 
 	useSeoMeta({
 		title: "Analytics Dashboard",

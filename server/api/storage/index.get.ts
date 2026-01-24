@@ -34,14 +34,19 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
     for (const file of data) {
 
-        const { data: title } = await server.from('artikelen').select('title').eq('id', file.article_id).single();
+        let title = null;
+
+        if (file.article_id) {
+            const { data } = await server.from('artikelen').select('title').eq('id', file.article_id || "").single();
+            title = data?.title;
+        }
 
         const fileMeta = meta.find((m) => m.name === file.name)
         if (!fileMeta || !meta) continue;
 
         files.push({
             id: file.id,
-            article_name: title?.title || null,
+            article_name: title,
             name: file.name,
             published: file.published,
             media: `/attachments/${file.name}`,

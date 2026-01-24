@@ -1,10 +1,10 @@
 export default defineMultiFactorVerificationEventHandler(async (event, { user, client}) => {
 
     const { data: factors, error: factorError } = await client.auth.mfa.listFactors()
-    if ((factors && !factors.all[0]) || factorError) return useReturnResponse(event, internalServerError)
+    if (factorError || (!factors.all || !factors.all[0])) return useReturnResponse(event, internalServerError)
 
     const { error } = await client.auth.mfa.unenroll({
-        factorId: factors.all[0].id,
+        factorId: factors!.all[0]!.id,
     })
 
     if (error) return useReturnResponse(event, internalServerError)

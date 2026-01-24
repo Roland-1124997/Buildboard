@@ -30,7 +30,7 @@ export default defineAuthEventHandler(async (event, { client }) => {
 
   useSetCookies(event, data.session);
 
-  if (data.user.factors && data.user.factors[0].status === 'verified') {
+  if (data.user.factors && data.user.factors[0] && data.user.factors[0].status === 'verified') {
 
     return useReturnResponse(event, {
       status: {

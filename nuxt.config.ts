@@ -23,12 +23,15 @@ export default defineNuxtConfig({
   ],
 
   // Include Supabase dependencies because of issues with supabase
+  // modules where being imported using commonjs instead of esm
   vite: {
     optimizeDeps: {
       include: [
         '@supabase/supabase-js',
         '@supabase/realtime-js',
-        '@supabase/auth-js'
+        '@supabase/auth-js',
+        'to-px',
+        'striptags'
       ]
     }
   },
@@ -116,7 +119,8 @@ export default defineNuxtConfig({
   routeRules: {
     '/auth/': {
       redirect: '/auth/login'
-    }
+    },
+    '/auth/**': { appLayout: 'auth' },
   },
 
   app: {

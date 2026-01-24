@@ -44,10 +44,6 @@
 </template>
 
 <script setup lang="ts">
-	definePageMeta({
-		middleware: "totp-redirecter",
-		layout: "auth",
-	});
 
 	useSeoMeta({
 		title: "Twee-factor authenticatie - Dashboard",

@@ -1,6 +1,7 @@
 export default defineSupabaseFileHandler(async (event, { user, server }) => {
 
     const { name } = getRouterParams(event);
+    if (!name) return useReturnResponse(event, badRequestError);
     
     const { data: attachment, error: attachmentError } = await server.from('attachments').select('*').eq('name', name).single();
     if (attachmentError || !attachment) return useReturnResponse(event, notFoundError);

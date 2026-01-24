@@ -1,3 +1,5 @@
+import { H3Event } from "h3";
+
 export const useReturnResponse = (event: H3Event, data: ApiResponse<Record<string, any>>) => {
     setResponseStatus(event, data.status.code)
     return { ...data }

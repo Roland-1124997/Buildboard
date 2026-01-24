@@ -139,3 +139,16 @@ export type StoreType = Store<string, {
 
 export type HistoryEntry<T> = { [K in keyof T]: T[K] | null };
 export type RouteHistory<T> = Record<string, HistoryEntry<T[]>>;
+
+
+export type UserDisplay = {
+    id: string
+    session: string
+    email: string
+    factors?: {
+        verified: boolean
+        enabled: boolean
+    }
+    mfa_needs_to_verified?: boolean
+
+}

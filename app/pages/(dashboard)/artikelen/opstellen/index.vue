@@ -9,7 +9,7 @@
 								<TiptapMenu class="flex items-center p-1 py-1 mb-1 overflow-x-auto underline border rounded-lg bg-gray-50" :editor="editor" :editable />
 
 								<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
-									<div class="flex items-center justify-between gap-2 py-1 pb-2 overflow-x-auto text-sm border-b">
+									<div class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
 										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md">{{ words }} woorden</p>
 
 										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md">{{ Object.keys(errors).length }} fouten</p>
@@ -46,10 +46,6 @@
 
 <script setup lang="ts">
 	import TableOfContents from "@tiptap/extension-table-of-contents";
-
-	definePageMeta({
-		middleware: "authorized",
-	});
 
 	useSeoMeta({
 		title: "Artikel shrijven",

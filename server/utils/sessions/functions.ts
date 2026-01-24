@@ -1,8 +1,7 @@
-
 import { H3Event } from "h3";
 import { SupabaseClient, Session, User } from "@supabase/supabase-js";
 
-export type { H3Event, SupabaseClient, Session, User }
+export type { SupabaseClient, Session, User }
 export type SupaBaseUser = User & { current_session_id: string, aal: string };
 
 export const validateAccessToken = (currentSession: Session | Omit<Session, "user">) => {
@@ -88,7 +87,7 @@ export const extractSessionId = (session: Omit<Session, "user">): string | undef
     if (session?.access_token) {
         try {
             const sessionTokenParts = session.access_token.split('.');
-            if (sessionTokenParts.length >= 2) {
+            if (sessionTokenParts.length >= 2 && sessionTokenParts[1]) {
                 const token = JSON.parse(
                     Buffer.from(sessionTokenParts[1], 'base64').toString('ascii'),
                 );
@@ -105,7 +104,7 @@ export const extractSessionId = (session: Omit<Session, "user">): string | undef
 export const useSetSessionData = async (event: H3Event, user: SupaBaseUser | null) => {
     if (user) {
 
-        const hasMFA = !!(user.factors && user.factors[0].status === 'verified')
+        const hasMFA = !!(user.factors && user.factors[0] && user.factors[0].status === 'verified')
         const needsVerification = hasMFA && user?.aal !== 'aal2';
 
         if (needsVerification) return { mfa_needs_to_verified: true };

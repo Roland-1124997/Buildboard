@@ -23,7 +23,7 @@ export default defineAuthEventHandler(async (event, { user, client }) => {
     });
 
     const { data: factors, error: factorError } = await client.auth.mfa.listFactors()
-    if (factorError) return useReturnResponse(event, internalServerError)
+    if (factorError || (!factors.all || !factors.all[0])) return useReturnResponse(event, internalServerError)
 
     const { error } = await client.auth.mfa.challengeAndVerify({
         factorId: factors.all[0].id,

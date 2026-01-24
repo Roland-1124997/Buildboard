@@ -29,11 +29,6 @@
 </template>
 
 <script setup lang="ts">
-	definePageMeta({
-		middleware: "authorized",
-		layout: "auth",
-	});
-
 	useSeoMeta({
 		title: "Dashboard",
 		description: "Welkom terug! Log in om door te gaan naar je dashboard.",

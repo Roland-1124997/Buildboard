@@ -157,10 +157,6 @@
 
 <script setup lang="ts">
 
-	definePageMeta({
-		middleware: "authorized",
-	});
-
 	useSeoMeta({
 		title: "Profiel Dashboard",
 		description: "Bekijk en bewerk je profielinformatie.",

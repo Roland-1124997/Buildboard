@@ -18,7 +18,7 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
         const { error: upsertError } = await server.from('attachments').upsert({
             id: data?.id, 
-            name: data?.path, 
+            name: data?.path || '', 
             published: published,
             article_id: articleId,
             updated_at: new Date().toISOString(),

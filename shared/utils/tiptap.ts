@@ -1,26 +1,12 @@
-import StarterKit from "@tiptap/starter-kit";
-
-import { Editor } from "@tiptap/core";
+import { useFilterParagraphs } from "#shared/utils/useFilterParagraphs";
+import { blockImages } from '#shared/utils/extensions'
+import { nodeView } from '#shared/utils/connection'
 import { Selection } from '@tiptap/extensions'
-import { all, createLowlight } from 'lowlight'
-import { Placeholder } from "@tiptap/extensions";
-import { CharacterCount } from "@tiptap/extensions";
-import { Details, DetailsSummary, DetailsContent } from '@tiptap/extension-details'
+import { Editor } from "@tiptap/core"
 
-import FileHandler from "@tiptap/extension-file-handler";
-import Image from "@tiptap/extension-image";
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-
+import Highlight from "@tiptap/extension-highlight"
 import Document from "@tiptap/extension-document";
-import Highlight from "@tiptap/extension-highlight";
-import Underline from "@tiptap/extension-underline";
-import Link from "@tiptap/extension-link";
-
-import { blockImages } from './extensions'
-import { nodeView } from './connection'
-export { useEditor } from "@tiptap/vue-3";
-
-import { useFilterParagraphs } from "./useFilterParagraphs";
+import Image from "@tiptap/extension-image";
 
 const pendingImages: Map<string, File> = new Map();
 
@@ -222,7 +208,7 @@ export const extensions = [
 ]
 
 export const articleExtensions = [
-    details, nodeView, blockImages,
+    details, nodeView, blockImages, 
     DetailsSummary, DetailsContent,
     codelowBlock, articleStarterKit, Selection,
     image, characterCount, fileHandler,

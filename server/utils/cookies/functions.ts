@@ -1,3 +1,5 @@
+import { H3Event } from "h3";
+
 export const useGetCookies = async (event: H3Event) => {
 
     const refreshToken = getCookie(event, "refresh-token");

@@ -102,7 +102,7 @@ export const useArticles = defineStore("useArticles", () => {
                     method: "DELETE",
                 },
                 message: {
-                    success: "Artikel succesvol verwijderd.",
+                    success: `Artikel ${content.title} succesvol verwijderd.`,
                     confirm: "Ja, verwijder het artikel",
                     cancel: "Nee, behoud het artikel",
                 }

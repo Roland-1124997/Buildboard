@@ -1,6 +1,7 @@
+import { H3Event } from "h3";
 
 const defineBaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser | null, server: SupabaseClient<Database> }) => any) => {
-    return defineEventHandler(async (event: H3Event) => {
+    return defineEventHandler(async (event) => {
 
         const client = await serverSupabaseClient(event);
         const server = serverSupabaseServiceRole(event)
@@ -12,11 +13,11 @@ const defineBaseEventHandler = (callback: (event: H3Event, options: { client: Su
 };
 
 export const defineSupabaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database>, IsFactorVerified: boolean }) => any) => {
-    return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
+    return defineBaseEventHandler(async (event, { client, user, server }) => {
 
         if (!user) return useReturnResponse(event, unauthorizedError)
 
-        const IsFactorVerified = user.factors && user.factors[0].status === 'verified' || false;
+        const IsFactorVerified = user.factors && user.factors[0] && user.factors[0].status === 'verified' || false;
 
         if (IsFactorVerified && user.aal != 'aal2') return useReturnResponse(event, {
             status: {
@@ -32,13 +33,13 @@ export const defineSupabaseEventHandler = (callback: (event: H3Event, options: {
 }
 
 export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database> }) => any) => {
-    return defineSupabaseEventHandler(async (event: H3Event, { user, client, server, IsFactorVerified }) => {
+    return defineSupabaseEventHandler(async (event, { user, client, server, IsFactorVerified }) => {
 
         if (IsFactorVerified && user.aal == 'aal2') {
 
             const { data: factors, error: factorError } = await client.auth.mfa.listFactors()
-            if (factorError) return useReturnResponse(event, internalServerError)
-
+            if (factorError || (!factors.all || !factors.all[0])) return useReturnResponse(event, internalServerError)
+            
             const request = await readBody<{ code: string }>(event);
 
             const { error } = await client.auth.mfa.challengeAndVerify({
@@ -63,13 +64,13 @@ export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Ev
 }
 
 export const defineAuthEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database> }) => any) => {
-    return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
+    return defineBaseEventHandler(async (event, { client, user, server }) => {
         return callback(event, { client, user: user as SupaBaseUser, server })
     })
 }
 
 export const defineSupabaseFileHandler = (callback: (event: H3Event, options: { user: SupaBaseUser | null, server: SupabaseClient<Database> }) => any) => {
-    return defineBaseEventHandler(async (event: H3Event, { client, user, server }) => {
+    return defineBaseEventHandler(async (event, { user, server }) => {
         return callback(event, { user: user as SupaBaseUser, server })
     })
 }
