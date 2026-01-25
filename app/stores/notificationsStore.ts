@@ -269,7 +269,7 @@ export const useNotifications = defineStore("useNotifications", () => {
                         backToList();
                         close();
                     },
-                    onclose: () => {
+                    onClose: () => {
                         backToList();
                         close();
                     }
