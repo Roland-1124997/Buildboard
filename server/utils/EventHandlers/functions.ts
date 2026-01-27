@@ -1,14 +1,39 @@
 import { H3Event } from "h3";
 
+const ignoredMethods = ['GET', 'HEAD', 'OPTIONS'];
+const ignorePath = ['/api/savory'];
+
 const defineBaseEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser | null, server: SupabaseClient<Database> }) => any) => {
     return defineEventHandler(async (event) => {
 
-        const client = await serverSupabaseClient(event);
-        const server = serverSupabaseServiceRole(event)
+        const method = event.method.toUpperCase();
+        const path = event.path
 
-        const { data: user } = await useSessionExists(event, client);
+        const token = getCookie(event, 'csrf-token');
+        const stored = useStorage(`csrf-tokens`);
+        const isValid = token ? await stored.getItem(token) : false;
 
-        return callback(event, { client, user: user as SupaBaseUser, server })
+        if (ignorePath.includes(path) || ignoredMethods.includes(method) || isValid) {
+
+            await stored.removeItem(token as string);
+            deleteCookie(event, 'csrf-token');
+
+            const client = await serverSupabaseClient(event);
+            const server = serverSupabaseServiceRole(event)
+
+            const { data: user } = await useSessionExists(event, client);
+
+            return callback(event, { client, user: user as SupaBaseUser, server })
+        }
+
+        return useReturnResponse(event, {
+            status: {
+                code: 403,
+                success: false,
+                message: 'Ongeldige CSRF token',
+            },
+        });
+
     })
 };
 

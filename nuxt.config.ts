@@ -63,9 +63,9 @@ export default defineNuxtConfig({
     cookiePrefix: "access-token",
     cookieOptions: {
       maxAge: 60 * 60 * 8,
-      sameSite: 'lax',
+      sameSite: 'strict',
       httpOnly: true,
-      secure: false
+      secure: process.env.NODE_ENV === 'development' ? false : true
     },
     types: '~~/server/utils/supabase/types/database.types.ts'
   },
@@ -112,14 +112,12 @@ export default defineNuxtConfig({
 
     whitelistedDomains: process.env.WHITELISTED_DOMAINS,
     production: process.env.NODE_ENV === 'development' ? false : true
-
+    
   },
 
 
   routeRules: {
-    '/auth/': {
-      redirect: '/auth/login'
-    },
+    '/auth/': { redirect: '/auth/login' },
     '/auth/**': { appLayout: 'auth' },
   },
 

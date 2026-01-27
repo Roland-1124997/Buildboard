@@ -1,4 +1,5 @@
 import { H3Event } from "h3";
+const { production } = useRuntimeConfig();
 
 export const useGetCookies = async (event: H3Event) => {
 
@@ -17,10 +18,11 @@ export const useGetCookies = async (event: H3Event) => {
 
 export const useSetCookies = (event: H3Event, session: Omit<Session, "user"> | null) => {
     if (session) {
-
         setCookie(event, "refresh-token", session.refresh_token, {
             maxAge: 60 * 60 * 24 * 14,
+            sameSite: 'strict',
             httpOnly: true,
+            secure: production,
         });
     }
 }

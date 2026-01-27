@@ -7,23 +7,20 @@ const catcher = async <T>(promise: Promise<T>) => {
     }
 
     catch (error: any) {
-        return { data: null, error: (error.data.error || error.data) as ErrorResponse };
+        return { data: null, error: (error.data.error || error.data || error) as ErrorResponse };
     }
 }
 
 export const useCsrfToken = async () => {
-
-    let token = ""
-
-    const { data, error } = await catcher<ApiResponse<{ csrfToken: string }>>($fetch("/api/auth/csrf"));
-    if (!error) token = data?.data?.csrfToken || "";
-
-    return token
+    await catcher<ApiResponse<{ csrfToken: string }>>($fetch("/api/security/csrf-token"));
 }
 
 export const useApiHandler = <G>(url: FetchUrl) => {
 
     const Send = async <T = G>(options?: SendOptions): Promise<{ data: T | null; error: ErrorResponse | null }> => {
+        
+        if(options?.method != 'GET') await useCsrfToken();
+
         const extendedUrl = options?.extends ? `${url}${options.extends}` : url;
         return catcher<T>($fetch(extendedUrl, {
             ...options
@@ -35,21 +32,15 @@ export const useApiHandler = <G>(url: FetchUrl) => {
     })
 
     const Post = async <T = G>(options?: MethodOptions) => Send<T>({
-        ...options, method: 'POST', headers: {
-            'X-CSRF-Token': await useCsrfToken()
-        }
+        ...options, method: 'POST'
     })
 
     const Delete = async <T = G>(options?: MethodOptions) => Send<T>({
-        ...options, method: 'DELETE', headers: {
-            'X-CSRF-Token': await useCsrfToken()
-        }
+        ...options, method: 'DELETE'
     })
 
     const Patch = async <T = G>(options?: MethodOptions) => Send<T>({
-        ...options, method: 'PATCH', headers: {
-            'X-CSRF-Token': await useCsrfToken()
-        }
+        ...options, method: 'PATCH'
     })
 
     return {
