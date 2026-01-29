@@ -12,7 +12,7 @@ const catcher = async <T>(promise: Promise<T>) => {
 }
 
 export const useCsrfToken = async () => {
-    await catcher<ApiResponse<{ csrfToken: string }>>($fetch("/api/security/csrf-token"));
+    await catcher($fetch("/api/security/csrf-token"));
 }
 
 export const useApiHandler = <G>(url: FetchUrl) => {

@@ -3,7 +3,8 @@ let closeSession: Function | null = null;
 
 export const useSessions = defineStore("useSessions", () => {
 
-    const Request = useApiHandler<ApiResponse<any>>("/api/auth/logout");
+    const request = useApiHandler<ApiResponse<null>>("/api/auth/logout");
+    const requestSession = useApiHandler<ApiResponse<UserDisplay>>("/api/user");
 
     const { addToast } = useToast();
 
@@ -12,8 +13,15 @@ export const useSessions = defineStore("useSessions", () => {
         error: true,
     });
 
+    const user = computed<UserDisplay>(() => session.value.data?.data || null);
+
     const setCloseFunction = (callback: Function) => {
         closeSession = callback;
+    }
+
+    const refreshSession = async () => {
+        const { data, error } = await requestSession.Get();
+        session.value = { data, error };
     }
 
     const setSession = (data: any, error: any) => session.value = { data, error };
@@ -21,7 +29,7 @@ export const useSessions = defineStore("useSessions", () => {
     const getSession = async () => session.value;
 
     const logout = async () => {
-        const { data, error } = await Request.Post();
+        const { data, error } = await request.Post();
 
         if (error || !data) return addToast({
             message: "Er is een fout opgetreden bij het uitloggen",
@@ -41,11 +49,17 @@ export const useSessions = defineStore("useSessions", () => {
         return navigateTo(redirect);
     };
 
+    const isCurrentSession = (sessionId: string) => sessionId === user.value.session;
+
+
     return {
+        user,
         setCloseFunction,
         setSession,
         getSession,
         clearSession,
         logout,
+        refreshSession,
+        isCurrentSession
     };
 });
