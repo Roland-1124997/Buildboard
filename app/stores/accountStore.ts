@@ -113,6 +113,7 @@ export const useAccount = defineStore("useAccount", () => {
                 request: {
                     url: `/api/auth/account/sessions/${sessionId}`,
                     method: "DELETE",
+                    secure: true,
                 },
                 message: {
                     success: "Sessie succesvol verwijderd.",
@@ -173,6 +174,7 @@ export const useAccount = defineStore("useAccount", () => {
                 request: {
                     url: `/api/auth/totp`,
                     method: "DELETE",
+                    secure: true,
                 },
                 message: {
                     success: "Tweefactorauthenticatie succesvol uitgeschakeld.",

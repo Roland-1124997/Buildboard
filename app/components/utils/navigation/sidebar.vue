@@ -1,6 +1,5 @@
 <template>
-
-    <aside :class="['fixed inset-y-0 left-0 z-[60] w-64 bg-gray-50 border-r transform transition-transform md:transition-none duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
+	<aside :class="['fixed inset-y-0 left-0 z-[60] w-64 bg-gray-50 border-r transform transition-transform md:transition-none duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
 		<div class="flex flex-col h-full">
 			<div class="flex items-center justify-between h-16 px-4 border-b">
 				<div class="flex items-center space-x-3">
@@ -17,11 +16,12 @@
 			</div>
 
 			<nav id="sidebar-menu" aria-label="Hoofdnavigatie" class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-				<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false">
+				<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false" @pointerover="loadStorePreload(route.toolbar?.store)">
 					<Icon :name="route.iconName" class="w-5 h-5" />
 					<span class="flex-1">{{ route.label }}</span>
-					<span v-if="route.alert && notifications.unseen > 0" class="inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-h-5 min-w-5 h-fit w-fit">
-						{{ notifications.unseen > 99 ? "99+" : notifications.unseen }}
+
+					<span v-if="route.alert && Number(loadStoreAlertCount(route.toolbar?.store)) > 0" class="inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-h-5 min-w-5 h-fit w-fit">
+						{{ loadStoreAlertCount(route.toolbar?.store, true) }}
 					</span>
 				</NuxtLink>
 			</nav>
@@ -36,26 +36,20 @@
 	</aside>
 
 	<div v-if="isMobileMenuOpen" @click="isMobileMenuOpen = false" class="fixed inset-0 z-50 bg-black bg-opacity-50 lg:hidden"></div>
-
-
 </template>
 
-
 <script setup lang="ts">
+	const store = useSessions();
+	const route = useRoute();
 
-    const { addToast } = useToast();
+	const isMobileMenuOpen = defineModel<boolean>("isMobileMenuOpen");
 
-    const store = useSessions();
-    const route = useRoute();
+	defineProps<{
+		routes: Record<string, RouteType>;
+		notifications: { unseen: number };
+	}>();
 
-    const isMobileMenuOpen = defineModel<boolean>("isMobileMenuOpen");
-    
-    defineProps<{
-        routes: Record<string, RouteType>;
-        notifications: { unseen: number }
-    }>();
-
-    const routerActiveRelatedClass: any = (to: string) => {
+	const routerActiveRelatedClass: any = (to: string) => {
 		const path = route.path.replace("/", "");
 		const target = to.replace("/", "");
 
@@ -64,8 +58,6 @@
 
 		return isRelated ? className : "";
 	};
-
-    
 
 </script>
 

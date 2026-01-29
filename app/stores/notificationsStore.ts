@@ -217,6 +217,7 @@ export const useNotifications = defineStore("useNotifications", () => {
                 request: {
                     url: `/api/notifications/${message.uid}`,
                     method: "DELETE",
+                    secure: false,
                 },
                 message: {
                     success: "Bericht succesvol verwijderd",
@@ -391,6 +392,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         nextPage,
         previousPage,
         toPage,
+
     };
 });
 

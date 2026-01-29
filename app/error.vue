@@ -22,6 +22,10 @@
 				<p v-if="error" class="max-w-xl text-lg">Er is een probleem opgetreden bij het laden van de pagina. Probeer het later opnieuw</p>
 				<p v-else class="max-w-xl text-lg">Je wordt automatisch teruggeleid naar de startpagina. Dit kan een paar seconden duren.</p>
 
+				<DevOnly>
+					{{ error?.stack }}
+				</DevOnly>
+				
 				<div v-if="error" class="relative w-full">
 					<button @click="handleError" class="relative inline-flex md:min-w-[20rem] items-center justify-center w-full gap-2 px-4 py-3 text-white transition bg-black md:w-fit hover:bg-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-black disabled:cursor-not-allowed disabled:opacity-60">
 						<span class="inline-flex items-center gap-2">

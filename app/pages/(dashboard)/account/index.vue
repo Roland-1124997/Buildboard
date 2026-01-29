@@ -184,12 +184,6 @@
 	});
 
 	const store = useSessions();
-	
 	const account = useAccount();
-	await account.initialPayload();
-
-	onMounted(async () => {
-		if(account.error) account.refresh()
-	});
 
 </script>

@@ -155,6 +155,7 @@ export const useStorage = defineStore("useStorage", () => {
                 request: {
                     url: `/api/storage/${file.id}`,
                     method: "DELETE",
+                    secure: false,
                 },
                 message: {
                     success: "Bestand succesvol verwijderd.",

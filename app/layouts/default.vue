@@ -13,18 +13,18 @@
 	useSearch();
 	useFilter()
 
+	const account = useAccount();
 	const store = useAnalytics();
 	const articles = useArticles();
 	const session = useSessions();
 	const storageStore = useStorage();
 	const notifications = useNotifications();
 
+	store.initialPayload();
+	account.initialPayload();
 	articles.initialPayload();
 	storageStore.initialPayload();
 	notifications.initialPayload();
-
-	store.initialPayload();
-	
 
 	const { close } = await notifications.realTime();
 
@@ -32,13 +32,11 @@
 		
 		session.setCloseFunction(close);
 
+		if(store.error) store.refresh()
+		if(account.error) account.refresh()
 		if(articles.error) articles.refresh()
 		if(storageStore.error) storageStore.refresh()
 		if(notifications.error) notifications.refresh()
-
-		if(store.error) store.refresh()
-		
-
 	});
 
 	onUnmounted(() => close());

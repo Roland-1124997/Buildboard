@@ -2,6 +2,9 @@ export const useArticles = defineStore("useArticles", () => {
 
     const { addToast } = useToast();
     const { create, close } = useModal();
+    const { wait } = useDebounce();
+
+    const isPreloading = ref<boolean>(false);
 
     const uri = "/api/articles";
     const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
@@ -61,6 +64,22 @@ export const useArticles = defineStore("useArticles", () => {
         }
     };
 
+    const preload = async () => {
+
+        if (!articles.value || isPreloading.value) return;
+
+        const promises = articles.value
+            .filter((article: any) => article.thumbnail_url)
+            .map((article: any) => fetch(article.thumbnail_url));
+
+        isPreloading.value = true;
+        
+        await Promise.all(promises);
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        
+        isPreloading.value = false;
+    }
+
     const filter = (query: string) => {
         if (!query) return articles.value;
 
@@ -74,9 +93,9 @@ export const useArticles = defineStore("useArticles", () => {
             const foundInDescription = description.toLowerCase().includes(query.toLowerCase());
             const foundInTopics = topics.toLowerCase().includes(query.toLowerCase());
 
-            return foundInTitle || foundInDescription || foundInTopics; 
+            return foundInTitle || foundInDescription || foundInTopics;
         });
-        
+
     };
 
     const remove = (id: number) => {
@@ -94,12 +113,13 @@ export const useArticles = defineStore("useArticles", () => {
             name: `Verwijder artikel ${content.title}`,
             description: "Weet je zeker dat je dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { 
+            props: {
                 onCancel,
                 onComplete,
                 request: {
                     url: `/api/articles/${id}`,
                     method: "DELETE",
+                    secure: false,
                 },
                 message: {
                     success: `Artikel ${content.title} succesvol verwijderd.`,
@@ -120,6 +140,7 @@ export const useArticles = defineStore("useArticles", () => {
         savePayload,
         getSavedPayload,
         clearSavedPayload,
+        preload
     };
 
 });

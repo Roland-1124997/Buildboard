@@ -1,5 +1,5 @@
 
-export default defineMultiFactorVerificationEventHandler(async (event) => {
+export default defineSupabaseEventHandler(async (event) => {
 
     const id = getRouterParam(event, 'id');
     if (!id) return useReturnResponse(event, badRequestError);

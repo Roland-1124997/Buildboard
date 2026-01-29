@@ -9,7 +9,7 @@
 
 			<div class="space-y-4">
 				<div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
-					<h2 class="mb-2 text-sm font-semibold text-gray-700">Handmatige configuratie</h2>
+					<h2 class="mb-1 text-sm font-semibold text-gray-700">Handmatige configuratie</h2>
 					<p class="mb-3 text-xs text-gray-600">Kun je de QR-code niet scannen? Gebruik deze sleutel:</p>
 
 					<div class="flex items-center gap-2">
@@ -21,7 +21,7 @@
 				</div>
 
 				<div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
-					<h2 class="mb-2 text-sm font-semibold text-gray-700">Verifieer je authenticatie-app</h2>
+					<h2 class="mb-1 text-sm font-semibold text-gray-700">Verifieer je authenticatie-app</h2>
 					<p class="mb-3 text-xs text-gray-600">Voer de 6-cijferige code in die je authenticator-app genereert om de installatie te voltooien.</p>
 
 					<FormBase :schema="schema.totp.frontend" :request v-slot="{ loading, errors }">
