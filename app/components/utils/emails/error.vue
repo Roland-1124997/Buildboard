@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col items-center justify-center h-full p-8 text-gray-500 bg-white">
 		<icon name="akar-icons:inbox" class="w-16 h-16 mb-4 text-gray-300" aria-hidden="true" />
-		<h2 class="mb-2 text-lg font-medium">Geen berichten</h2>
+		<h2 class="mb-1 text-lg font-medium">Geen berichten</h2>
 		<p class="text-sm text-center">
 			{{ displayMessage() }}
 		</p>

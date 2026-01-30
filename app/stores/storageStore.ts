@@ -25,7 +25,7 @@ export const useStorage = defineStore("useStorage", () => {
     const uri = "/api/storage";
     const Request = useApiHandler<ApiResponse<Record<string, FileData[]>>>(uri);
 
-    const count = ref<Number>();
+    const count = ref<Number>(0);
     const files = ref<Record<string, FileData[]>>({});
     const error = ref<ErrorResponse | null | any>(null);
     const loading = ref<boolean>(false);
