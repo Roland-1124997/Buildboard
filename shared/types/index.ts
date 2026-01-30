@@ -125,6 +125,7 @@ export type ToolBar = {
 export type RouteType = {
     label: string;
     iconName: string;
+    refetchOnEnter?: boolean;
     alert?: boolean;
     toolbar?: ToolBar;
 };
@@ -135,6 +136,9 @@ export type StoreType = Store<string, {
         page?: number;
         search?: string;
     }) => Promise<void>;
+    alert?: { value: number };
+    loading: boolean;
+    error: any | null;
 }>;
 
 export type HistoryEntry<T> = { [K in keyof T]: T[K] | null };

@@ -43,7 +43,12 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                     createButton({
                         to: "/berichten/opstellen",
                         description: "Nieuw bericht schrijven",
-                        isSmall: true,
+                    }),
+                    createButton({
+                        iconName: "akar-icons:arrow-cycle",
+                        description: "Bestanden synchroniseren",
+                        isButton: true,
+                        onClick: "refresh",
                     }),
                 ],
                 filters: [
@@ -65,6 +70,12 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                         to: "/artikelen/opstellen",
                         description: "Nieuw artikel schrijven",
                     }),
+                    createButton({
+                        iconName: "akar-icons:arrow-cycle",
+                        description: "Bestanden synchroniseren",
+                        isButton: true,
+                        onClick: "refresh",
+                    }),
                 ],
                 search: createSearch("artikelen"),
                 store: 'useArticles',
@@ -83,7 +94,7 @@ const routes = cachedFunction((): Record<string, RouteType> => {
                         onClick: "triggerFileSelect",
                     }),
                     createButton({
-                        iconName: "akar-icons:cloud-download",
+                        iconName: "akar-icons:arrow-cycle",
                         description: "Bestanden synchroniseren",
                         isButton: true,
                         onClick: "refresh",
@@ -103,6 +114,10 @@ const routes = cachedFunction((): Record<string, RouteType> => {
         "/account": {
             label: "Account",
             iconName: "akar-icons:person",
+            refetchOnEnter: true,
+            toolbar: {
+                store: 'useAccount',
+            },
         },
         "/portfolio": {
             label: "Portfolio",
@@ -115,3 +130,4 @@ const routes = cachedFunction((): Record<string, RouteType> => {
 });
 
 export default defineSupabaseEventHandler( (event) => routes());
+

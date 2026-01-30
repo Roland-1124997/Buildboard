@@ -28,12 +28,16 @@ export const useStorage = defineStore("useStorage", () => {
     const count = ref<Number>();
     const files = ref<Record<string, FileData[]>>({});
     const error = ref<ErrorResponse | null | any>(null);
+    const loading = ref<boolean>(false);
 
     const refresh = async (params?: {
         filter?: string; page?: number, search?: string
     }) => {
 
         const route = useRoute();
+        loading.value = true;
+
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         const { data, error: Error } = await Request.Get({
             query: {
@@ -44,11 +48,13 @@ export const useStorage = defineStore("useStorage", () => {
         });
 
         if (!Error && data) {
+            loading.value = false;
             files.value = data.data ?? {};
             count.value = Object.values(data.data ?? {}).flat().length;
         }
 
         else {
+            loading.value = false;
             error.value = Error;
             addToast({
                 message: "Er is een fout opgetreden bij het verversen van de bestanden.",
@@ -195,6 +201,7 @@ export const useStorage = defineStore("useStorage", () => {
         count,
         files,
         error,
+        loading,
         refresh,
         initialPayload,
         upload,

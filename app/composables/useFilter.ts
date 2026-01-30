@@ -28,8 +28,8 @@ export const useFilter = (options?: {
 
             loading.value = true;
 
-            // Simulate minimum loading time for better UX
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // // Simulate minimum loading time for better UX
+            // await new Promise(resolve => setTimeout(resolve, 300));
 
             await options.callback({
                 filter: value,

@@ -39,7 +39,7 @@
 					</div>
 				</div>
 
-				<div v-if="account.sessions && account.sessions.length" class="space-y-3">
+				<div v-if="account.sessions && account.sessions.length" class="grid gap-3 md:grid-cols-2">
 					<div v-for="(session, index) in account.sessions" :key="session.id" class="relative pt-5 bg-white border-t md:border md:p-5 md:rounded-xl">
 						<div class="flex items-start justify-between mb-4">
 							<div class="flex items-start gap-3">
@@ -72,7 +72,7 @@
 							</div>
 						</div>
 
-						<div class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-200 md:grid-cols-3">
+						<div class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-200 md:grid-cols-2">
 							<div class="flex items-start gap-3">
 								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
 									<icon name="akar-icons:network" class="w-4 h-4 text-blue-600" />
@@ -85,38 +85,14 @@
 								</div>
 							</div>
 
-							<div class="flex items-start gap-3">
-								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
-									<icon name="akar-icons:clock" class="w-4 h-4 text-blue-600" />
-								</div>
-								<div class="flex-1">
-									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Laatste activiteit</p>
-									<p class="text-xs font-semibold text-gray-500 mt-0.5">
-										<NuxtTime :datetime="session.updated_at" :relative="true" locale="nl-NL" />
-									</p>
-								</div>
-							</div>
-
-							<div class="flex items-start gap-3">
+							<div class="items-start hidden gap-3 md:flex">
 								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
 									<icon name="akar-icons:door" class="w-4 h-4 text-blue-600" />
 								</div>
 								<div class="flex-1">
 									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Ingelogd op</p>
-									<p class="text-xs font-semibold text-gray-500 mt-0.5">
-										<NuxtTime :datetime="session.created_at" :relative="true" locale="nl-NL" />
-									</p>
-								</div>
-							</div>
-
-							<div class="flex items-start gap-3">
-								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
-									<icon name="akar-icons:location" class="w-4 h-4 text-blue-600" />
-								</div>
-								<div class="flex-1 min-w-0">
-									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
 									<p class="text-sm font-semibold text-gray-900">
-										{{ account.getCounryName(session.country_code) }}
+										<NuxtTime :datetime="session.created_at" :relative="true" locale="nl-NL" />
 									</p>
 								</div>
 							</div>
@@ -132,6 +108,58 @@
 									</p>
 								</div>
 							</div>
+
+							<div class="flex items-start gap-3 md:hidden">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:location" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
+									<p class="text-sm font-semibold text-gray-900">
+										{{ account.getCounryName(session.country_code) }}
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3 md:hidden">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:door" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Ingelogd op</p>
+									<p class="text-sm font-semibold text-gray-900">
+										<NuxtTime :datetime="session.created_at" :relative="true" locale="nl-NL" />
+									</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-3">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:clock" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Laatste activiteit</p>
+									<p class="text-sm font-semibold text-gray-900">
+										<NuxtTime :datetime="session.updated_at" :relative="true" locale="nl-NL" />
+									</p>
+								</div>
+							</div>
+
+							
+
+							<div class="items-start hidden gap-3 md:flex">
+								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
+									<icon name="akar-icons:location" class="w-4 h-4 text-blue-600" />
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
+									<p class="text-sm font-semibold text-gray-900">
+										{{ account.getCounryName(session.country_code) }}
+									</p>
+								</div>
+							</div>
+
+							
 						</div>
 
 						<div class="flex flex-wrap items-center justify-between gap-2 pt-4 mt-4 text-xs text-gray-500 border-t border-gray-200">

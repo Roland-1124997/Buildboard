@@ -5,12 +5,15 @@ export const useInitilizeStore = async (toolbar: ToolBar, params: { filter?: str
     if(import.meta.server) return;
     
     const storeName = toolbar?.store;
-
-    if (storeName) {
-        const currentStore = useCurrentStore(storeName);
-        if (currentStore && currentStore.refresh) await currentStore.refresh(params);
-    }
+    await useRefreshCurrentStore(storeName, params);
 };
+
+export const useRefreshCurrentStore = async (storeName: string | undefined, params?: { filter?: string; page?: number }) => {
+    if (!storeName) return;
+
+    const currentStore = useCurrentStore(storeName);
+    if (currentStore && currentStore.refresh) await currentStore.refresh(params);
+}
 
 export const useCurrentStore = (storeName: string) => {
     
@@ -20,23 +23,16 @@ export const useCurrentStore = (storeName: string) => {
     return currentStore;
 }
 
-
-export const routerStore = (name: string | undefined) => {
-    if (!name) return null;
-    return useCurrentStore(name);
+export const useRouterStore = (storeName: string | undefined) => {
+    if (!storeName) return null;
+    return useCurrentStore(storeName);
 };
 
-export const loadStoreAlertCount = (name: string | undefined, format: boolean = false): string | number => {
-    const store = routerStore(name);
-    const unseen = Number(store && "unseen" in store ? (store.unseen ?? 0) : 0);
+export const useAlertCount = (storeName: string | undefined, format: boolean = false) => {
+    const store = useRouterStore(storeName);
+    const count = store?.alert?.value ?? 0;
 
-    if (format) return unseen > 99 ? "99+" : String(unseen);
-    return unseen;
+    if (format) return count > 99 ? "99+" : String(count);
+    return count;
 };
 
-export const loadStorePreload = (name: string | undefined) => {
-    const store = routerStore(name);
-    if (!store) return null;
-
-    return "preload" in store && typeof store.preload === "function" ? store.preload() : null;
-};

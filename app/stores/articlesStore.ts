@@ -2,15 +2,14 @@ export const useArticles = defineStore("useArticles", () => {
 
     const { addToast } = useToast();
     const { create, close } = useModal();
-    const { wait } = useDebounce();
-
-    const isPreloading = ref<boolean>(false);
-
+    
     const uri = "/api/articles";
     const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
 
     const articles = ref<any[] | any>(null);
     const error = ref<any[] | any>(null);
+    const loading = ref<boolean>(false);
+
 
     const storedPayload = useLocalStorage<string | null>("articles:payload", null);
     const savePayload = async (payload: any) => storedPayload.value = JSON.stringify(payload);
@@ -25,6 +24,10 @@ export const useArticles = defineStore("useArticles", () => {
         filter?: string; page?: number, search?: string
     }) => {
 
+        loading.value = true;
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+
         const { data, error: Error } = await Request.Get({
             query: {
                 page: params?.page || useRoute().query.page || 1,
@@ -34,10 +37,12 @@ export const useArticles = defineStore("useArticles", () => {
         });
 
         if (!Error && data) {
+            loading.value = false;
             articles.value = data.data;
         }
 
         else {
+            loading.value = false;
             error.value = Error;
             addToast({
                 message: "Er is een fout opgetreden bij het vernieuwen van de artikelen.",
@@ -49,13 +54,17 @@ export const useArticles = defineStore("useArticles", () => {
 
     const initialPayload = async () => {
 
+        loading.value = true;
+
         const { data, error: Error } = await useFetch<ApiResponse<any>>(uri);
 
         if (!Error.value && data.value) {
+            loading.value = false;
             articles.value = data.value.data;
         }
 
         else {
+            loading.value = false;
             error.value = Error.value;
             addToast({
                 message: "Er is een fout opgetreden bij het ophalen van artikelen.",
@@ -63,22 +72,6 @@ export const useArticles = defineStore("useArticles", () => {
             });
         }
     };
-
-    const preload = async () => {
-
-        if (!articles.value || isPreloading.value) return;
-
-        const promises = articles.value
-            .filter((article: any) => article.thumbnail_url)
-            .map((article: any) => fetch(article.thumbnail_url));
-
-        isPreloading.value = true;
-        
-        await Promise.all(promises);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        
-        isPreloading.value = false;
-    }
 
     const filter = (query: string) => {
         if (!query) return articles.value;
@@ -133,6 +126,7 @@ export const useArticles = defineStore("useArticles", () => {
     return {
         articles,
         error,
+        loading,
         initialPayload,
         filter,
         remove,
@@ -140,7 +134,6 @@ export const useArticles = defineStore("useArticles", () => {
         savePayload,
         getSavedPayload,
         clearSavedPayload,
-        preload
     };
 
 });

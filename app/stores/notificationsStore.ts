@@ -25,6 +25,10 @@ export const useNotifications = defineStore("useNotifications", () => {
 
     const activeMessageId = computed(() => route.query.id);
 
+    const alert = computed<{ value: number }>(() => {
+        return { value: unseen.value };
+    });
+
     const storedPayload = useLocalStorage<string | null>("notification:payload", null);
     const savePayload = async (payload: any) => storedPayload.value = JSON.stringify(payload);
     const clearSavedPayload = () => storedPayload.value = null;
@@ -44,6 +48,10 @@ export const useNotifications = defineStore("useNotifications", () => {
         filter?: string; page?: number, search?: string
     }) => {
 
+        loading.value = true;
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+
         const { data, error: Error } = await Request.Get({
             query: { 
                 page: params?.page || useRoute().query.page || pagination.value.page || 1,
@@ -53,6 +61,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         });
 
         if (!Error && data) {
+            loading.value = false;
             pagination.value.page = data.pagination?.page || 1;
             pagination.value.total = data.pagination?.total || 1;
 
@@ -63,6 +72,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         }
 
         else {
+            loading.value = false;
             error.value = Error;
             addToast({
                 message: "Er is een fout opgetreden bij het verversen van de berichten.",
@@ -73,6 +83,8 @@ export const useNotifications = defineStore("useNotifications", () => {
     }
 
     const initialPayload = async () => {
+
+        loading.value = true;
 
         const route = useRoute();
         const activePage = route.path === '/berichten'
@@ -88,7 +100,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         });
 
         if (!Error.value && data.value) {
-
+            loading.value = false;
             pagination.value.page = data.value?.pagination?.page || 1;
             pagination.value.total = data.value?.pagination?.total || 1;
 
@@ -98,6 +110,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         }
 
         else {
+            loading.value = false;
             error.value = Error.value;
             addToast({
                 message: "Er is een fout opgetreden bij het ophalen van berichten.",
@@ -371,7 +384,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         loading,
         messages,
         selected,
-        unseen,
+        alert,
         error,
         activeMessageId,
         pagination,

@@ -1,6 +1,6 @@
 <template>
 
-	<UtilsNavigationSidebar v-model:isMobileMenuOpen="isMobileMenuOpen" :routes :notifications/>
+	<UtilsNavigationSidebar v-model:isMobileMenuOpen="isMobileMenuOpen" :routes/>
 		
 	<div class="flex flex-col flex-1 w-full overflow-hidden">
 		<header class="z-40 flex items-center justify-between h-16 px-4 bg-white border-b lg:px-6">
@@ -15,7 +15,7 @@
 			<div class="sticky top-0 left-0 flex items-center justify-between w-full gap-2 p-1"></div>
 
 			<div class="flex items-center gap-2 md:hidden">
-				<UtilsButton @click="notifications.requestPermission()" to="/berichten" iconName="akar-icons:inbox" :options="{ count: notifications.unseen }" />
+				<UtilsButton @click="notifications.requestPermission()" to="/berichten" iconName="akar-icons:inbox" :options="{ count: notifications.alert.value }" />
 			</div>
 		</header>
 

@@ -16,12 +16,12 @@
 			</div>
 
 			<nav id="sidebar-menu" aria-label="Hoofdnavigatie" class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-				<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="isMobileMenuOpen = false" @pointerover="loadStorePreload(route.toolbar?.store)">
+				<NuxtLink v-for="(route, to) in routes" :key="to" :to="`${to}`" :class="routerActiveRelatedClass(to)" class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800" @click="clickAction(route)">
 					<Icon :name="route.iconName" class="w-5 h-5" />
+					
 					<span class="flex-1">{{ route.label }}</span>
-
-					<span v-if="route.alert && Number(loadStoreAlertCount(route.toolbar?.store)) > 0" class="inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-h-5 min-w-5 h-fit w-fit">
-						{{ loadStoreAlertCount(route.toolbar?.store, true) }}
+					<span v-if="route.alert && Number(useAlertCount(route.toolbar?.store)) > 0" class="inline-flex items-center justify-center p-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-h-5 min-w-5 h-fit w-fit">
+						{{ useAlertCount(route.toolbar?.store, true) }}
 					</span>
 				</NuxtLink>
 			</nav>
@@ -43,11 +43,12 @@
 	const route = useRoute();
 
 	const isMobileMenuOpen = defineModel<boolean>("isMobileMenuOpen");
-
-	defineProps<{
-		routes: Record<string, RouteType>;
-		notifications: { unseen: number };
-	}>();
+	defineProps<{ routes: Record<string, RouteType> }>();
+	
+	const clickAction = (route: RouteType) => {
+		isMobileMenuOpen.value = false;
+		if(route.refetchOnEnter) useRefreshCurrentStore(route.toolbar?.store);
+	}
 
 	const routerActiveRelatedClass: any = (to: string) => {
 		const path = route.path.replace("/", "");
