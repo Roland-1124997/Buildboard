@@ -55,24 +55,26 @@ export const useSearch = (
         ]);
 
         if (!value) {
+
+            if (value === lastEntry?.search) return
+            await execute('');
+
             search.value = '';
             delete query.search;
 
             router.replace({ query });
-
-            if (value === lastEntry?.search) return
-            await execute('');
         }
 
         else {
+
+            if (value === lastEntry?.search) return
+            await execute(value as string);
+
             search.value = value as string;
             query.search = search.value;
             delete query.page;
 
             router.replace({ query });
-
-            if (value === lastEntry?.search) return
-            await execute(value as string);
         }
     }
 
