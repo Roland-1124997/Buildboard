@@ -13,7 +13,7 @@
 				</div>
 
 				<div class="flex flex-col gap-3 mt-5 sm:flex-row">
-					<button type="submit" :disabled="loading" aria-label="Bevestigen" class="relative inline-flex items-center justify-center w-full gap-2 px-4 py-3 text-white transition bg-blue-600 hover:bg-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-60">
+					<button type="submit" :disabled="loading" aria-label="Bevestigen" class="relative inline-flex items-center justify-center w-full gap-2 px-4 py-3 text-white transition bg-red-600 hover:bg-red-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-300 disabled:cursor-not-allowed disabled:opacity-60">
 						<span v-if="!loading" class="inline-flex items-center gap-2">
 							<Icon name="akar-icons:check" />
 							{{ props.message.confirm }}
@@ -32,18 +32,6 @@
 					</button>
 				</div>
 			</div>
-
-			<!-- <div class="flex flex-col gap-3 sm:flex-row">
-				<button type="submit" :disabled="loading" class="flex items-center justify-center flex-1 gap-2 px-5 py-3 text-sm font-medium text-white transition-colors duration-150 bg-red-600 border border-red-600 rounded-lg outline-none md:text-base focus:outline-none focus:ring-2 focus:ring-red-400 hover:bg-red-700" aria-label="Bevestigen">
-					<icon name="akar-icons:check" class="w-4 h-4" aria-hidden="true" />
-					<span> {{ props.message.confirm }} </span>
-				</button>
-
-				<button :disabled="loading" type="button" @click.stop="props.onCancel()" class="flex items-center justify-center flex-1 gap-2 px-5 py-3 text-sm font-medium text-gray-700 transition-colors duration-150 bg-white border border-gray-300 rounded-lg outline-none md:text-base focus:outline-none focus:ring-2 focus:ring-gray-400 hover:bg-gray-50 hover:border-gray-400" aria-label="Annuleren">
-					<icon name="akar-icons:cross" class="w-4 h-4" aria-hidden="true" />
-					<span> {{ props.message.cancel }} </span>
-				</button>
-			</div> -->
 		</FormBase>
 	</div>
 </template>

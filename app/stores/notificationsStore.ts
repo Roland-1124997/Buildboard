@@ -15,7 +15,7 @@ export const useNotifications = defineStore("useNotifications", () => {
     const uri = "/api/notifications";
     const Request = useApiHandler<ApiResponse<any>>(uri);
 
-    const loading = ref<boolean>(false);
+    const loading = ref<boolean>(true);
     const selected = ref<any | null>(null);
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);

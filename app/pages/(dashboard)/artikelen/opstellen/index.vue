@@ -14,10 +14,10 @@
 
 										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md">{{ Object.keys(errors).length }} fouten</p>
 
-										<div @click.stop="toggleEditable" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none cursor-pointer hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+										<button @click.stop="toggleEditable" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none cursor-pointer hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
 											<icon :name="!editable ? 'akar-icons:edit' : 'akar-icons:eye'" class="w-4 h-4" aria-hidden="true" />
 											<span class="">{{ !editable ? "Bewerken" : "Voorbeeld" }}</span>
-										</div>
+										</button>
 
 										<button v-if="Object.keys(errors).length < 1" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
 											<icon name="akar-icons:save" class="w-4 h-4" aria-hidden="true" />

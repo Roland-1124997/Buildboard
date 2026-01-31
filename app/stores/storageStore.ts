@@ -28,7 +28,7 @@ export const useStorage = defineStore("useStorage", () => {
     const count = ref<Number>(0);
     const files = ref<Record<string, FileData[]>>({});
     const error = ref<ErrorResponse | null | any>(null);
-    const loading = ref<boolean>(false);
+    const loading = ref<boolean>(true);
 
     const refresh = async (params?: {
         filter?: string; page?: number, search?: string

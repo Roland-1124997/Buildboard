@@ -8,7 +8,7 @@ export const useArticles = defineStore("useArticles", () => {
 
     const articles = ref<any[] | any>(null);
     const error = ref<any[] | any>(null);
-    const loading = ref<boolean>(false);
+    const loading = ref<boolean>(true);
 
     const storedPayload = useLocalStorage<string | null>("articles:payload", null);
     const savePayload = async (payload: any) => storedPayload.value = JSON.stringify(payload);

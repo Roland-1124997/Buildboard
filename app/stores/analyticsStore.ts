@@ -6,7 +6,7 @@ export const useAnalytics = defineStore("useAnalytics", () => {
     const statistics = computed(() => analytics.value?.statistics || null);
     const metrics = computed(() => analytics.value?.metrics || null);
     const error = ref<any | null>(null);
-    const loading = ref<boolean>(false);
+    const loading = ref<boolean>(true);
 
     const uri = "/api/umami/analytics";
     const Request = useApiHandler<ApiResponse<any>>(uri);

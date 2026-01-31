@@ -48,7 +48,7 @@ export const useAccount = defineStore("useAccount", () => {
 
     const sessions = ref<UserSession[] | null>(null);
     const error = ref<any | null>(null);
-    const loading = ref<boolean>(false);
+    const loading = ref<boolean>(true);
 
     const refresh = async () => {
 
