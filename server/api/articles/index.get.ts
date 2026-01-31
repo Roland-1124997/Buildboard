@@ -1,6 +1,13 @@
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
-    const { data: articles, error } = await server.from('artikelen').select('*').order('updated_at', { ascending: false });
+    const search = String(getQuery(event).search || '').toLowerCase();
+    let query;
+
+    if (search) query = server.rpc('search_artikelen', { search: search }).order('updated_at', { ascending: false });
+    else query = server.from('artikelen').select('*')
+        .order('updated_at', { ascending: false });
+    
+    const { data: articles, error } = await query;
 
     if (error) return useReturnResponse(event, internalServerError);
 

@@ -21,20 +21,21 @@
 		</div>
 
 		<div class="flex flex-shrink-0 gap-x-2">
-			<button @click="store.patch(file)" class="text-gray-500 transition-colors rounded-lg hover:text-orange-600" :title="!file.published ? 'Maak zichtbaar' : 'Verbergen'" :aria-label="!file.published ? 'Maak zichtbaar' : 'Verbergen'">
-				<icon :name="file.published ? 'akar-icons:link-on' : 'akar-icons:link-off'" size="1.1rem" />
+			<button @click="store.patch(file)" class="flex items-center justify-center text-gray-500 transition-colors rounded-lg hover:text-teal-600" :title="file.published ? 'Zichtbaar' : 'Verborgen'" :aria-label="file.published ? 'Zichtbaar' : 'Verborgen'">
+				<icon :name="file.published ? 'akar-icons:circle-check' : 'akar-icons:circle-x'" size="1.1rem" />
 			</button>
 
-			<button @click="store.preview(file)" class="text-gray-500 transition-colors rounded-lg hover:text-green-600" title="Voorbeeld" aria-label="Bekijk voorbeeld van bestand">
-				<icon name="akar-icons:eye" size="1.1rem" />
+			<button @click="store.preview(file)" class="relative flex items-center justify-center text-gray-500 transition-colors rounded-lg w-fit hover:text-green-600" title="Voorbeeld" aria-label="Bekijk voorbeeld van bestand">
+				<icon name="akar-icons:eye" size="0.7rem" class="absolute " />
+				<icon name="akar-icons:circle" size="1.1rem" />
 			</button>
 
-			<button @click="store.download(file)" class="text-gray-500 transition-colors rounded-lg hover:text-blue-600" title="Download" aria-label="Download bestand">
-				<icon name="akar-icons:download" size="1.1rem" />
+			<button @click="store.download(file)" class="flex items-center justify-center text-gray-500 transition-colors rounded-lg hover:text-blue-600" title="Download" aria-label="Download bestand">
+				<icon name="akar-icons:circle-triangle-down" size="1.1rem" />
 			</button>
 
-			<button @click="store.remove(file)" class="text-gray-500 transition-colors rounded-lg hover:text-red-600" title="Verwijderen" aria-label="Verwijder bestand">
-				<icon name="akar-icons:trash-can" size="1.1rem" />
+			<button @click="store.remove(file)" class="flex items-center justify-center text-gray-500 transition-colors rounded-lg hover:text-red-600" title="Verwijderen" aria-label="Verwijder bestand">
+				<icon name="akar-icons:circle-minus" size="1.1rem" />
 			</button>
 		</div>
 	</div>
@@ -42,12 +43,11 @@
 
 <script setup lang="ts">
 	const store = useStorage();
-    
-    defineProps({
-        file: {
-            type: Object as () => FileData,
-            required: true
-        }
-    })
 
+	defineProps({
+		file: {
+			type: Object as () => FileData,
+			required: true,
+		},
+	});
 </script>

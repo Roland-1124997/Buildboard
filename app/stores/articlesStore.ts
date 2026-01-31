@@ -10,7 +10,6 @@ export const useArticles = defineStore("useArticles", () => {
     const error = ref<any[] | any>(null);
     const loading = ref<boolean>(false);
 
-
     const storedPayload = useLocalStorage<string | null>("articles:payload", null);
     const savePayload = async (payload: any) => storedPayload.value = JSON.stringify(payload);
     const clearSavedPayload = () => storedPayload.value = null;
@@ -27,6 +26,7 @@ export const useArticles = defineStore("useArticles", () => {
         loading.value = true;
         await new Promise(resolve => setTimeout(resolve, 300));
 
+        
 
         const { data, error: Error } = await Request.Get({
             query: {
@@ -73,24 +73,6 @@ export const useArticles = defineStore("useArticles", () => {
         }
     };
 
-    const filter = (query: string) => {
-        if (!query) return articles.value;
-
-        return articles.value?.filter((article: any) => {
-
-            const title = article.title || "";
-            const description = article.description || "";
-            const topics = article.topics.map((t: any) => t).join(" ") || "";
-
-            const foundInTitle = title.toLowerCase().includes(query.toLowerCase());
-            const foundInDescription = description.toLowerCase().includes(query.toLowerCase());
-            const foundInTopics = topics.toLowerCase().includes(query.toLowerCase());
-
-            return foundInTitle || foundInDescription || foundInTopics;
-        });
-
-    };
-
     const remove = (id: number) => {
 
         const content = articles.value.find((art: any) => art.id === id);
@@ -123,18 +105,44 @@ export const useArticles = defineStore("useArticles", () => {
         });
     };
 
+    const togglePublish = async (article: any) => {
+
+        const id = article.id;
+        const title = article.title;
+        const publish = !article.published;
+
+        const { data, error: Error } = await Request.Patch({
+            extends: `/${id}`, query: { publish: publish }
+        })
+
+        if (!Error && data) {
+            addToast({
+                message: `Artikel ${title} succesvol ${publish ? "gepubliceerd" : "gedepubliceerd"}.`,
+                type: "success",
+            });
+            await refresh();
+        }
+        else {
+            addToast({
+                message: `Er is een fout opgetreden bij het ${publish ? "publiceren" : "depubliceren"} van het artikel ${title}.`,
+                type: "error",
+            });
+        }
+    };
+
     return {
         articles,
         error,
         loading,
         initialPayload,
-        filter,
         remove,
         refresh,
         savePayload,
         getSavedPayload,
         clearSavedPayload,
+        togglePublish,
     };
+
 
 });
 

@@ -39,10 +39,7 @@ export const useNotifications = defineStore("useNotifications", () => {
     };
 
     watch(unseen, async (count) => await setBadge(count)), { immediate: true };
-
-    watch(() => route.path, () => {
-        selected.value = null
-    });
+    watch(() => route.path, () => selected.value = null);
 
     const refresh = async (params?: {
         filter?: string; page?: number, search?: string
@@ -50,7 +47,6 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         loading.value = true;
         await new Promise(resolve => setTimeout(resolve, 300));
-
 
         const { data, error: Error } = await Request.Get({
             query: { 

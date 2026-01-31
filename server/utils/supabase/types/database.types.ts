@@ -51,6 +51,7 @@ export type Database = {
                     topics: Json | null
                     updated_at: string | null
                     words: number | null
+                    published: boolean | null
                 }
                 Insert: {
                     anchors?: Json | null
@@ -63,6 +64,7 @@ export type Database = {
                     topics?: Json | null
                     updated_at?: string | null
                     words?: number | null
+                    published?: boolean | null
                 }
                 Update: {
                     anchors?: Json | null
@@ -75,6 +77,7 @@ export type Database = {
                     topics?: Json | null
                     updated_at?: string | null
                     words?: number | null
+                    published?: boolean | null
                 }
                 Relationships: []
             }
@@ -182,6 +185,24 @@ export type Database = {
                 Args: { p_session_id: string }
                 Returns: undefined
             }
+
+            search_artikelen: {
+                Args: { search: string }
+                Returns: {
+                    anchors: Json | null
+                    content: Json | null
+                    created_at: string
+                    description: string | null
+                    id: string
+                    read_time: string | null
+                    title: string | null
+                    topics: Json | null
+                    updated_at: string | null
+                    words: number | null
+                    published: boolean | null
+                }[]
+            },
+
             get_sessions_by_user: {
                 Args: { p_user_uuid: string }
                 Returns: {

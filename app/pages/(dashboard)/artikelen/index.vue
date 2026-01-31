@@ -1,77 +1,8 @@
 <template>
-	<div class="">
-		<div v-if="filteredArticles.length > 0" class="grid gap-3 md:grid-cols-3 pb-[5.5rem] md:pb-0">
-			<div v-for="art in filteredArticles" :key="art.id" class="z-10 flex flex-col h-full p-4 duration-150 bg-white border rounded-lg group hover:bg-gray-50">
-				<div class="flex flex-col flex-1 gap-4">
-					<div class="relative flex flex-col flex-1">
-						<div class="flex items-end justify-between mb-1">
-							<h2 class="text-lg font-bold leading-tight capitalize text-slate-900">{{ art.title }}</h2>
-
-							<div class="flex items-center gap-1 p-[0.29rem] px-2 text-xs text-gray-100 rounded-lg w-fit bg-neutral-900 font-mono hover:bg-neutral-800 select-none">
-								<NuxtLink class="flex items-center justify-center gap-1 hover:text-gray-300" :to="`/artikelen/opstellen?edit=${art.id}`">
-									<icon name="akar-icons:edit" class="w-4 h-4" aria-hidden="true" />
-									<span class="hidden md:inline">Bewerken</span>
-								</NuxtLink>
-								<span aria-hidden>|</span>
-
-								<button aria-label="verwijder artikel" class="flex items-center justify-center gap-1 hover:text-gray-300" @click="store.remove(art.id)">
-									<icon name="akar-icons:trash" class="w-4 h-4" aria-hidden="true" />
-									<span class="sr-only">Verwijderen</span>
-								</button>
-							</div>
-						</div>
-
-						<img :src="art.thumbnail_url" :alt="`afbeedling van artikel ${art.title}`" class="object-cover w-full h-48 my-3 border rounded-lg md:h-56 bg-gray-50" />
-
-						<div class="flex flex-wrap items-center gap-2 mb-2">
-							<span v-for="topic in art.topics" :key="topic" class="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-md">
-								{{ topic }}
-							</span>
-						</div>
-
-						<p class="mb-3 text-sm text-gray-600 line-clamp-2 md:line-clamp-3">{{ art.description || "Geen beschrijving beschikbaar" }}</p>
-						<div class="flex items-center gap-3 mt-auto text-xs text-gray-600 group-hover:text-gray-800">
-							<span v-if="art.words" aria-label="hoeveelheid woorden" class="flex items-center gap-1">
-								<icon name="akar-icons:file" class="w-4 h-4" aria-hidden="true" />
-								<span class="text-gray-500">{{ art.words }} woorden</span>
-							</span>
-							<span v-if="art.read_time" aria-label="gemiddelde leestijd" class="flex items-center gap-1">
-								<icon name="akar-icons:clock" class="w-4 h-4" aria-hidden="true" />
-								<span class="text-gray-500">{{ art.read_time }} min</span>
-							</span>
-							<span v-if="art.updated_at" aria-label="laatst aangepast op" class="flex items-center gap-1">
-								<icon name="akar-icons:history" class="w-4 h-4" aria-hidden="true" />
-								<NuxtTime :datetime="art.updated_at" year="2-digit" month="2-digit" day="2-digit" hour="2-digit" minute="2-digit" class="text-gray-500" />
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div v-else class="h-[65vh] flex flex-col items-center justify-center md:h-[72vh] text-center">
-			<div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full">
-				<icon name="akar-icons:file" class="w-8 h-8 text-gray-400" />
-			</div>
-
-			<span v-if="search">
-				<p class="mb-1 text-base font-semibold text-gray-900">Geen artikelen gevonden</p>
-				<p class="mb-2 text-sm text-gray-700 ">Er zijn geen artikelen die overeenkomen met je zoekopdracht:</p>
-				<div class="flex items-center justify-center w-full ">
-					<div class="flex items-center gap-2 px-3 py-1 text-sm font-medium text-blue-800 bg-blue-100 rounded-md">
-						<icon name="akar-icons:search" class="w-3 h-3" />
-						<p>{{ search }}</p>
-					</div>
-				</div>
-					
-					
-				
-			</span>
-
-			<span v-else>
-				<p class="text-sm font-medium text-gray-900">Geen artikelen beschikbaar</p>
-				<p class="mt-1 text-xs text-gray-500">Gebruik de knop hieronder om een nieuw artikel toe te voegen</p>
-			</span>
-		</div>
+	<div class="grid gap-4 grid-cols-1 md:grid-cols-3 pb-[5.5rem] md:pb-0">
+		<UtilsArticlesCardSkeleton v-if="store.loading" />
+		<UtilsArticlesCard v-else-if="store.articles.length > 0" :articles="store.articles" />
+		<UtilsArticlesError v-else class="col-span-3 " />
 	</div>
 </template>
 
@@ -102,10 +33,6 @@
 		],
 	});
 
-	const { search } = useSearch();
 	const store = useArticles();
 
-	const filteredArticles = computed(() => {
-		return store.filter(search.value as string);
-	});
 </script>

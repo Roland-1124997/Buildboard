@@ -1,11 +1,28 @@
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const id = getRouterParam(event, "id");
-
     if (!id) return useReturnResponse(event, badRequestError);
 
-    const request = await readBody(event);
+    const { publish } = getQuery(event);
 
+    if (publish != undefined) {
+
+        const { error } = await server.from('artikelen').update({
+            published: publish === 'true'
+        }).eq('id', id);
+
+        if (error) return useReturnResponse(event, internalServerError);
+
+        return useReturnResponse(event, {
+            status: {
+                code: 200,
+                message: `Artikel succesvol ${publish === 'true' ? 'gepubliceerd' : 'gedepubliceerd'}.`,
+                success: true
+            }
+        })
+    }
+
+    const request = await readBody(event);
     const { error: zodError } = await schema.article.backend.safeParseAsync(request);
 
     if (zodError) return useReturnResponse(event, {
