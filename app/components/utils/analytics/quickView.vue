@@ -1,7 +1,7 @@
 <template>
 	<template v-if="data && !loading">
 		<article v-for="statistic in data" :key="statistic.label" class="z-10 flex items-center w-full gap-2 p-2 border rounded-lg bg-gray-50 md:gap-3 md:p-3">
-			<div class="flex items-center justify-center p-2 text-white rounded-lg shrink-0 md:p-3" :style="{ backgroundColor: `${statistic.color}` }">
+			<div class="flex items-center justify-center p-2 text-white rounded-lg select-none shrink-0 md:p-3" :style="{ backgroundColor: `${statistic.color}` }">
 				<icon :name="statistic.icon" class="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
 			</div>
 			<div class="flex-1 min-w-0">

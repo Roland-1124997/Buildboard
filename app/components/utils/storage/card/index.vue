@@ -20,7 +20,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-shrink-0 gap-x-2">
+		<div class="flex flex-shrink-0 select-none gap-x-2">
 			<button @click="store.patch(file)" class="flex items-center justify-center text-gray-500 transition-colors rounded-lg hover:text-teal-600 focus:text-teal-600 focus:outline-none " :title="file.published ? 'Zichtbaar' : 'Verborgen'" :aria-label="file.published ? 'Zichtbaar' : 'Verborgen'">
 				<icon :name="file.published ? 'akar-icons:circle-check' : 'akar-icons:circle-x'" size="1.1rem" />
 			</button>

@@ -5,9 +5,9 @@
 			<input id="file" ref="inputRef" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.jpg,.jpeg,.png,.gif,.webp" @change="handleFileSelect" class="sr-only" />
 		</div>
 
-		<div v-if="toolbar" class="z-40">
+		<div v-if="toolbar && (toolbar.buttons || toolbar.filters || toolbar.search)" class="z-40">
 			<div v-if="toolbar?.groupWithFilters" :class="[!toolbar?.groupWithFilters ? '' : 'flex-wrap']" class="flex items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
-				<UtilsInputSearch :toolbar v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :disabled="pending" />
+				<UtilsInputSearch v-if="toolbar.search" :toolbar name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :disabled="pending" />
 
 				<div class="flex items-center w-full gap-[0.35rem]">
 					<UtilsButtonImportant v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="checkClickAction(btn)" :loading="isRefreshButton(btn) ? pending : false" />
@@ -17,7 +17,7 @@
 
 			<div v-else class="flex flex-col items-center justify-between w-full gap-3 px-4 py-2 bg-white border-b md:flex-nowrap lg:px-4">
 				<div class="flex items-center justify-between w-full gap-2">
-					<UtilsInputSearch :toolbar v-if="toolbar.search" name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :disabled="pending" />
+					<UtilsInputSearch v-if="toolbar.search" :toolbar name="search" :label="toolbar.search.label" :placeholder="toolbar.search.placeholder" :disabled="pending" />
 					<UtilsButtonImportant v-if="toolbar.buttons" v-for="(btn, index) in toolbar.buttons" :key="index" :to="btn.to" :icon-name="btn.iconName" :description="btn.description" :isButton="btn.isButton" :isSmall="btn.isSmall" @click="checkClickAction(btn)" :loading="isRefreshButton(btn) ? pending : false" />
 				</div>
 

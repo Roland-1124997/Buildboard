@@ -4,7 +4,7 @@
 			<div class="flex items-center justify-between gap-2 mt-3">
 				<h2 class="text-xl font-bold leading-tight capitalize text-slate-900 line-clamp-2">{{ article.title }}</h2>
 
-				<div class="flex items-center justify-between gap-2">
+				<div class="flex items-center justify-between gap-2 select-none">
 					<NuxtLink :to="`/artikelen/opstellen?edit=${article.id}`" class="flex items-center justify-center w-8 h-8 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" title="Bewerken">
 						<icon name="akar-icons:edit" class="w-4 h-4" aria-hidden="true" />
 					</NuxtLink>
@@ -19,7 +19,7 @@
 
 			<p class="mb-2 text-sm text-gray-600 line-clamp-2 md:line-clamp-3">{{ article.description || "Geen beschrijving beschikbaar" }}</p>
 
-			<img v-if="article.thumbnail_url" :src="article.thumbnail_url" :alt="`Thumbnail voor ${article.title}`" class="object-cover w-full h-40 mb-2 border rounded-lg" />
+			<img v-if="article.thumbnail_url" :src="article.thumbnail_url" :alt="`Thumbnail voor ${article.title}`" class="object-cover w-full h-40 mb-2 border rounded-lg select-none" />
 
 			<div class="flex flex-wrap items-center gap-2 mb-2 select-none">
 				<span v-for="topic in article.topics" :key="topic" class="flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-md">

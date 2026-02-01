@@ -1,5 +1,5 @@
 <template>
-	<div class="relative text-sm">
+	<div class="relative select-none text-sm">
 		<button class="flex items-center justify-center gap-2 p-2 border rounded-xl bg-gray-50 hover:bg-gray-100">
 			<img v-if="options.url" :src="options.url" :alt="options.name" class="w-5 h-5 font-medium text-gray-500 rounded-full" />
 			<icon v-else :name="iconName" class="text-gray-400" size="1.2rem" />
