@@ -8,6 +8,7 @@ const pagination = ref<{
 
 export const useNotifications = defineStore("useNotifications", () => {
 
+    const { clear, get, LastEntry, set } = useHistory();
     const { create, close } = useModal();
     const { addToast } = useToast();
     const { setBadge } = useBadge();
@@ -87,9 +88,11 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         const params = {
             page: activePage ? (route.query.page || pagination.value.page || 1) : 1,
-            filter: activePage ? (route.query.filter || 'all') : 'all',
+            filter: activePage ? (route.query.filter || 'alles') : 'alles',
             search: activePage ? (route.query.search || '') : ''
-        }
+        } as { filter: string; page: number; search: string };
+
+        set('/berichten', [params]);
 
         const { data, error: Error } = await useFetch<ApiResponse<any>>('/api/notifications', {
             query: { ...params },

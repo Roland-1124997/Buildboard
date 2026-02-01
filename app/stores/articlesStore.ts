@@ -2,7 +2,8 @@ export const useArticles = defineStore("useArticles", () => {
 
     const { addToast } = useToast();
     const { create, close } = useModal();
-    
+    const { clear, get, LastEntry, set } = useHistory();
+
     const uri = "/api/articles";
     const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
 
@@ -25,8 +26,6 @@ export const useArticles = defineStore("useArticles", () => {
 
         loading.value = true;
         await new Promise(resolve => setTimeout(resolve, 300));
-
-        
 
         const { data, error: Error } = await Request.Get({
             query: {
@@ -55,8 +54,20 @@ export const useArticles = defineStore("useArticles", () => {
     const initialPayload = async () => {
 
         loading.value = true;
+        const route = useRoute();
+        const activePage = route.path === '/artikelen'
 
-        const { data, error: Error } = await useFetch<ApiResponse<any>>(uri);
+        const params = {
+            page: activePage ? (route.query.page || 1) : 1,
+            filter: activePage ? (route.query.filter || '') : '',
+            search: activePage ? (route.query.search || '') : ''
+        } as { filter: string; page: number; search: string };
+
+        set('/artikelen', [params]);
+
+        const { data, error: Error } = await useFetch<ApiResponse<any>>(uri, {
+            query: { ...params },
+        });
 
         if (!Error.value && data.value) {
             loading.value = false;

@@ -21,10 +21,12 @@ export const useStorage = defineStore("useStorage", () => {
 
     const { create, close } = useModal();
     const { addToast } = useToast();
+    const { clear, get, LastEntry, set } = useHistory();
+
 
     const uri = "/api/storage";
     const Request = useApiHandler<ApiResponse<Record<string, FileData[]>>>(uri);
-
+    
     const count = ref<Number>(0);
     const files = ref<Record<string, FileData[]>>({});
     const error = ref<ErrorResponse | null | any>(null);
@@ -65,6 +67,8 @@ export const useStorage = defineStore("useStorage", () => {
 
     const initialPayload = async () => {
 
+        loading.value = true;
+
         const route = useRoute();
         const activePage = route.path === '/opslagruimte'
 
@@ -72,18 +76,22 @@ export const useStorage = defineStore("useStorage", () => {
             page: activePage ? (route.query.page || 1) : 1,
             filter: activePage ? (route.query.filter || 'alles') : 'alles',
             search: activePage ? (route.query.search || '') : ''
-        }
+        } as { filter: string; page: number; search: string };
+
+        set('/opslagruimte', [params]);
 
         const { data, error: Error } = await useFetch<ApiResponse<Record<string, FileData[]>>>(uri, {
             query: { ...params },
         });
 
         if (!Error.value && data.value) {
+            loading.value = false;
             files.value = data.value?.data || {};
             count.value = Object.values(data.value?.data || {}).flat().length;
         }
 
         else {
+            loading.value = false;
             error.value = Error.value;
             addToast({
                 message: "Er is een fout opgetreden bij het ophalen van bestanden.",

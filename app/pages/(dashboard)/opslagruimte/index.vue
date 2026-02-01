@@ -1,9 +1,15 @@
 <template>
 	<div class="pb-[5.5rem] md:pb-0">
-		<UtilsStorageCardSkeleton v-if="store.loading"  />
+		<UtilsStorageCardSkeleton v-if="store.loading" />
+
 		<div v-else-if="Object.keys(store.files).length > 0" class="space-y-3">
-			<UtilsStorageCount :count="Number(store.count)" />
-			<UtilsStorageCardGroup v-for="(grouped, articleTitle) in store.files" :key="articleTitle" :files="grouped" :articleTitle="articleTitle" />
+			<ClientOnly>
+				<UtilsStorageCount :count="Number(store.count)" />
+				<UtilsStorageCardGroup v-for="(grouped, articleTitle) in store.files" :key="articleTitle" :files="grouped" :articleTitle="articleTitle" />
+				<template #fallback>
+					<UtilsStorageCardSkeleton />
+				</template>
+			</ClientOnly>
 		</div>
 		<UtilsStorageError v-else />
 	</div>

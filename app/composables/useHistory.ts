@@ -1,23 +1,21 @@
 
-export const useHistory = <T>() => {
+const history: RouteHistory = {}
 
-    const history: RouteHistory<T> = {}
+export const useHistory = () => {
 
     const clearHistory = (path: string) => {
         history[path] = [];
     }
 
-    const getHistory = (path: string): HistoryEntry<T[]> => {
+    const getHistory = (path: string): HistoryEntry[] => {
         return history[path] || [];
     }
 
-    const getHistoryLastEntry = (path: string): T | null => {
-        const entries = getHistory(path);
-        if (entries.length == 0) return null;
-        return entries[entries.length - 1] || null;
+    const getHistoryLastEntry = (path: string): HistoryEntry | null => {
+        return getHistory(path)[0] || null;
     }
 
-    const setHistory = (path: string, entries: HistoryEntry<T[]>) => {
+    const setHistory = async (path: string, entries: HistoryEntry[]) => {
         history[path] = entries;
     }
 

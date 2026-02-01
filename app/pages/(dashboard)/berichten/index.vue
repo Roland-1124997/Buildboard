@@ -6,7 +6,13 @@
 				<template v-else>
 					<UtilsEmailsError v-if="store.messages.length === 0"/>
 					<UtilsEmailsPagination v-if="store.pagination.total > 1"/>
-					<UtilsEmailsCard/>
+					
+					<ClientOnly v-else>
+						<UtilsEmailsCard/>
+						<template #fallback>
+							<UtilsEmailsCardSkeleton />
+						</template>
+					</ClientOnly>
 				</template>
 			</div>
 		</div>

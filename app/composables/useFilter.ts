@@ -1,7 +1,7 @@
 import type { LocationQueryValue } from 'vue-router';
 
 const filter = ref<string | null>(null);
-const { clear, get, LastEntry, set } = useHistory<{ filter: string | null, search: string | null, page: number | null }>();
+const { clear, get, LastEntry, set } = useHistory();
 
 export const useFilter = (options?: {
     enableWatch?: boolean;
@@ -27,9 +27,6 @@ export const useFilter = (options?: {
         if (options?.callback) {
 
             loading.value = true;
-
-            // // Simulate minimum loading time for better UX
-            // await new Promise(resolve => setTimeout(resolve, 300));
 
             await options.callback({
                 filter: value,

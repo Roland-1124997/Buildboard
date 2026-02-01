@@ -141,8 +141,13 @@ export type StoreType = Store<string, {
     error: any | null;
 }>;
 
-export type HistoryEntry<T> = { [K in keyof T]: T[K] | null };
-export type RouteHistory<T> = Record<string, HistoryEntry<T[]>>;
+export type HistoryEntry = { 
+    search: string | null
+    filter: string | null 
+    page: string | number | null
+};
+
+export type RouteHistory = Record<string, HistoryEntry[]>;
 
 
 export type UserDisplay = {

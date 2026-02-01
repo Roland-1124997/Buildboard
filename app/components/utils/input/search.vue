@@ -9,7 +9,6 @@
 </template>
 
 <script setup lang="ts">
-
 	const { name, initialValue, toolbar } = defineProps({
 		toolbar: { type: Object as PropType<ToolBar>, required: true },
 		name: { type: String, required: true },
@@ -36,12 +35,15 @@
 
 	localHistory.value = history.LastEntry(route.path)?.search || "";
 
-	onMounted(() => (localSearch.value = (route.query.search as string) || localHistory.value));
+	onMounted(() => {
+		localSearch.value = (route.query.search as string) || localHistory.value;
+	});
+
 	watchDebounced(
 		localSearch,
 		async (newValue) => {
 			await setSearch(newValue);
 		},
-		{ immediate: true, debounce: 1000, maxWait: 5000 }
+		{ immediate: true, debounce: 1000, maxWait: 5000 },
 	);
 </script>
