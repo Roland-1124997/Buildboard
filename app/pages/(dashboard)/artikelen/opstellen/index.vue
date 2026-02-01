@@ -10,16 +10,16 @@
 
 								<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
 									<div class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
-										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md">{{ words }} woorden</p>
+										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ words }} woorden</p>
 
-										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md">{{ Object.keys(errors).length }} fouten</p>
+										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ Object.keys(errors).length }} fouten</p>
 
-										<button @click.prevent="toggleEditable" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none cursor-pointer hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+										<button @click.prevent="toggleEditable" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none cursor-pointer select-none hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
 											<icon :name="!editable ? 'akar-icons:edit' : 'akar-icons:eye'" class="w-4 h-4" aria-hidden="true" />
 											<span class="">{{ !editable ? "Bewerken" : "Voorbeeld" }}</span>
 										</button>
 
-										<button v-if="Object.keys(errors).length < 1" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+										<button v-if="Object.keys(errors).length < 1" class="flex items-center justify-center w-full gap-2 p-2 text-white bg-blue-600 border-blue-500 rounded-md outline-none select-none hover:bg-blue-700 hover:text-white focus:text-white focus:border-blue-600 hover:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
 											<icon name="akar-icons:save" class="w-4 h-4" aria-hidden="true" />
 											<span class="">{{ editId ? "Bijwerken" : "Aanmaken" }}</span>
 										</button>

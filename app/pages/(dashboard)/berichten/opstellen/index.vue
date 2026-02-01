@@ -1,7 +1,7 @@
 <template>
 	<div class="relative bg-white">
 		<ClientOnly>
-			<FormBase :appendToBody :schema="schema.notification.frontend" :request v-slot="{ loading }">
+			<FormBase :appendToBody :schema="schema.notification.frontend" :request v-slot="{ loading, errors }">
 				<div class="grid grid-cols-3 gap-2">
 					<div class="sr-only" aria-hidden>
 						<UtilsInput name="referentie" label="Referentie" icon-name="akar-icons:link-chain" type="text" placeholder="Referentie" :disabled="loading" :hide-label="true" :initial-value="repliedContent" />
@@ -14,7 +14,7 @@
 						<UtilsInput name="onderwerp" label="Onderwerp van het bericht" icon-name="akar-icons:tag" type="text" placeholder="Onderwerp" :initial-value="onderwerp" :disabled="loading" :required="true" :hide-label="true" />
 					</div>
 
-					<button type="submit" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Verstuur bericht" :disabled="loading">
+					<button type="submit" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg select-none hover:bg-blue-700 focus:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Verstuur bericht" :disabled="loading">
 						<span v-if="!loading">Verstuur</span>
 						<span v-else>verzenden...</span>
 					</button>

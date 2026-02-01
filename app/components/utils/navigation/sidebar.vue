@@ -1,6 +1,6 @@
 <template>
 	<aside :class="['fixed inset-y-0 left-0 z-[60] w-64 bg-gray-50 border-r transform transition-transform md:transition-none duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
-		<div class="flex flex-col h-full">
+		<div class="flex flex-col h-full select-none">
 			<div class="flex items-center justify-between h-16 px-4 border-b">
 				<div class="flex items-center space-x-3">
 					<div class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
@@ -64,10 +64,10 @@
 
 <style scoped>
 	.router-link-related-active {
-		@apply text-blue-800 bg-blue-50 hover:bg-blue-100;
+		@apply text-blue-800 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200;
 	}
 
 	.router-link-active {
-		@apply text-blue-800 bg-blue-100 hover:bg-blue-100;
+		@apply text-blue-800 bg-blue-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300;
 	}
 </style>

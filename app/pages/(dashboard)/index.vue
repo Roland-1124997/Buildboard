@@ -3,7 +3,12 @@
 		<h1 class="hidden mb-6 text-2xl font-bold md:flex">Statistieken Overzicht</h1>
 
 		<section class="relative grid grid-cols-2 gap-3 md:grid-cols-4">
-			<UtilsAnalyticsQuickView :data="store.statistics" />
+			<ClientOnly>
+				<UtilsAnalyticsQuickView :data="store.statistics" />
+				<template #fallback>
+					<UtilsAnalyticsSkeleton />
+				</template>
+			</ClientOnly>
 		</section>
 
 		<section class="grid w-full grid-cols-1 mt-3 gap-y-3 md:gap-3 md:grid-cols-3 h-fit pb-[5.5rem] md:pb-0">
@@ -96,29 +101,38 @@
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
 				<h2 class="mb-1 text-xl font-bold">Algemene breakdown</h2>
 				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina.</p>
-				<div :class="displayAll ? '' : 'h-[36rem]  md:h-[12.65rem]'" class="overflow-hidden ">
-					<ChartsCards v-if="store.metrics" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
-				
-					<template v-else>
+
+				<ClientOnly>
+					<div :class="displayAll ? '' : 'h-[36rem]  md:h-[12.65rem]'" class="overflow-hidden">
+						<ChartsCards v-if="store.metrics" :data="store.metrics.pages.values" :categories="store.metrics.pages.categories" />
+
+						<template v-else>
+							<div aria-hidden class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
+								<div class="h-[12.65rem] bg-gray-200 rounded-lg"></div>
+								<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+								<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
+							</div>
+						</template>
+					</div>
+					<div ref="display_button" class="flex justify-center mt-2">
+						<UtilsButtonAction v-if="displayAll" @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Beperk weergave', always: true }" />
+						<UtilsButtonAction v-else @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true }" />
+					</div>
+
+					<template #fallback>
 						<div aria-hidden class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
 							<div class="h-[12.65rem] bg-gray-200 rounded-lg"></div>
 							<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
 							<div class="hidden h-[12.65rem] bg-gray-200 rounded-lg md:flex"></div>
 						</div>
 					</template>
-				</div>
-				<div ref="display_button" class="flex justify-center mt-2 ">
-					<UtilsButtonAction v-if="displayAll" @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Beperk weergave', always: true}"/>
-					<UtilsButtonAction v-else @click="toggleDisplayAll" iconName="akar-icons:info" :options="{ name: 'Toon alle gegevens', always: true}"/>
-				</div>
-				
+				</ClientOnly>
 			</article>
 		</section>
 	</div>
 </template>
 
 <script setup lang="ts">
-
 	useSeoMeta({
 		title: "Analytics Dashboard",
 		description: "Bekijk een overzicht van de algemene statistieken van je website, inclusief bezoekers, weergaven en bezoekduur.",
@@ -146,18 +160,17 @@
 	});
 	const store = useAnalytics();
 
-	const button = useTemplateRef('display_button');
+	const button = useTemplateRef("display_button");
 	const displayAll = ref(false);
 	const toggleDisplayAll = async () => {
 		displayAll.value = !displayAll.value;
-		
+
 		if (displayAll.value) await nextTick();
-		button.value?.scrollIntoView({ behavior: 'smooth' })
+		button.value?.scrollIntoView({ behavior: "smooth" });
 	};
 
 	const activedDevice = ref("bezoekers");
 	const updateActiveDevice = (device: string) => {
 		activedDevice.value = device;
 	};
-
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<field :name="name" v-slot="{ field, meta }">
 		<div class="group">
-			<label :class="hideLabel ? ' sr-only' : ''" class="flex items-center justify-between mb-2 text-sm font-medium text-gray-700" :for="name">
+			<label :class="hideLabel ? ' sr-only' : ''" class="flex items-center justify-between mb-2 text-sm font-medium text-gray-700 select-none" :for="name">
 
 				<div>
 					{{ label }} <span class="text-red-700">{{ required ? "* " : "" }}</span>
@@ -26,7 +26,7 @@
 				<span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none left-3">
 					<Icon :name="iconName" size="1.1rem" />
 				</span>
-				<input v-bind="field" :disabled :id="name" :placeholder :type="inputType" autocomplete="on" class="w-full p-3 pl-10 text-gray-900 transition border rounded-xl bg-white/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/60 disabled:opacity-60 disabled:cursor-not-allowed" />
+				<input v-bind="field" :disabled :id="name" :placeholder :type="inputType" autocomplete="on" class="w-full p-3 pl-10 text-gray-900 transition border rounded-xl bg-white/80 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed placeholder:text-gray-400" :class="meta.validated && !meta.valid ? 'focus:ring-red-500/60 focus:border-red-500/60 border-red-500 ' : 'focus:ring-indigo-500/60 focus:border-indigo-500/60'" />
 			</div>
 		</div>
 	</field>

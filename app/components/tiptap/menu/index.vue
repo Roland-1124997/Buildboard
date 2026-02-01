@@ -1,5 +1,5 @@
 <template>
-	<div class="">
+	<div class="select-none ">
 		<div v-for="(item, index) in list" :key="index">
 			<div class="divider" v-if="item.type === 'divider'" :key="`divider${index}`"></div>
 			<TiptapMenuList v-else :action="item.action ?? (() => {})"
