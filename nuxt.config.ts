@@ -139,8 +139,8 @@ export default defineNuxtConfig({
     strategies: "injectManifest",
     registerType: 'autoUpdate',
     manifest: {
-      name: "Dashbord",
-      short_name: "Dashbord",
+      name: "dashboard",
+      short_name: "dashboard",
       description: "Personal dashboard application",
       prefer_related_applications: true,
       orientation: "portrait",
