@@ -1,5 +1,5 @@
 <template>
-	<div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg w-fit">
+	<div class="flex select-none items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg w-fit">
 		<icon name="akar-icons:folder" size="0.875rem" class="text-gray-500" />
 		<span class="text-xs font-semibold text-gray-600">
 			{{ articleTitle === "null" ? "Niet gekoppeld" : `${articleTitle}` }}

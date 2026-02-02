@@ -12,7 +12,7 @@ const loginFields = {
         .string({ message: defaultMessage })
         .nonempty({ message: defaultMessage })
         .email({ message: defaultEmailMessage }),
-    
+
     password: zod
         .string({ message: defaultMessage })
         .nonempty({ message: defaultMessage })
@@ -82,6 +82,17 @@ const navigatorField = {
     language: zod.string(),
 }
 
+const fileMetaField = {
+    title: zod
+        .string({ message: defaultMessage })
+        .nonempty({ message: defaultMessage })
+        .max(100, { message: "Mag niet langer zijn dan 100 tekens" }),
+
+    alt: zod.string({ message: defaultMessage })
+        .nonempty({ message: defaultMessage })
+        .max(250, { message: "Mag niet langer zijn dan 250 tekens" }),
+}
+
 export const schema = {
 
     login: {
@@ -113,6 +124,11 @@ export const schema = {
         backend: zod.object(navigatorField),
         frontend: toTypedSchema(zod.object(navigatorField)),
     },
+
+    fileMeta: {
+        backend: zod.object(fileMetaField),
+        frontend: toTypedSchema(zod.object(fileMetaField)),
+    }
 
 };
 

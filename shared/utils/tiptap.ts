@@ -8,6 +8,9 @@ import Highlight from "@tiptap/extension-highlight"
 import Document from "@tiptap/extension-document";
 import Image from "@tiptap/extension-image";
 
+import { useModal } from "#shared/utils/useModal";
+
+
 const pendingImages: Map<string, File> = new Map();
 
 const appendImage = (currentEditor: Editor, file: File, pos?: number) => {
@@ -17,17 +20,37 @@ const appendImage = (currentEditor: Editor, file: File, pos?: number) => {
     fileReader.readAsDataURL(file)
     fileReader.onload = () => {
 
+        const { create, close } = useModal();
+
         const result = fileReader.result as string
 
-        if (pos) currentEditor.chain().insertContentAt(pos, {
-            type: 'image', attrs: { src: result },
-        }).focus().run()
+        const onConfirm = async (attrs: { alt: string, title: string}) => {
+            
+            if (pos) currentEditor.chain().insertContentAt(pos, {
+                type: 'image', attrs: { ...attrs, src: result },
+            }).focus().run()
 
-        else currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
-            type: 'image', attrs: { src: result },
-        }).focus().run()
+            else currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
+                type: 'image', attrs: { ...attrs, src: result },
+            }).focus().run()
 
-        pendingImages.set(result, file);
+            pendingImages.set(result, file);
+
+            close();
+            
+        }
+
+        create({
+            name: "Afbeelding toevoegen",
+            description: "Voer een bijschrift en alternatieve tekst in voor de afbeelding.",
+            component: "ImageMeta",
+            props: { 
+                content: {
+                    src: result,
+                },
+                onConfirm,
+            }
+        });
 
     }
 

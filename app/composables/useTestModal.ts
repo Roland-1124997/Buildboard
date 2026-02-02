@@ -33,7 +33,7 @@ watch(opened, (value) => {
     }
 })
 
-export const useModal = () => {
+export const useTestModal = () => {
 
     const create = (options: ModalOptions) => {
         content.value = {

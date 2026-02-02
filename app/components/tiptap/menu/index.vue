@@ -101,6 +101,32 @@
 			isActive: () => editor.isActive("details"),
 		},
 		{
+			icon: "fluent:image-edit-24-regular",
+			title: "Image Meta",
+			action: () => {
+				
+				const { alt, src, title } = editor.getAttributes("image");
+
+				create({
+					name: "Afbeelding metadata bewerken",
+					description: "Bewerk de metadata van de afbeelding",
+					component: "ImageMeta",
+					props: {
+						content: {
+							src, alt, title,
+						},
+						onConfirm: (attrs: { title: string; alt: string }) => {
+							const Attrs = { ...attrs, src };
+							editor.chain().focus().setImage(Attrs).run();
+							close();
+						},
+					},
+				});
+				
+			},
+			isActive: () => editor.isActive("image")
+		},
+		{
 			type: "divider",
 		},
 		{

@@ -23,7 +23,7 @@
 		</ClientOnly>
 
 		<section v-if="editor" class="z-10 bg-white">
-			<TiptapMenu class="flex items-center p-1 py-1 mt-2 mb-2 overflow-x-auto underline border rounded-lg" :editor="editor" :hidden />
+			<TiptapMenu class="flex items-center p-1 py-1 mt-2 mb-2 overflow-x-auto underline border rounded-lg" :editor="editor" :hidden :editable="true" />
 			<div :class="content != '' ? 'gap-4 p-2' : 'p-3'" class="grid grid-cols-1 mt-3 overflow-auto outline-none appearance-none max-h-[62vh] md:max-h-[67vh] rounded-lg bg-gray-50">
 				<TiptapEditor :class="content != '' ? 'px-2 border-l-2 border-yellow-500 max-w-none bg-yellow-50' : ''" :editor="editor" v-model="content" aria-label="Bericht inhoud" />
 				<div v-if="content" v-html="content" :class="data.origin == 'email' ? 'space-y-4' : ''" class="px-2 border-l-2 border-blue-500 bg-blue-50 text-balance viewer"></div>
@@ -63,7 +63,7 @@
 
 	const { addToast } = useToast();
 
-	const hidden = ["Highlight", "link", "Paragraph", "Code Block", "Horizontal Rule", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Details", "Verbind project"];
+	const hidden = ["Highlight", "link", "Paragraph", "Code Block", "Horizontal Rule", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Details", "Verbind project", "Image Meta"];
 
 	const store = useNotifications();
 

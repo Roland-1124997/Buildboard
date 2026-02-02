@@ -12,22 +12,11 @@
 					</transition>
 				</div>
 				
-				<div aria-label="toggle wachtwoord" class="cursor-pointer select-none " v-if="type === 'password'" @click="togglePassword">
-					<span v-if="showPassword">
-						Verberg
-					</span>
-					<span v-else>
-						Toon
-					</span>
-				</div>
 			</label>
 
-			<div class="relative">
-				<span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none left-3">
-					<Icon :name="iconName" size="1.1rem" />
-				</span>
-				<input v-bind="field" :disabled :id="name" :placeholder :type="inputType" autocomplete="on" class="w-full p-3 pl-10 text-gray-900 transition border rounded-xl bg-white/80 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed placeholder:text-gray-400" :class="meta.validated && !meta.valid ? 'focus:ring-red-500/60 focus:border-red-500/60 border-red-500 ' : 'focus:ring-indigo-500/60 focus:border-indigo-500/60'" />
-			</div>
+			
+			<textarea v-bind="field" :disabled :id="name" :placeholder autocomplete="on" class="w-full p-3 h-[12vh] text-gray-900 transition border resize-none rounded-xl bg-white/80 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed placeholder:text-gray-400" :class="meta.validated && !meta.valid ? 'focus:ring-red-500/60 focus:border-red-500/60 border-red-500 ' : 'focus:ring-indigo-500/60 focus:border-indigo-500/60'" />
+			
 		</div>
 	</field>
 </template>
@@ -48,24 +37,9 @@
 	const { value } = useField<string | Array<any> | Number>(`${name}`);
 
 	watch(() => initialValue,
-			(initial) => value.value = initial, { immediate: true }
+		(initial) => value.value = initial, { immediate: true }
 	);
 		
-	const inputType = computed(() => 
-		type == "password" 
-			? showPassword.value 
-				? "text" 
-				: "password" 
-			: type
-	);
-
-	const showPassword = ref(false);
-
-	const togglePassword = () => {
-		showPassword.value = !showPassword.value;
-	};
-
-
 </script>
 
 <style scoped>
