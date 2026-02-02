@@ -1,6 +1,6 @@
 <template>
 	<div class="w-full h-full">
-		<Form @submit="props.onConfirm" :validation-schema="schema.fileMeta.frontend" v-slot="{ errors, meta }" class="flex flex-col max-h-[65vh]">
+		<Form @submit="props.onConfirm" :validation-schema="schema.fileMeta.frontend" v-slot="{ errors, meta }" class="flex flex-col max-h-[64vh]">
 			<div class="grid gap-6 p-1 overflow-y-auto bg-white md:grid-cols-2">
 				<div class="space-y-2">
 					<p class="text-sm font-medium text-gray-700 col-span-full">Voorbeeld van de afbeelding:</p>
