@@ -28,11 +28,11 @@ const appendImage = (currentEditor: Editor, file: File, pos?: number) => {
             
             if (pos) currentEditor.chain().insertContentAt(pos, {
                 type: 'image', attrs: { ...attrs, src: result },
-            }).focus().run()
+            }).createParagraphNear().focus().run()
 
             else currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
                 type: 'image', attrs: { ...attrs, src: result },
-            }).focus().run()
+            }).createParagraphNear().focus().run()
 
             pendingImages.set(result, file);
 
