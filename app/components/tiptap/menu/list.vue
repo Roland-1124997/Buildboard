@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="!editable" class="flex items-center justify-between text-black menu-item"
+    <button :disabled="!editable || isBlocked?.()" class="flex items-center justify-between text-black menu-item"
         :class="{ 'is-active': isActive ? isActive() : null }" @click="action" :title="title">
         <div class="flex items-end justify-center " v-if="isActive">
             <div class="flex items-end justify-center " v-if="isActive() && activeIcon">
@@ -47,6 +47,11 @@ const probs = defineProps({
     editable: {
         type: Boolean,
         default: true,
+    },
+
+    isBlocked: {
+        type: Function,
+        default: null,
     },
 });
 

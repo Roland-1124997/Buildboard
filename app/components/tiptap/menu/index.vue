@@ -124,7 +124,8 @@
 				});
 				
 			},
-			isActive: () => editor.isActive("image")
+			isActive: () => editor.isActive("image"),
+			isBlocked: () => !editor.isActive("image"),
 		},
 		{
 			type: "divider",
