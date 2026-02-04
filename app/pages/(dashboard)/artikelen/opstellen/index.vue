@@ -6,10 +6,10 @@
 					<div class="z-10 bg-white md:pr-4 md:border-r">
 						<div class="relative flex-1 mt-1 overflow-x-hidden overflow-y-auto outline-none appearance-none md:mt-auto h-[85vh] md:h-[88vh]">
 							<div class="sticky top-0 z-10 bg-white">
-								<TiptapMenu class="flex items-center p-1 py-1 mb-1 overflow-x-auto underline border rounded-lg bg-gray-50" :editor="editor" :editable />
+								<TiptapMenu v-if="!loaded" class="flex items-center p-1 py-1 mb-1 overflow-x-auto underline border rounded-lg bg-gray-50" :editor="editor" :editable />
 
 								<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
-									<div class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
+									<div v-if="!loaded" class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
 										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ words }} woorden</p>
 
 										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ Object.keys(errors).length }} fouten</p>
@@ -34,10 +34,10 @@
 								</FormBase>
 							</div>
 
-							<TiptapEditor :editor="editor" aria-label="Artkel inhoud" />
+							<TiptapEditor v-if="!loaded" :editor="editor" aria-label="Artkel inhoud" />
 						</div>
 					</div>
-					<TiptapTableList :Anchors="Anchors" v-model="activeId" />
+					<TiptapTableList v-if="!loaded" :Anchors="Anchors" v-model="activeId" />
 				</div>
 			</div>
 		</div>
@@ -76,6 +76,7 @@
 	const { addToast } = useToast();
 
 	const store = useArticles();
+	
 
 	const content = ref<Record<string, any>>();
 	const activeId: any = ref(null);
@@ -84,6 +85,14 @@
 	const editId = computed(() => {
 		const route = useRoute();
 		return route.query.edit as string | undefined;
+	});
+
+	const loaded = ref(true)
+
+	// hack to ensure there's no rendering issues with the buttons
+	onMounted(async () => {
+		if(!editId.value) await new Promise((resolve) => setTimeout(resolve, 100));
+		loaded.value = false;
 	});
 
 	if (editId.value) {
