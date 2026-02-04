@@ -111,6 +111,7 @@
 	};
 
 	const populateFields = (editor: Editor) => {
+		
 		content.value = editor.getJSON();
 		store.savePayload(content.value);
 
@@ -153,12 +154,6 @@
 	});
 
 	onBeforeRouteLeave(() => {
-		store.clearSavedPayload();
-		store.clearSavedPayload();
-	});
-
-	onBeforeMount(() => {
-		store.clearSavedPayload();
 		store.clearSavedPayload();
 	});
 

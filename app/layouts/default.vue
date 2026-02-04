@@ -20,6 +20,8 @@
 	const storageStore = useStorage();
 	const notifications = useNotifications();
 
+	watch(() => useRoute().path, () => articles.clearSavedPayload(), { immediate: true } )
+
 	store.initialPayload();
 	account.initialPayload();
 	articles.initialPayload();
