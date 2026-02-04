@@ -153,13 +153,11 @@
 	});
 
 	onBeforeRouteLeave(() => {
-		console.log("leaving route, clearing store");
 		store.clearSavedPayload();
 		store.clearSavedPayload();
 	});
 
 	onBeforeMount(() => {
-		console.log("mounting route, clearing store");
 		store.clearSavedPayload();
 		store.clearSavedPayload();
 	});
