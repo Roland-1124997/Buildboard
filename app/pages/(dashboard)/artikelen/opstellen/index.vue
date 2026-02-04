@@ -153,6 +153,14 @@
 	});
 
 	onBeforeRouteLeave(() => {
+		console.log("leaving route, clearing store");
+		store.clearSavedPayload();
+		store.clearSavedPayload();
+	});
+
+	onBeforeMount(() => {
+		console.log("mounting route, clearing store");
+		store.clearSavedPayload();
 		store.clearSavedPayload();
 	});
 
@@ -178,11 +186,10 @@
 			await upload(response.data?.id)
 			await store.refresh()
 		},
-		onfailure: () =>
-			addToast({
-				message: failureMessage,
-				type: "error",
-			}),
+		onfailure: () => addToast({
+			message: failureMessage,
+			type: "error",
+		}),
 	};
 
 	const appendToBody = async (values: any) => {
