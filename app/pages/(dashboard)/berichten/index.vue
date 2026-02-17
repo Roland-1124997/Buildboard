@@ -2,12 +2,11 @@
 	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[77dvh] md:h-[74dvh] md:grid-cols-2">
 		<div class="z-10 md:pr-4 md:border-r">
 			<div class="flex-1 h-full overflow-y-auto">
+				<UtilsEmailsPagination v-if="store.pagination.total > 1"/>
 				<UtilsEmailsCardSkeleton v-if="store.loading" />
 				<template v-else>
 					<UtilsEmailsError v-if="store.messages.length === 0"/>
-					<UtilsEmailsPagination v-if="store.pagination.total > 1"/>
-					
-					<ClientOnly v-else>
+					<ClientOnly v-else >
 						<UtilsEmailsCard/>
 						<template #fallback>
 							<UtilsEmailsCardSkeleton />

@@ -6,21 +6,52 @@ import { JSDOM } from 'jsdom';
 const { IMAP_HOST, IMAP_PORT, IMAP_SECURE, IMAP_USER, IMAP_PASS } = useRuntimeConfig();
 
 export const sanitizeHtml = (html: string) => {
-
     let output = sanitize(html, {
-        allowedTags: sanitize.defaults.allowedTags.concat(['img']).filter(tag => tag !== 'blockquote' && tag !== 'div'),
+        allowedTags: sanitize.defaults.allowedTags.filter(tag => tag !== 'img'),
         allowedAttributes: {
             ...sanitize.defaults.allowedAttributes,
-            '*': ['class']
+            '*': ['class'],
         },
-        allowedSchemes: ['http', 'https', 'mailto', 'data']
-    })
+        allowedSchemes: ['http', 'https', 'mailto'],
+        disallowedTagsMode: 'discard',
+    });
 
-    output = output.replace(/\n{2,}/g, '');
-    output = output.replace(/[^\x00-\x7F]/g, ''); 
-    output = output.replace(/^(<br\s*\/?>)+/i, '');
+    output = output.replace(
+        /<hr([^>]*)>/gi,
+        '<hr$1 style="margin-top:16px;margin-bottom:16px;">'
+    );
 
-    return output;
+    output = output.replace(
+        /<h1([^>]*)>/gi,
+        '<h1$1 style="margin:0;padding:0;font-size:2em;line-height:1.08em;padding-top:16px;font-weight:600;padding-bottom:16px;text-align:left">'
+    );
+
+    output = output.replace(
+        /<h2([^>]*)>/gi,
+        '<h2$1 style="margin:0;padding:0;font-size:1.5em;line-height:1.08em;padding-top:14px;font-weight:600;padding-bottom:14px;text-align:left">'
+    );
+
+    output = output.replace(
+        /<h3([^>]*)>/gi,
+        '<h3$1 style="margin:0;padding:0;font-size:1.25em;line-height:1.08em;padding-top:12px;font-weight:600;padding-bottom:12px;text-align:left">'
+    );
+
+    output = output.replace(
+        /<h4([^>]*)>/gi,
+        '<h4$1 style="margin:0;padding:0;font-size:1.1em;line-height:1.08em;padding-top:10px;font-weight:600;padding-bottom:10px;text-align:left">'
+    );
+
+    output = output.replace(
+        /<h5([^>]*)>/gi,
+        '<h5$1 style="margin:0;padding:0;font-size:1em;line-height:1.08em;padding-top:8px;font-weight:600;padding-bottom:8px;text-align:left">'
+    );
+
+    output = output.replace(
+        /<h6([^>]*)>/gi,
+        '<h6$1 style="margin:0;padding:0;font-size:0.9em;line-height:1.08em;padding-top:6px;font-weight:600;padding-bottom:6px;text-align:left">'
+    );
+
+    return output.replaceAll('  ', '').trim()
 }
 
 export const useConnectClient = async () => {
