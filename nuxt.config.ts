@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   // Include Supabase dependencies because of issues with supabase
   nitro: {
     scheduledTasks: {
-      '30 * * * *': ['analytics'],
+      '10 * * * *': ['analytics'],
       '0 12 */5 * *': ['supabase']
     },
     experimental: {

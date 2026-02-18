@@ -29,7 +29,8 @@ export default defineTask({
                 await Promise.all([
                     cache.removeItem(`nitro:functions:analytics:stats:${cacheKey}.json`),
                     cache.removeItem(`nitro:functions:analytics:device:${cacheKey}.json`),
-                    cache.removeItem(`nitro:functions:analytics:path:${cacheKey}.json`)
+                    cache.removeItem(`nitro:functions:analytics:path:${cacheKey}.json`),
+                    cache.removeItem(`nitro:functions:analytics:country:${cacheKey}.json`)
                 ]);
 
                 await Promise.all([
@@ -47,6 +48,11 @@ export default defineTask({
                     useFetchMetrics(`path:${value}`, {
                         startAt, endAt, unit: 'day',
                         timezone, type: 'path'
+                    }),
+
+                    useFetchMetrics(`country:${value}`, {
+                        startAt, endAt, unit: 'day',
+                        timezone, type: 'country'
                     })
 
                 ]);

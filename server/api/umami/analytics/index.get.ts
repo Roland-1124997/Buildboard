@@ -1,3 +1,5 @@
+import { count } from "console";
+
 export default defineSupabaseEventHandler(async (event) => {
 
     const filter = String(getQuery(event).filter || 'vandaag');
@@ -24,6 +26,15 @@ export default defineSupabaseEventHandler(async (event) => {
     });
 
     if (pagesError || !pages) return useReturnResponse(event, internalServerError);
+
+
+    const { data: country, error: countryError } = await useFetchMetrics(`country:${filter}`, {
+        startAt, endAt, unit: 'day',
+        timezone: 'Europe/Amsterdam', type: 'country'
+    }); 
+
+    if (countryError || !country) return useReturnResponse(event, internalServerError);
+
 
     return useReturnResponse(event, {
         status: {
@@ -113,7 +124,9 @@ export default defineSupabaseEventHandler(async (event) => {
                         },
                     },
                     values: calculateMetrics(pages)
-                }
+                },
+                countries: country
+
             }
         }
     });

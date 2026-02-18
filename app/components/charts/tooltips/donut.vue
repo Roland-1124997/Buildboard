@@ -13,11 +13,7 @@
 </template>
 
 <script setup lang="ts">
-	const { data, categories, active, values } = defineProps({
-		data: {
-			type: Array as () => Record<string, any>[],
-			required: true,
-		},
+	const { categories, active, values } = defineProps({
 		categories: {
 			type: Object as () => Record<string, { name: string; color: string }>,
 			required: true,
@@ -28,16 +24,14 @@
 			default: "bezoekers",
 		},
 		values: {
-			type: Object as () => { index: number; data: number } | null,
-			required: false,
-			default: null,
+			type: Object as () => { label: string; [key: string]: any } | null,
 		},
 	});
 
-	const localLabel = computed(() => data[values?.index || 0]?.label || "");
-	const localData = computed(() => useFormatDuration(values?.data || 0));
+	const localLabel = computed(() => values?.label || "");
+	const localData = computed(() => useFormatDuration(values?.[values.label] || 0));
 	const localStyle = computed(() => {
-		const color = categories[data[values?.index || 0]?.label.toLowerCase()]?.color || "";
+		const color = categories[values?.label?.toLowerCase() || ""]?.color || "";
 
 		return { background: color };
 	});

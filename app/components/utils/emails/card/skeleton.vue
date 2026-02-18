@@ -6,7 +6,7 @@
 					<div class="flex items-center gap-2">
 						<div class="flex-shrink-0 w-4 h-4 bg-blue-200 rounded-full"></div>
 						<div class="h-5 bg-blue-100 rounded-full w-14"></div>
-						<div class="w-32 h-4 bg-gray-200 rounded"></div>
+						<div class="w-20 h-4 bg-gray-200 rounded"></div>
 					</div>
 					<div class="flex items-center gap-3">
 						<div class="w-16 h-4 bg-gray-200 rounded"></div>

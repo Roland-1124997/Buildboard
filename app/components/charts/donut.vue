@@ -51,7 +51,7 @@
 		</div>
 
 		<template #tooltip="{ values }">
-			<ChartsTooltipsDonut :data="data" :categories="categories" :active="active" :values="values" />
+			<ChartsTooltipsDonut :categories="categories" :active="active" :values="values" />
 		</template>
 	</DonutChart>
 </template>
