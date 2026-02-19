@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<UtilsApp>
-			<UtilsNavigationSidebar v-model:isMobileMenuOpen="isMobileMenuOpen" :routes />
+			<UtilsNavigationSidebar v-if="Object.keys(routes).length > 0" v-model:isMobileMenuOpen="isMobileMenuOpen" :routes />
 
 			<div class="flex flex-col flex-1 w-full overflow-hidden">
 				<header class="z-40 flex items-center justify-between h-16 px-4 bg-white border-b lg:px-6">
