@@ -1,5 +1,5 @@
 <template>
-	<aside :class="['fixed inset-y-0 left-0 z-[60] w-64 bg-gray-50 border-r transform transition-transform md:transition-none duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
+	<aside :class="['fixed inset-y-0 left-0 z-[60] w-64 bg-gray-50 border-r transform transition-transform md:transition-none duration-300 ease-in-out lg:translate-x-0 h-full lg:static lg:inset-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
 		<div class="flex flex-col h-full select-none">
 			<div class="flex items-center justify-between h-16 px-4 border-b">
 				<div class="flex items-center space-x-3">
@@ -26,7 +26,7 @@
 				</NuxtLink>
 			</nav>
 
-			<div class="p-3 mb-3 border-t md:mb-0">
+			<div v-if="Object.keys(routes).length > 0" class="p-3 mb-3 border-t md:mb-0">
 				<button aria-label="uitlogen" @click="store.logout" class="flex items-center w-full gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-red-50 hover:text-red-600">
 					<Icon name="akar-icons:door" class="w-5 h-5" />
 					<span>Uitloggen</span>

@@ -30,7 +30,6 @@ export default defineNuxtConfig({
         '@supabase/supabase-js',
         '@supabase/realtime-js',
         '@supabase/auth-js',
-        'to-px',
         'striptags'
       ]
     }

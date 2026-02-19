@@ -1,16 +1,16 @@
 <template>
 	<nav aria-label="Breadcrumb" class="py-1 select-none">
 		<ol class="flex items-center gap-1 overflow-scroll">
-			<li v-for="(crumb, index) in breadcrumbs" :key="index" class="flex items-center gap-1 last:truncate">
-				<NuxtLink v-if="index < breadcrumbs.length - 1" :to="crumb.path" class="text-gray-600 transition-colors duration-200 hover:text-gray-900 hover:underline">
+			<li v-for="(crumb, index) in breadcrumbs.slice(0, 3)" :key="index" class="flex items-center gap-1 last:truncate">
+				<NuxtLink v-if="index < breadcrumbs.slice(0, 3).length - 1" :to="crumb.path" class="text-gray-600 transition-colors duration-200 hover:text-gray-900 hover:underline">
 					{{ crumb.label }}
 				</NuxtLink>
 
-				<span v-else class="font-bold truncate text-gray-950 ">
-					{{ crumb.label.split(' ')[0] }}
+				<span v-else class="font-bold truncate text-gray-950">
+					{{ crumb.label.split(" ")[0] }}
 				</span>
 
-				<span aria-hidden v-if="index < breadcrumbs.length - 1" class="text-gray-600 select-none"> / </span>
+				<span aria-hidden v-if="index < breadcrumbs.slice(0, 3).length - 1" class="text-gray-600 select-none"> / </span>
 			</li>
 		</ol>
 	</nav>
