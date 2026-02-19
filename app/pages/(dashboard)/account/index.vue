@@ -116,7 +116,7 @@
 								<div class="flex-1 min-w-0">
 									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
 									<p class="text-sm font-semibold text-gray-900">
-										{{ account.getCounryName(session.country_code) }}
+										{{ useCounryName(session.country_code) }}
 									</p>
 								</div>
 							</div>
@@ -145,8 +145,6 @@
 								</div>
 							</div>
 
-							
-
 							<div class="items-start hidden gap-3 md:flex">
 								<div class="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg shrink-0">
 									<icon name="akar-icons:location" class="w-4 h-4 text-blue-600" />
@@ -154,12 +152,10 @@
 								<div class="flex-1 min-w-0">
 									<p class="text-xs font-medium tracking-wide text-gray-500 uppercase">Locatie</p>
 									<p class="text-sm font-semibold text-gray-900">
-										{{ account.getCounryName(session.country_code) }}
+										{{ useCounryName(session.country_code) }}
 									</p>
 								</div>
 							</div>
-
-							
 						</div>
 
 						<div class="flex flex-wrap items-center justify-between gap-2 pt-4 mt-4 text-xs text-gray-500 border-t border-gray-200">
@@ -184,7 +180,6 @@
 </template>
 
 <script setup lang="ts">
-
 	useSeoMeta({
 		title: "Profiel Dashboard",
 		description: "Bekijk en bewerk je profielinformatie.",
@@ -213,5 +208,4 @@
 
 	const store = useSessions();
 	const account = useAccount();
-
 </script>

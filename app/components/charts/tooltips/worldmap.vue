@@ -3,7 +3,7 @@
 		<div class="flex items-center gap-1">
 			<div v-if="data.count > 0" class="w-3 h-3 rounded-full" :style="localStyle"></div>
 			<p class="font-bold text-normal">
-				{{ getCounryName(data.id) }}
+				{{ useCounryName(data.id) }}
 			</p>
 		</div>
 
@@ -31,12 +31,6 @@
 			required: true,
 		},
 	});
-
-    const getCounryName = (countryCode: string | null) => {
-		if (!countryCode) return "Onbekend";
-		const regionNames = new Intl.DisplayNames(["nl"], { type: "region" });
-		return regionNames.of(countryCode) || "Onbekend";
-	};
 
 	const localStyle = computed(() => {
 		const color = data.areaColor ? data.areaColor(data) : "#dbeafe";

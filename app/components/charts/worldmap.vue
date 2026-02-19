@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { WorldMapTopoJSON, WorldMap110mAlphaTopoJSON } from "@unovis/ts/maps";
+	import { WorldMapTopoJSON } from "@unovis/ts/maps";
 
 	import { geoMercator } from "d3-geo";
 
@@ -69,9 +69,3 @@
 	</div>
 </template>
 
-<style>
-	:root {
-		--vis-map-feature-color: #ffffff;
-		--vis-map-boundary-color: #9c9c9c;
-	}
-</style>

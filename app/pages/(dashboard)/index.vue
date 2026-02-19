@@ -99,6 +99,34 @@
 			</article>
 
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
+				<h2 class="mb-1 text-xl font-bold">Breakdown per pagina</h2>
+				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina,</p>
+
+				<div class="grid gap-3 md:grid-cols-3">
+					<div v-for="page in store.metrics?.pages.values.slice(0, 6)" :key="page.label" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+						<div class="flex items-center pb-1 mb-2 text-sm font-semibold text-gray-900 truncate border-b">
+							<p class="text-sm font-semibold text-gray-900">{{ page.label }}</p>
+						</div>
+						<div class="grid grid-cols-3 gap-2 text-center">
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
+								<p class="font-medium text-gray-900">{{ page.bezoekers }}</p>
+							</div>
+
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
+								<p class="font-medium text-gray-900">{{ page.bezoeken }}</p>
+							</div>
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
+								<p class="font-medium text-gray-900">{{ page.weergaven }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</article>
+
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
 				<h2 class="mb-1 text-xl font-bold">Bezoekers per land</h2>
 				<p class="mb-6 text-sm text-gray-600">Een visuele weergave van waar je bezoekers vandaan komen,</p>
 
@@ -116,6 +144,35 @@
 						</div>
 					</template>
 				</ClientOnly>
+			</article>
+
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-1">
+				<h2 class="mb-1 text-xl font-bold">Top landen</h2>
+				<p class="mb-6 text-sm text-gray-600">De landen waaruit je meeste bezoekers komen,</p>
+
+				<div class="flex flex-col gap-3 pt-3">
+					<div v-for="country in store.metrics?.countries.slice(0, 4)" :key="country.name" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+						<div class="flex items-center pb-1 mb-2 border-b">
+							<icon :name="`twemoji:flag-${useCounryName(country.name, 'en').replace(' ', '-').toLowerCase()}`" class="object-cover w-6 h-6 mr-2 rounded-sm" />
+							<p class="text-sm font-semibold text-gray-900">{{ useCounryName(country.name) }}</p>
+						</div>
+						<div class="grid grid-cols-3 gap-2 text-center">
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
+								<p class="font-medium text-gray-900">{{ country.visitors }}</p>
+							</div>
+
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
+								<p class="font-medium text-gray-900">{{ country.visits }}</p>
+							</div>
+							<div>
+								<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
+								<p class="font-medium text-gray-900">{{ country.pageviews }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</article>
 		</section>
 	</div>

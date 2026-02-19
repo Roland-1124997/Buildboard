@@ -1,11 +1,6 @@
 
 const getLocationString = (session: UserSession) => `${session.city}, ${session.country_code}`;
 
-const getCounryName = (countryCode: string | null) => {
-    if (!countryCode) return "Onbekend";
-    const regionNames = new Intl.DisplayNames(["nl"], { type: "region" });
-    return regionNames.of(countryCode) || "Onbekend";
-};
 
 const getRegionName = (regionCode: string | null) => {
     if (!regionCode) return "Onbekend";
@@ -195,7 +190,6 @@ export const useAccount = defineStore("useAccount", () => {
         enableProtection,
         disableProtection,
         getLocationString,
-        getCounryName,
         getRegionName,
         deviceType,
 

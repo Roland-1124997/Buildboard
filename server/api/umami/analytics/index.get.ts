@@ -1,5 +1,3 @@
-import { count } from "console";
-
 export default defineSupabaseEventHandler(async (event) => {
 
     const filter = String(getQuery(event).filter || 'vandaag');

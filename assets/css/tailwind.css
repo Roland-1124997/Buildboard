@@ -4,6 +4,8 @@
 
 :root {
     --vis-donut-background-color: transparent !important;
+    --vis-map-feature-color: #ffffff !important;
+    --vis-map-boundary-color: #9c9c9c !important;
 }
 
 ::-webkit-scrollbar {
@@ -20,6 +22,7 @@ body {
     -webkit-touch-callout: none;
     @apply bg-white
 }
+
 
 .tiptap {
     @apply outline-none appearance-none
