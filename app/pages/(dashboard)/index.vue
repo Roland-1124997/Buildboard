@@ -103,26 +103,50 @@
 				<p class="mb-6 text-sm text-gray-600">Een overzicht van de belangrijkste statistieken per pagina,</p>
 
 				<div class="grid gap-3 md:grid-cols-3">
-					<div v-for="page in store.metrics?.pages.values.slice(0, 6)" :key="page.label" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-						<div class="flex items-center pb-1 mb-2 text-sm font-semibold text-gray-900 truncate border-b">
-							<p class="text-sm font-semibold text-gray-900">{{ page.label }}</p>
-						</div>
-						<div class="grid grid-cols-3 gap-2 text-center">
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
-								<p class="font-medium text-gray-900">{{ page.bezoekers }}</p>
+					<ClientOnly v-if="store.metrics?.pages.values">
+						<div v-for="page in store.metrics?.pages.values.slice(0, 6)" :key="page.label" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+							<div class="flex items-center pb-1 mb-2 text-sm font-semibold text-gray-900 truncate border-b">
+								<p class="text-sm font-semibold text-gray-900">{{ page.label }}</p>
 							</div>
+							<div class="grid grid-cols-3 gap-2 text-center">
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
+									<p class="font-medium text-gray-900">{{ page.bezoekers }}</p>
+								</div>
 
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
-								<p class="font-medium text-gray-900">{{ page.bezoeken }}</p>
-							</div>
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
-								<p class="font-medium text-gray-900">{{ page.weergaven }}</p>
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
+									<p class="font-medium text-gray-900">{{ page.bezoeken }}</p>
+								</div>
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
+									<p class="font-medium text-gray-900">{{ page.weergaven }}</p>
+								</div>
 							</div>
 						</div>
-					</div>
+
+						<template #fallback>
+							<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] bg-gray-100 border border-gray-200 rounded-lg">
+								<div class="h-5 mb-3 bg-gray-200 rounded"></div>
+								<div class="grid grid-cols-3 gap-2">
+									<div class="h-4 bg-gray-200 rounded"></div>
+									<div class="h-4 bg-gray-200 rounded"></div>
+									<div class="h-4 bg-gray-200 rounded"></div>
+								</div>
+							</div>
+						</template>
+					</ClientOnly>
+
+					<template v-else>
+						<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] bg-gray-100 border border-gray-200 rounded-lg">
+							<div class="h-5 mb-3 bg-gray-200 rounded"></div>
+							<div class="grid grid-cols-3 gap-2">
+								<div class="h-4 bg-gray-200 rounded"></div>
+								<div class="h-4 bg-gray-200 rounded"></div>
+								<div class="h-4 bg-gray-200 rounded"></div>
+							</div>
+						</div>
+					</template>
 				</div>
 			</article>
 
@@ -133,17 +157,24 @@
 				<ClientOnly v-if="store.metrics">
 					<div class="pt-3 overflow-hidden">
 						<div class="">
-							<ChartsWorldmap :data="store.metrics.countries" :zoom-extent="[1.2, 30]" />
+							<ChartsWorldmap :data="store.metrics.countries" :zoom-extent="[1.2, 45]" />
 						</div>
 					</div>
 
 					<template #fallback>
 						<div aria-hidden class="pt-3 animate-pulse">
-							<div class="md:hidden h-[340px] bg-gray-200 rounded-lg"></div>
+							<div class="md:hidden h-[400px] bg-gray-200 rounded-lg"></div>
 							<div class="hidden h-[520px] bg-gray-200 rounded-lg md:flex"></div>
 						</div>
 					</template>
 				</ClientOnly>
+
+				<template v-else>
+					<div aria-hidden class="pt-3 animate-pulse">
+						<div class="md:hidden h-[400px] bg-gray-200 rounded-lg"></div>
+						<div class="hidden h-[520px] bg-gray-200 rounded-lg md:flex"></div>
+					</div>
+				</template>
 			</article>
 
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-1">
@@ -151,27 +182,51 @@
 				<p class="mb-6 text-sm text-gray-600">De landen waaruit je meeste bezoekers komen,</p>
 
 				<div class="flex flex-col gap-3 pt-3">
-					<div v-for="country in store.metrics?.countries.slice(0, 4)" :key="country.name" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-						<div class="flex items-center pb-1 mb-2 border-b">
-							<icon :name="`twemoji:flag-${useCounryName(country.name, 'en').replace(' ', '-').toLowerCase()}`" class="object-cover w-6 h-6 mr-2 rounded-sm" />
-							<p class="text-sm font-semibold text-gray-900">{{ useCounryName(country.name) }}</p>
-						</div>
-						<div class="grid grid-cols-3 gap-2 text-center">
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
-								<p class="font-medium text-gray-900">{{ country.visitors }}</p>
+					<ClientOnly v-if="store.metrics?.countries">
+						<div v-for="country in store.metrics?.countries.slice(0, 4)" :key="country.name" class="p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+							<div class="flex items-center pb-1 mb-2 border-b">
+								<icon :name="`twemoji:flag-${useCounryName(country.name, 'en').replace(' ', '-').toLowerCase()}`" class="object-cover w-6 h-6 mr-2 rounded-sm" />
+								<p class="text-sm font-semibold text-gray-900">{{ useCounryName(country.name) }}</p>
 							</div>
+							<div class="grid grid-cols-3 gap-2 text-center">
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Bezoekers</h3>
+									<p class="font-medium text-gray-900">{{ country.visitors }}</p>
+								</div>
 
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
-								<p class="font-medium text-gray-900">{{ country.visits }}</p>
-							</div>
-							<div>
-								<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
-								<p class="font-medium text-gray-900">{{ country.pageviews }}</p>
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Bezoeken</h3>
+									<p class="font-medium text-gray-900">{{ country.visits }}</p>
+								</div>
+								<div>
+									<h3 class="text-xs font-semibold text-blue-800">Weergaven</h3>
+									<p class="font-medium text-gray-900">{{ country.pageviews }}</p>
+								</div>
 							</div>
 						</div>
-					</div>
+
+						<template #fallback>
+							<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] bg-gray-100 border border-gray-200 rounded-lg">
+								<div class="h-5 mb-3 bg-gray-200 rounded"></div>
+								<div class="grid grid-cols-3 gap-2">
+									<div class="h-4 bg-gray-200 rounded"></div>
+									<div class="h-4 bg-gray-200 rounded"></div>
+									<div class="h-4 bg-gray-200 rounded"></div>
+								</div>
+							</div>
+						</template>
+					</ClientOnly>
+
+					<template v-else>
+						<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] bg-gray-100 border border-gray-200 rounded-lg">
+							<div class="h-5 mb-3 bg-gray-200 rounded"></div>
+							<div class="grid grid-cols-3 gap-2">
+								<div class="h-4 bg-gray-200 rounded"></div>
+								<div class="h-4 bg-gray-200 rounded"></div>
+								<div class="h-4 bg-gray-200 rounded"></div>
+							</div>
+						</div>
+					</template>
 				</div>
 			</article>
 		</section>
@@ -205,6 +260,8 @@
 		],
 	});
 	const store = useAnalytics();
+
+	const hidden = ref(true);
 
 	const activedDevice = ref("bezoekers");
 	const updateActiveDevice = (device: string) => {
