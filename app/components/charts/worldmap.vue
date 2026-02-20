@@ -60,7 +60,7 @@
 </script>
 
 <template>
-	<div class="overflow-hidden border rounded-lg">
+	<div class="overflow-hidden bg-blue-200 border rounded-lg">
 		<TopoJSONMap map-feature-key="countries" :height="mapHeight" :zoom-extent="zoomExtent" :projection="customProjection" :data="worldData" :topo-json="WorldMapTopoJSON" :area-color="areaColor">
 			<template #tooltip="{ values }">
 				<ChartsTooltipsWorldmap :data="{ ...values, areaColor }" />

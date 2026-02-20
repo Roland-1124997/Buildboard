@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+import { loopThroughChunks } from './server/utils/chunks/functions';
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: {
@@ -21,22 +24,6 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@nuxt/a11y",
   ],
-
-  // Include Supabase dependencies because of issues with supabase
-  // modules where being imported using commonjs instead of esm
-  vite: {
-    optimizeDeps: {
-      include: [
-        '@supabase/supabase-js',
-        '@supabase/realtime-js',
-        '@supabase/auth-js',
-        'striptags'
-      ]
-    }
-  },
-
-
-  // Include Supabase dependencies because of issues with supabase
   nitro: {
     scheduledTasks: {
       '10 * * * *': ['analytics'],
@@ -45,12 +32,19 @@ export default defineNuxtConfig({
     experimental: {
       tasks: true
     },
-    externals: {
-      inline: [
-        '@supabase/realtime-js',
-        '@supabase/auth-js',
-        'tslib'
-      ]
+  },
+
+  vite: {
+    build: {
+      // Verhoog de waarschuwing limiet voor chunk grootte, aangezien sommige libraries (zoals elk.js) een grote footprint hebben
+      chunkSizeWarningLimit: 1500,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            return loopThroughChunks(id);
+          }
+        }
+      }
     }
   },
 
@@ -118,7 +112,7 @@ export default defineNuxtConfig({
 
     whitelistedDomains: process.env.WHITELISTED_DOMAINS,
     production: process.env.NODE_ENV === 'development' ? false : true
-    
+
   },
 
 

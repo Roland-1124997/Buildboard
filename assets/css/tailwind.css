@@ -4,8 +4,8 @@
 
 :root {
     --vis-donut-background-color: transparent !important;
-    --vis-map-feature-color: #ffffff !important;
-    --vis-map-boundary-color: #9c9c9c !important;
+    --vis-map-feature-color: #f4f4f4 !important;
+    --vis-map-boundary-color: #85a3c9 !important;
 }
 
 ::-webkit-scrollbar {

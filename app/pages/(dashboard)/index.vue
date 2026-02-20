@@ -126,7 +126,7 @@
 						</div>
 
 						<template #fallback>
-							<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] bg-gray-100 border border-gray-200 rounded-lg">
+							<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] animate-pulse bg-gray-100 border border-gray-200 rounded-lg">
 								<div class="h-5 mb-3 bg-gray-200 rounded"></div>
 								<div class="grid grid-cols-3 gap-2">
 									<div class="h-4 bg-gray-200 rounded"></div>
@@ -138,7 +138,7 @@
 					</ClientOnly>
 
 					<template v-else>
-						<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] bg-gray-100 border border-gray-200 rounded-lg">
+						<div v-for="i in 6" :key="i" class="p-4 h-[6.6rem] animate-pulse bg-gray-100 border border-gray-200 rounded-lg">
 							<div class="h-5 mb-3 bg-gray-200 rounded"></div>
 							<div class="grid grid-cols-3 gap-2">
 								<div class="h-4 bg-gray-200 rounded"></div>
@@ -157,7 +157,7 @@
 				<ClientOnly v-if="store.metrics">
 					<div class="pt-3 overflow-hidden">
 						<div class="">
-							<ChartsWorldmap :data="store.metrics.countries" :zoom-extent="[1.2, 45]" />
+							<LazyChartsWorldmap :data="store.metrics.countries" :zoom-extent="[1.2, 45]" />
 						</div>
 					</div>
 
@@ -206,7 +206,7 @@
 						</div>
 
 						<template #fallback>
-							<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] bg-gray-100 border border-gray-200 rounded-lg">
+							<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] animate-pulse bg-gray-100 border border-gray-200 rounded-lg">
 								<div class="h-5 mb-3 bg-gray-200 rounded"></div>
 								<div class="grid grid-cols-3 gap-2">
 									<div class="h-4 bg-gray-200 rounded"></div>
@@ -218,7 +218,7 @@
 					</ClientOnly>
 
 					<template v-else>
-						<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] bg-gray-100 border border-gray-200 rounded-lg">
+						<div v-for="i in 4" :key="i" class="p-4 h-[6.85rem] animate-pulse bg-gray-100 border border-gray-200 rounded-lg">
 							<div class="h-5 mb-3 bg-gray-200 rounded"></div>
 							<div class="grid grid-cols-3 gap-2">
 								<div class="h-4 bg-gray-200 rounded"></div>
