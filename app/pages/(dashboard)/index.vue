@@ -157,7 +157,7 @@
 				<ClientOnly v-if="store.metrics">
 					<div class="pt-3 overflow-hidden">
 						<div class="">
-							<LazyChartsWorldmap :data="store.metrics.countries" :zoom-extent="[1.2, 45]" />
+							<LazyChartsWorldmap :data="store.metrics.countries" :zoom-extent="[2.6, 45]" />
 						</div>
 					</div>
 
