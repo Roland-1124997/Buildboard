@@ -13,6 +13,8 @@ export const useNotifications = defineStore("useNotifications", () => {
     const { addToast } = useToast();
     const { setBadge } = useBadge();
 
+    const { requestPermission, showNotification } = useNotification();
+
     const uri = "/api/notifications";
     const Request = useApiHandler<ApiResponse<any>>(uri);
 
@@ -64,6 +66,18 @@ export const useNotifications = defineStore("useNotifications", () => {
 
             messages.value = data.data?.messages || [];
             unseen.value = data.data?.unseen || 0;
+
+            if (unseen.value > 0) {
+
+                await showNotification("Je berichten zijn bijgewerkt", {
+                    body: `Je hebt ${unseen.value} ongelezen berichten.`,
+                    icon: "/icons/icon_512.png",
+                });
+
+            }
+
+
+        
 
             await setBadge(unseen.value);
         }
@@ -177,38 +191,6 @@ export const useNotifications = defineStore("useNotifications", () => {
         await refresh()
     };
 
-
-    const requestPermission = async () => {
-
-        if (!("Notification" in window) || Notification.permission !== "default") return;
-
-        Notification.requestPermission()
-            .then((permission) => {
-
-                if (permission !== 'granted') {
-                    addToast({
-                        message: `notificatie permissies geweigerd!`,
-                        type: "error",
-                        duration: 5000,
-                    })
-                    return
-                }
-
-                addToast({
-                    message: `Notificatie permissies verleend!`,
-                    type: "success",
-                    duration: 5000,
-                })
-
-                return navigator.serviceWorker.ready
-            })
-
-            .catch((error) => addToast({
-                message: `Fout bij het aanvragen van notificatie permissies: ${error}`,
-                type: "error",
-                duration: 5000,
-            }));
-    };
 
     const deleteMessage = async (message: any) => {
 
