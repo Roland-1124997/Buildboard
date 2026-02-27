@@ -62,12 +62,31 @@ export const startImapWatcher = async () => {
 
             // Setup event listeners
             events.forEach((event: string) => {
-                const handler = () => {
-                    imapEmitter.emit('new', randomUUID());
+
+                const handler = async (mail: any) => {
+
+                    const unseen = await unseenMessagesCount(client!)
+
+                    const data = await useFetchImapSingleMessage(client!, mail.seq || mail.count, {
+                        uid: true,
+                        envelope: true,
+                        internalDate: true,
+                        flags: true,
+                        source: true
+                    })
+
+                    imapEmitter.emit('new', {
+                        data: data,
+                        events: {
+                            incoming: event === 'exists',
+                            deleted: event === 'expunge',
+                        },
+                        unseen
+                    });
                 };
                 eventHandlers.set(event, handler);
                 client!.on(event as any, handler);
-            });
+            })
 
             // Handle connection errors
             client.on('error', (err: Error) => {
@@ -163,18 +182,18 @@ const getFilteredMessageUids = async (client: ImapFlow, filter: string, search: 
     const unseen_filter = filter === "ongelezen";
     const has_search = !!search;
 
-    
+
     if (!has_search && !seen_filter && !unseen_filter) return [];
-    
+
     const searchQuery: any = {};
     if (seen_filter || unseen_filter) searchQuery.seen = seen_filter;
-    
+
     if (has_search) searchQuery.or = [
         { subject: search },
         { from: search },
         { body: search }
     ];
-    
+
     const uids = await client.search(searchQuery);
     return uids === false ? [] : uids;
 };

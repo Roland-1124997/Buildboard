@@ -8,8 +8,19 @@ clientsClaim();
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
-
-
+registerRoute(
+    ({ url }) => url.pathname.includes('/icons/'),
+    new StaleWhileRevalidate({
+        cacheName: 'image-cache',
+        plugins: [
+            {
+                cacheableResponse: {
+                    statuses: [200],
+                }
+            }
+        ]
+    })
+);
 
 registerRoute(
     ({ url }) => {

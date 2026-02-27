@@ -132,7 +132,9 @@ export default defineNuxtConfig({
   },
 
   icon: {
-    provider: 'iconify',
+    clientBundle: {
+      scan: true,
+    }
   },
 
   pwa: {
@@ -142,12 +144,12 @@ export default defineNuxtConfig({
       name: "dashboard",
       short_name: "dashboard",
       description: "Personal dashboard application",
-      prefer_related_applications: true,
       orientation: "portrait",
       background_color: "#FFFFFF",
       start_url: "/",
       scope: "/",
       theme_color: "#FFFFFF",
+      display: "standalone",
       display_override: ["window-controls-overlay", "standalone", "minimal-ui", "fullscreen", "browser"],
       icons: [
         {

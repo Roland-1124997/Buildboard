@@ -5,7 +5,7 @@
 				<div class="flex items-center justify-between py-2">
 					<div class="flex items-center flex-1 gap-3">
 						<div class="flex items-center justify-center p-1.5 rounded-lg bg-white/10">
-							<Icon name="mdi:cellphone-arrow-down" class="w-5 h-5 text-white" />
+							<Icon name="akar-icons:download" class="w-5 h-5 text-white" />
 						</div>
 						<div class="flex flex-col">
 							<p class="text-xs font-semibold text-white sm:text-sm">Installeer App</p>
@@ -16,7 +16,7 @@
 					<div class="flex items-center gap-2 ml-4">
 						<button @click="handleInstall" class="px-2 py-1 text-xs font-medium text-blue-600 transition-colors duration-200 bg-white rounded-lg shadow-sm hover:bg-blue-50 sm:text-sm">Installeren</button>
 						<button @click="dismissPrompt" class="flex items-center justify-center p-1.5 transition-colors duration-200 rounded-lg text-white/80 hover:text-white hover:bg-white/10" aria-label="Sluiten">
-							<Icon name="mdi:close" class="w-4 h-4" />
+							<Icon name="akar-icons:x-small" class="w-4 h-4" />
 						</button>
 					</div>
 				</div>

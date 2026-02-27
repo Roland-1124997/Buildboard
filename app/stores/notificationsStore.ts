@@ -1,3 +1,4 @@
+
 const pagination = ref<{
     page: number;
     total: number;
@@ -23,7 +24,7 @@ export const useNotifications = defineStore("useNotifications", () => {
     const messages = ref<any[]>([]);
     const unseen = ref<number>(0);
     const error = ref<any | null>(null);
-    
+
     const route = useRoute();
 
     const activeMessageId = computed(() => route.query.id);
@@ -41,6 +42,29 @@ export const useNotifications = defineStore("useNotifications", () => {
         return null;
     };
 
+    const updateMessageInList = (data: any) => {
+        const index = messages.value.findIndex((msg: any) => msg.uid === data.uid);
+
+        if (index === -1) {
+            messages.value.unshift(data);
+            messages.value.pop();
+        }
+
+        else {
+            const oldMessage = messages.value[index];
+
+            messages.value[index] = {
+                ...data, threadId: oldMessage?.threadId
+            }
+        }
+        
+    };
+
+    const updateUnseenCount = async (count: number) => {
+        unseen.value = count;
+        await setBadge(count);
+    }
+
     watch(unseen, async (count) => await setBadge(count)), { immediate: true };
     watch(() => route.path, () => selected.value = null);
 
@@ -52,7 +76,7 @@ export const useNotifications = defineStore("useNotifications", () => {
         await new Promise(resolve => setTimeout(resolve, 300));
 
         const { data, error: Error } = await Request.Get({
-            query: { 
+            query: {
                 page: params?.page || useRoute().query.page || pagination.value.page || 1,
                 filter: params?.filter || useRoute().query.filter || 'all',
                 search: params?.search !== undefined ? params.search : (useRoute().query.search || '')
@@ -67,19 +91,6 @@ export const useNotifications = defineStore("useNotifications", () => {
             messages.value = data.data?.messages || [];
             unseen.value = data.data?.unseen || 0;
 
-            if (unseen.value > 0) {
-
-                await showNotification("Je berichten zijn bijgewerkt", {
-                    body: `Je hebt ${unseen.value} ongelezen berichten.`,
-                    icon: "/icons/icon_512.png",
-                });
-
-            }
-
-
-        
-
-            await setBadge(unseen.value);
         }
 
         else {
@@ -132,6 +143,8 @@ export const useNotifications = defineStore("useNotifications", () => {
         }
     }
 
+
+
     const realTime = async () => {
 
         const event_id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -150,7 +163,21 @@ export const useNotifications = defineStore("useNotifications", () => {
             },
         });
 
-        watch(events, async () => await refresh());
+        watch(events, async (response) => {
+
+            const { data, unseen, events } = JSON.parse(response)
+
+            if (events.deleted) await refresh();
+            if(data) updateMessageInList(data);
+
+            await updateUnseenCount(unseen);
+            
+            if (unseen > 0 && events.incoming) await showNotification(data.subject, {
+                body: data.preview,
+                icon: "/icons/icon_512.png",
+            });
+            
+        });
 
         if (Error.value) error.value = Error.value;
 
@@ -161,7 +188,7 @@ export const useNotifications = defineStore("useNotifications", () => {
 
         if ((message.flags).includes("\\Seen")) return
 
-        const { error } = await Request.Patch({
+        const { data, error } = await Request.Patch({
             extends: `/${message.uid}`,
             query: { action: "markAsSeen" },
         })
@@ -171,14 +198,17 @@ export const useNotifications = defineStore("useNotifications", () => {
             message: `Fout bij het markeren van de notificatie als gelezen:`,
         });
 
-        await refresh()
+        if (data) {
+            updateMessageInList(data.data.message);
+            await updateUnseenCount(data.data.unseen);
+        }
     };
 
     const markAsUnseen = async (message: any) => {
 
         if (!(message.flags).includes("\\Seen")) return
 
-        const { error } = await Request.Patch({
+        const { data, error } = await Request.Patch({
             extends: `/${message.uid}`,
             query: { action: "markAsUnseen" },
         })
@@ -188,15 +218,19 @@ export const useNotifications = defineStore("useNotifications", () => {
             message: `Fout bij het markeren van de notificatie als ongelezen:`,
         });
 
-        await refresh()
+        if (data) {
+            updateMessageInList(data.data.message);
+            await updateUnseenCount(data.data.unseen);
+        }
+
     };
 
 
     const deleteMessage = async (message: any) => {
 
         const onComplete = async () => {
-            close(); 
-            await refresh({ page: 1 });
+            close();
+            await refresh();
         }
 
         const onCancel = () => close();
@@ -205,7 +239,7 @@ export const useNotifications = defineStore("useNotifications", () => {
             name: message.subject || "Geen onderwerp",
             description: "Weet je zeker dat je dit bericht wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
             component: "Confirm",
-            props: { 
+            props: {
                 onCancel,
                 onComplete,
                 request: {
@@ -317,11 +351,11 @@ export const useNotifications = defineStore("useNotifications", () => {
 
     const previousPage = async () => {
         if (pagination.value.page > 1) {
-            
+
             pagination.value.page -= 1;
 
             const router = useRouter();
-            router.replace({    
+            router.replace({
                 query: {
                     ...useRoute().query,
                     page: pagination.value.page,

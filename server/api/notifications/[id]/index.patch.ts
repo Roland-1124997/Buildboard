@@ -17,6 +17,17 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
         ? await useAddMessageFlags(imap_client, search, seen)
         : await useRemoveMessageFlags(imap_client, search, seen);
 
+    const unseen = await unseenMessagesCount(imap_client)
+
+    const data = await useFetchImapSingleMessage(imap_client, search.uid, {
+        uid: true,
+        envelope: true,
+        internalDate: true,
+        flags: true,
+        source: true
+    }, { uid: true });
+
+    
     await useCloseImapClient(imap_client);
 
     if (error) return useReturnResponse(event, internalServerError);
@@ -26,6 +37,10 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
             success: true,
             code: 200,
             message: action == 'markAsSeen' ? "Bericht succesvol als gelezen gemarkeerd" : "Bericht succesvol als ongelezen gemarkeerd"
+        },
+        data: {
+            message: data,
+            unseen
         }
     })
 })

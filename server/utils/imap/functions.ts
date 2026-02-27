@@ -3,6 +3,9 @@ import { simpleParser } from 'mailparser';
 import sanitize from 'sanitize-html'
 import { JSDOM } from 'jsdom';
 
+
+import type { FetchMessageObject, FetchQueryObject, FetchOptions } from 'imapflow';
+
 const { IMAP_HOST, IMAP_PORT, IMAP_SECURE, IMAP_USER, IMAP_PASS } = useRuntimeConfig();
 
 export const sanitizeHtml = (html: string) => {
@@ -87,64 +90,82 @@ export const useReleaseImapMailbox = async (lock: any) => {
     lock.release();
 }
 
+export const buildResponse = async (message: FetchMessageObject, threadmap: Map<string, string>) => {
+    let html = '';
+    let preview = '';
+    let attachments = [];
+    let previewText = '';
+
+    if (!message.source) return null;
+
+    const emailSubject = message.envelope?.subject;
+    const stripedSubject = emailSubject?.split(':')[1]?.trim() || emailSubject?.trim();
+
+    if (stripedSubject) {
+        threadmap.set(stripedSubject, threadmap.get(stripedSubject) || crypto.randomUUID());
+        message.threadId = threadmap.get(stripedSubject);
+    }
+
+    const mail = await simpleParser(message.source);
+
+    const document = new JSDOM(mail.html || '');
+    const body = document.window.document.body
+
+    body.querySelectorAll('p').forEach((element, index) => {
+        if (index < 3) previewText += element.textContent + ' ';
+    });
+
+    html = sanitizeHtml(mail.html || "") || mail.textAsHtml || '';
+
+    attachments = mail.attachments;
+    preview = previewText || mail.text || mail.textAsHtml || '';
+    preview = preview
+        .replace(/https?:\/\/[^\s]+/g, '')
+        .replace(/\[/g, '')
+        .replace(/\]/g, '')
+        .replace(/\)/g, ') ')
+        .replace(/\s+/g, ' ')
+        .trim()
+
+    return {
+        id: message.id,
+        threadId: message.threadId || null,
+        uid: message.uid,
+        subject: message.envelope?.subject,
+        date: message.envelope?.date,
+        from: message.envelope?.from?.[0],
+        flags: message.flags ? Array.from(message.flags) : [],
+        attachments, preview, html,
+        references: mail.references || null,
+    };
+}
+
+export const useFetchImapSingleMessage = async (client: ImapFlow, search: number | string, fetchOptions: FetchQueryObject, options?: FetchOptions) => {
+    const threadmap = new Map<string, string>();
+
+    const msg = await client.fetchOne(search, fetchOptions, options);
+    if (msg) return await buildResponse(msg, threadmap);
+    
+
+    return null;
+}
+
 export const useFetchImapMessages = async (client: ImapFlow, criteria: any, fetchOptions: any) => {
     const messages = [];
     const threadmap = new Map<string, string>();
 
     for await (let message of client.fetch(criteria, fetchOptions)) {
-
-        let html = '';
-        let preview = '';
-        let attachments = [];
-        let previewText = '';
-
-        if (!message.source) continue;
-
-        const emailSubject = message.envelope?.subject;
-        const stripedSubject = emailSubject?.split(':')[1]?.trim() || emailSubject?.trim();
-
-        if (stripedSubject) {
-            threadmap.set(stripedSubject, threadmap.get(stripedSubject) || crypto.randomUUID());
-            message.threadId = threadmap.get(stripedSubject);
+        const response = await buildResponse(message, threadmap);
+        if (response) {
+            messages.push(response);
         }
-
-        const mail = await simpleParser(message.source);
-
-        const document = new JSDOM(mail.html || '');
-        const body = document.window.document.body
-
-        body.querySelectorAll('p').forEach((element, index) => {
-            if (index < 3) previewText += element.textContent + ' ';
-        });
-
-        html = sanitizeHtml(mail.html || "") || mail.textAsHtml || '';
-
-        attachments = mail.attachments;
-        preview = previewText || mail.text || mail.textAsHtml || '';
-        preview = preview
-            .replace(/https?:\/\/[^\s]+/g, '')
-            .replace(/\[/g, '')
-            .replace(/\]/g, '')
-            .replace(/\)/g, ') ')
-            .replace(/\s+/g, ' ')
-            .trim()
-
-        messages.push({
-            id: message.id,
-            threadId: message.threadId || null,
-            uid: message.uid,
-            subject: message.envelope?.subject,
-            date: message.envelope?.date,
-            from: message.envelope?.from?.[0],
-            flags: message.flags ? Array.from(message.flags) : [],
-            attachments, preview, html,
-            references: mail.references || null,
-        });
     }
 
     return messages.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 }
+
+
 
 
 export const useAddMessageFlags = async (client: ImapFlow, search: any, flags: string[]) => {

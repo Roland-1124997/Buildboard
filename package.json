@@ -66,6 +66,9 @@
 	},
 	"devDependencies": {
 		"@iconify-json/akar-icons": "^1.2.7",
+		"@iconify-json/fluent": "^1.2.39",
+		"@iconify-json/humbleicons": "^1.2.20",
+		"@iconify-json/twemoji": "^1.2.5",
 		"@octokit/types": "^15.0.1",
 		"@types/jsdom": "^27.0.0",
 		"@types/mailparser": "^3.4.6",
