@@ -50,7 +50,7 @@ export const usePush = async () => {
             .then((res) => {
                 if (res !== undefined) {
                     addToast({
-                        message: "Push subscription enabled successfully.",
+                        message: "Subscribed to push notifications successfully.",
                         type: "success",
                         duration: 5000,
                     })
@@ -89,7 +89,7 @@ export const usePush = async () => {
             .then((res) => {
                 if (res !== null && res !== undefined) {
                     addToast({
-                        message: "Push subscription disabled successfully.",
+                        message: "Unsubscribed from push notifications successfully.",
                         type: "success",
                         duration: 5000,
                     })
