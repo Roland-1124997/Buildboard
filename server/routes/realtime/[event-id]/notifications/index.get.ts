@@ -7,7 +7,6 @@ export default defineSupabaseEventHandler(async (event, { user }) => {
 
     const push = async (payload: any) => {
 
-        if(payload.events.incoming) await useSendNotification(payload, user.id)
         eventStream.push(JSON.stringify(payload));
 
     };

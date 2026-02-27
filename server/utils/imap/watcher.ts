@@ -22,6 +22,11 @@ export const startImapWatcher = async () => {
         return;
     }
 
+    const server = useSupaBaseServer()
+
+    const { data } = await server.auth.admin.listUsers()
+    const { users } = data
+
     started = true;
     stopped = false;
 
@@ -74,7 +79,7 @@ export const startImapWatcher = async () => {
                         source: true
                     })
 
-                    const mailobject = {
+                    const payload = {
                         data: data,
                         events: {
                             incoming: event === 'exists',
@@ -83,7 +88,11 @@ export const startImapWatcher = async () => {
                         unseen
                     }
 
-                    imapEmitter.emit('new', mailobject);
+                    imapEmitter.emit('new', payload);
+
+                    for (const user of users) {
+                        if (payload.events.incoming) await useSendNotification(payload, user.id)
+                    }
 
                 };
                 eventHandlers.set(event, handler);

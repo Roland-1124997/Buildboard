@@ -56,14 +56,17 @@ registerRoute(
 );
 
 self.addEventListener("push", async (event) => {
-    const { title, message, url, unseen } = await event.data.json();
+    const { id, title, message, url, unseen } = await event.data.json();
 
     navigator.setAppBadge(unseen);
 
     await self.registration.showNotification(title, {
         body: message,
         icon: "/icons/icon_512.png",
+        badge: "/icons/icon_512.png",
         data: { url },
+        lang: "nl",
+        tag: id,
     });
 });
 

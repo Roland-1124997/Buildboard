@@ -1,4 +1,4 @@
-import { url } from "inspector";
+import { consola } from "consola";
 import webpush from "web-push";
 
 export const useMakePagination = (itemsPerPage: number = 16, page: number = 1) => {
@@ -64,14 +64,15 @@ export const useSendNotification = async (payload: any, user_id: string) => {
     if (error) return;
 
     const body = JSON.stringify({
-        title: payload.data.subject,
-        message: (payload.data.preview as string).substring(0, 100) + "...",
+        id: payload.data.id,
+        title: `Nieuw bericht binnengekomen`,
+        message: (payload.data.subject as string).replace(/\[.*?\]/g, '').trim(),
         url: `/berichten?id=${payload.data.id}`,
         unseen: payload.unseen,
     })
 
     webpush.sendNotification(data.subscription as any, body)
-        .then(() => console.log('Notification sent'))
-        .catch(err => console.error('Error sending notification:', err));
+        .then(() => consola.info('[Notification] Notification sent successfully'))
+        .catch(err => consola.error('[Notification] Error sending notification:', err));
 
 };
