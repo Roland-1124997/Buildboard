@@ -112,3 +112,4 @@ export const calculatePercentage = (current: number, previous: number) => {
     return (((current - previous) / previous) * 100).toFixed(0);
 }
 
+

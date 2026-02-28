@@ -8,9 +8,42 @@ let started = false;
 let stopped = false;
 let currentClient: ImapFlow | null = null;
 
-let events = [
-    'flags', 'exists', 'expunge'
-]
+const IMAP_EVENTS = ['flags', 'exists', 'expunge'] as const;
+const FETCH_CONFIG = {
+    uid: true,
+    envelope: true,
+    internalDate: true,
+    flags: true,
+    source: true
+} as const;
+
+
+const mapEventFlags = (eventType: string) => ({
+    incoming: eventType === 'exists',
+    update: eventType === 'flags',
+    deleted: eventType === 'expunge',
+});
+
+const sendPushNotifications = async (data: any, eventFlags: any, unseen: number) => {
+    if (!data) return;
+
+    if (eventFlags.update) await useSendServiceWorkerPushEvent({
+        data: { badgeCount: unseen },
+        events: eventFlags
+    });
+
+    if (eventFlags.incoming) await useSendServiceWorkerPushEvent({
+        data: {
+            id: data.id,
+            title: "Nieuw bericht binnengekomen",
+            message: data.subject,
+            url: `/berichten?id=${data.id}`,
+            badgeCount: unseen,
+        },
+        events: eventFlags
+    });
+
+};
 
 const imapEmitter = new EventEmitter();
 const IDLE_TIMEOUT = 25 * 60 * 1000; // 25 minutes (IMAP spec is 29 min, we reconnect earlier)
@@ -22,11 +55,6 @@ export const startImapWatcher = async () => {
         return;
     }
 
-    const server = useSupaBaseServer()
-
-    const { data } = await server.auth.admin.listUsers()
-    const { users } = data
-
     started = true;
     stopped = false;
 
@@ -37,7 +65,7 @@ export const startImapWatcher = async () => {
 
         try {
 
-            events.forEach((event) => {
+            IMAP_EVENTS.forEach((event) => {
                 const handler = eventHandlers.get(event);
                 if (handler) {
                     client.off(event, handler);
@@ -65,35 +93,16 @@ export const startImapWatcher = async () => {
             await useGetImapMailbox(client, 'INBOX');
 
             // Setup event listeners
-            events.forEach((event: string) => {
-
+            IMAP_EVENTS.forEach((event: string) => {
                 const handler = async (mail: any) => {
+                    const unseen = await unseenMessagesCount(client!);
+                    const data = await useFetchImapSingleMessage(client!, mail.seq || mail.count, FETCH_CONFIG);
+                    const eventFlags = mapEventFlags(event);
 
-                    const unseen = await unseenMessagesCount(client!)
-
-                    const data = await useFetchImapSingleMessage(client!, mail.seq || mail.count, {
-                        uid: true,
-                        envelope: true,
-                        internalDate: true,
-                        flags: true,
-                        source: true
-                    })
-
-                    const payload = {
-                        data: data,
-                        events: {
-                            incoming: event === 'exists',
-                            deleted: event === 'expunge',
-                        },
-                        unseen
-                    }
-
+                    const payload = { data, events: eventFlags, unseen };
                     imapEmitter.emit('new', payload);
 
-                    for (const user of users) {
-                        if (payload.events.incoming) await useSendNotification(payload, user.id)
-                    }
-
+                    await sendPushNotifications(data, eventFlags, unseen);
                 };
                 eventHandlers.set(event, handler);
                 client!.on(event as any, handler);

@@ -48,7 +48,8 @@ export const formatSize = (bytes: number): string => {
     return `${size.toFixed(2)} ${units[unitIndex]}`;
 };
 
-export const useSendNotification = async (payload: any, user_id: string) => {
+
+const useGetVapidDetails = async () => {
 
     const { vapidPublicKey, vapidPrivateKey } = useRuntimeConfig()
 
@@ -59,20 +60,24 @@ export const useSendNotification = async (payload: any, user_id: string) => {
     );
 
     const server = useSupaBaseServer()
-    const { data, error } = await server.from('subscriptions').select("*").eq("user_id", user_id).single()
+    const { data: subscriptions, error } = await server.from('subscriptions').select("*")
 
-    if (error) return;
+    if (error) return { data: null, error }
 
-    const body = JSON.stringify({
-        id: payload.data.id,
-        title: `Nieuw bericht binnengekomen`,
-        message: (payload.data.subject as string).replace(/\[.*?\]/g, '').trim(),
-        url: `/berichten?id=${payload.data.id}`,
-        unseen: payload.unseen,
-    })
+    return { data: subscriptions, error: null }
 
-    webpush.sendNotification(data.subscription as any, body)
-        .then(() => consola.info('[Notification] Notification sent successfully'))
-        .catch(err => consola.error('[Notification] Error sending notification:', err));
+}
+
+export const useSendServiceWorkerPushEvent = async (payload: any) => {
+
+    const { data: subscriptions, error } = await useGetVapidDetails()
+
+    if(!error) for (const data of subscriptions) {
+
+        webpush.sendNotification(data.subscription as any, JSON.stringify(payload))
+            .then(() => consola.info('[Notification] Notification sent successfully'))
+            .catch(err => consola.error('[Notification] Error sending notification:', err));
+
+    }
 
 };

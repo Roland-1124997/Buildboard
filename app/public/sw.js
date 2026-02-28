@@ -55,19 +55,22 @@ registerRoute(
     })
 );
 
+
 self.addEventListener("push", async (event) => {
-    const { id, title, message, url, unseen } = await event.data.json();
 
-    navigator.setAppBadge(unseen);
+    const { data, events } = await event.data.json()
 
-    await self.registration.showNotification(title, {
-        body: message,
+    if (events.update || data.badgeCount) navigator.setAppBadge(data.badgeCount);
+
+    if (events.incoming) await self.registration.showNotification(data.title, {
+        body: data.message,
         icon: "/icons/icon_512.png",
         badge: "/icons/icon_512.png",
-        data: { url },
+        data: { url: data.url },
         lang: "nl",
-        tag: id,
+        tag: data.id,
     });
+
 });
 
 self.addEventListener("notificationclick", (event) => {
