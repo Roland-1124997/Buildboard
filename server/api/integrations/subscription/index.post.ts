@@ -5,7 +5,7 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
     const { data, error } = await server.from('subscriptions').upsert({
         user_id: user.id,
         subscription: request.subscription,
-    })
+    }, { onConflict: "user_id" })
 
     if (error) return useReturnResponse(event, internalServerError)
 

@@ -1,3 +1,4 @@
+
 export const usePush = async () => {
 
     const url = "/api/integrations/subscription"
@@ -5,107 +6,144 @@ export const usePush = async () => {
 
     const { addToast } = useToast()
     const active = ref(false)
+    const provider = ref("")
 
-    const { data, error } = await useFetch<ApiResponse<{ subscription: boolean }>>(url)
-    if (!error.value && data.value?.data) active.value = data.value.data.subscription
+    const { data, error } = await useFetch<ApiResponse<{ subscription: boolean, provider: string }>>(url)
+    if (!error.value && data.value?.data) {
+        active.value = data.value.data.subscription
+        provider.value = data.value.data.provider
+    }
 
-    const subscribe = () => {
-        Notification.requestPermission()
-            .then((permission) => {
-                if (permission !== 'granted') {
-                    addToast({
-                        message: `Notification permisions denied`,
-                        type: "error",
-                        duration: 5000,
-                    })
-                    return
-                }
+    const subscribe = async () => {
+        try {
+            const permission = await Notification.requestPermission()
 
-                if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-                    addToast({
-                        message: "Push not supported in this browser.",
-                        type: "error",
-                        duration: 5000,
-                    })
-                    return
-                }
+            if (permission !== 'granted') {
+                addToast({
+                    message: `Notification permisions denied`,
+                    type: "error",
+                    duration: 5000,
+                })
+                return
+            }
 
-                return navigator.serviceWorker.ready
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                addToast({
+                    message: "Push not supported in this browser.",
+                    type: "error",
+                    duration: 5000,
+                })
+                return
+            }
+
+            const registration = await navigator.serviceWorker.ready
+            if (!registration) return
+
+            const { vapidPublicKey } = useRuntimeConfig().public
+            const vapidKey = vapidPublicKey?.trim().replace(/['",]/g, '')
+
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(vapidKey)
             })
-            .then((registration) => {
-                if (!registration) return
+
+            if (!subscription) return
+
+            const res = await Post({ body: { subscription } })
+
+            if (res !== undefined) {
+                addToast({
+                    message: "Subscribed to push notifications successfully.",
+                    type: "success",
+                    duration: 5000,
+                })
+                active.value = true
+            }
+        } catch (error) {
+            addToast({
+                message: `An error occurred: ${error}`,
+                type: "error",
+                duration: 5000,
+            })
+        }
+    }
+
+    const unsubscribe = async () => {
+        try {
+            if (!('serviceWorker' in navigator)) {
+                addToast({
+                    message: "Service Worker not available.",
+                    type: "error",
+                    duration: 5000,
+                })
+                return
+            }
+
+            const registration = await navigator.serviceWorker.ready
+            const subscription = await registration.pushManager.getSubscription()
+
+            if (!subscription) {
+
+                await Delete()
+                addToast({
+                    message: "Server subscription removed (no active push subscription found).",
+                    type: "info",
+                    duration: 3000,
+                })
+                active.value = false
+                return
+            }
+
+            const success = await subscription.unsubscribe()
+            if (!success) {
+                throw new Error("Failed to unsubscribe from push")
+            }
+
+            await Delete()
+
+            addToast({
+                message: "Unsubscribed from push notifications successfully.",
+                type: "success",
+                duration: 5000,
+            })
+            active.value = false
+
+        } catch (error) {
+            addToast({
+                message: `Unsubscribe failed: ${error}`,
+                type: "error",
+                duration: 5000,
+            })
+        }
+    }
+
+    const syncSubscription = async () => {
+
+        try {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                return
+            }
+
+            const registration = await navigator.serviceWorker.ready
+            const subscription = await registration.pushManager.getSubscription()
+
+            if (!subscription && active.value) {
 
                 const { vapidPublicKey } = useRuntimeConfig().public
                 const vapidKey = vapidPublicKey?.trim().replace(/['",]/g, '')
 
-                return registration.pushManager.subscribe({
+                const newSubscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: urlBase64ToUint8Array(vapidKey)
                 })
-            })
-            .then((subscription) => {
-                if (!subscription) return
-                return Post({ body: { subscription } })
-            })
-            .then((res) => {
-                if (res !== undefined) {
-                    addToast({
-                        message: "Subscribed to push notifications successfully.",
-                        type: "success",
-                        duration: 5000,
-                    })
-                    active.value = true
-                }
-            })
-            .catch((error) => {
-                addToast({
-                    message: `An error occurred: ${error}`,
-                    type: "error",
-                    duration: 5000,
-                })
-            })
+
+                if (provider.value === getProviderName(newSubscription)) await Post({ body: { subscription: newSubscription } })
+
+            }
+        } catch (error) { }
     }
 
-    const unsubscribe = () => {
-        navigator.serviceWorker.ready
-            .then((registration) => {
-                return registration.pushManager.getSubscription()
-            })
-            .then((subscription) => {
-                if (!subscription) {
-                    addToast({
-                        message: "No active push subscription found.",
-                        type: "info",
-                        duration: 3000,
-                    })
-                    return null
-                }
-
-                return subscription.unsubscribe().then((success) => {
-                    if (success) return Delete()
-                    else throw new Error("Failed to unsubscribe from push")
-                })
-            })
-            .then((res) => {
-                if (res !== null && res !== undefined) {
-                    addToast({
-                        message: "Unsubscribed from push notifications successfully.",
-                        type: "success",
-                        duration: 5000,
-                    })
-                    active.value = false
-                }
-            })
-            .catch((error) => {
-                addToast({
-                    message: `Unsubscribe failed: ${error}`,
-                    type: "error",
-                    duration: 5000,
-                })
-            })
-    }
-
-    return { subscribe, unsubscribe, active }
+    return { subscribe, unsubscribe, syncSubscription, active }
 }
 
 const urlBase64ToUint8Array = (base64String: string) => {

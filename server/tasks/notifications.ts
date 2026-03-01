@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 
 const { startAt, endAt } = formulateDates("week");
 const timezone = 'Europe/Amsterdam';
@@ -20,7 +21,7 @@ export default defineTask({
 
         useSendServiceWorkerPushEvent({
             data: {
-                id: "weekly-stats",
+                id: randomUUID(),
                 title: title,
                 message: message,
                 url: "/?filter=week",
