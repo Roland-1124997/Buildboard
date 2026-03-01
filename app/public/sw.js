@@ -139,8 +139,6 @@ self.addEventListener("push", async (event) => {
 
     const { data, events } = await event.data.json()
 
-    console.log({ data, events })
-
     if (events.update || data.badgeCount) navigator.setAppBadge(data.badgeCount);
 
     if (events.incoming) await self.registration.showNotification(data.title, {
