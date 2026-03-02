@@ -1,7 +1,6 @@
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const request = await readBody(event);
-
     const { error: zodError } = await schema.article.backend.safeParseAsync(request);
 
     if (zodError) return useReturnResponse(event, {

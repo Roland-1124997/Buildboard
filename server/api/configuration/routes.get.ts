@@ -135,11 +135,8 @@ const routes = (subscriptionActive: boolean): Record<string, RouteType> => {
 }
 
 export default defineSupabaseEventHandler( async (event, { user, server }) => {
-    
-    const { data, error } = await server.from('subscriptions').select().eq("user_id", user.id).single()
-    
-    const subscriptionActive = !!data?.subscription
-    return routes(subscriptionActive)
-
+    const { data } = await server.from('subscriptions').select("id").eq("user_id", user.id)
+    const active = (data && data.length > 0) || false
+    return routes(active)
 });
 

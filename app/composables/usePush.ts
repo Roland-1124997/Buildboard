@@ -9,13 +9,16 @@ export const usePush = async () => {
 
     const { addToast } = useToast()
     const active = ref(false)
-    const provider = ref("")
 
-    const { data, error } = await useFetch<ApiResponse<{ subscription: boolean, provider: string }>>(url)
-    if (!error.value && data.value?.data) {
-        active.value = data.value.data.subscription
-        provider.value = data.value.data.provider
-    }
+    const channel = new BroadcastChannel('sw-messages');
+    
+    channel.addEventListener('message', event => {
+        const { type, payload } = event.data
+        if (type === "SUBSCRIPTION_UPDATED") active.value = payload.active
+    });
+
+    const { data, error } = await useFetch<ApiResponse<{ active: boolean, subscriptions: { id: string, expiration_time: string, endpoint: string, }[] }>>(url)
+    if (!error.value && data.value?.data) active.value = data.value.data.active
 
     const subscribe = async () => {
         try {
@@ -49,8 +52,8 @@ export const usePush = async () => {
 
             if (!subscription) return
 
-            const res = await Post({ body: { subscription } })
-            
+            const res = await Post({ body: subscription })
+
             if (res !== undefined) {
                 addToast({
                     message: "Subscribed to push notifications successfully.",
@@ -118,22 +121,17 @@ export const usePush = async () => {
     }
 
     const syncSubscription = async () => {
-
         postToWorker("SET_VAPID_KEY", { vapidKey: urlBase64ToUint8Array(vapidKey) })
-
+        postToWorker("CHECK_SUBSCRIPTION")
     }
 
     return { subscribe, unsubscribe, syncSubscription, active }
 }
 
-const postToWorker = async (type: string, payload: Record<string, unknown>) => {
+const postToWorker = async (type: string, payload: Record<string, unknown> | null = null) => {
 
     const registration = await navigator.serviceWorker.getRegistration();
-
-    if (registration?.active) registration.active.postMessage({
-        type, payload
-    });
-    
+    if (registration?.active) registration.active.postMessage({ type, payload });
 }
 
 const urlBase64ToUint8Array = (base64String: string) => {

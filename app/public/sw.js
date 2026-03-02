@@ -11,8 +11,34 @@ cleanupOutdatedCaches();
 
 let vapidKey
 const url = "/api/integrations/subscription"
+const channel = new BroadcastChannel('sw-messages');
+
+const cacheName = "static-cache";
+
+const pages = [
+    "/",
+    "/berichten",
+    "/artikelen",
+    "/opslagruimte",
+    "/account",
+    "/portfolio"
+]
+
+const cachePages = async () => {
+    const cache = await caches.open(cacheName);
+    const requests = pages.map(page => new Request(page));
+    await Promise.all(
+        requests.map(request =>
+            fetch(request)
+                .then(response => cache.put(request, response))
+                .catch(() => console.log(`Failed to cache ${request.url}`))
+        )
+    );
+}
 
 const getSubscriptionStatus = async () => {
+
+    await fetch("/api/user")
 
     return fetch(url)
         .then((res) => res.json())
@@ -20,65 +46,37 @@ const getSubscriptionStatus = async () => {
         .catch((error) => ({ data: null, error }))
 }
 
-const subscribe = async (subscription) => {
+const subscribe = async () => {
 
-    await fetch("/api/security/csrf-token")
+    const { data } = await getSubscriptionStatus();
+    if (!data.data.active) return
 
-    return await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ subscription: subscription }),
-    })
+    self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: vapidKey }).then(async (subscription) => {
 
-}
+        const found = data.data.subscriptions.find((sub) => sub.endpoint == subscription?.endpoint) || null
+        await fetch("/api/security/csrf-token")
 
-const getProviderName = (subscription) => {
+        if (found) return await fetch(`url/${found.id}`, {
+            method: "PATCH", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(subscription)
+        })
 
-    if (!subscription) return null
+        return await fetch(url, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(subscription),
+        }).then(() => postToClient("SUBSCRIPTION_UPDATED", { active: true }))
+    });
 
-    const endpoint = subscription.endpoint
-
-    if (endpoint.includes("google")) return "google"
-    if (endpoint.includes("apple")) return "apple"
-    if (endpoint.includes("mozilla")) return "mozilla"
-
-    return "unknown"
 }
 
 const checkSubscription = async () => {
     const registration = await self.registration;
     const subscription = await registration.pushManager.getSubscription();
 
-    if (!subscription) {
-        const { data } = await getSubscriptionStatus();
-        const active = data.data.subscription;
-        const provider = data.data.provider;
-
-        if (active) {
-            const newSubscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: vapidKey
-            });
-
-            if (provider == getProviderName(newSubscription)) await subscribe(newSubscription);
-        }
-    }
+    if (!subscription) return await subscribe();
 };
 
-const scheduleNextCheck = () => {
-    const now = new Date();
-    const nextRun = new Date(now);
-    nextRun.setMinutes(Math.ceil(now.getMinutes() / 2) * 2, 0, 0);
-
-    const delay = nextRun.getTime() - now.getTime();
-    setTimeout(() => {
-        checkSubscription();
-        setInterval(checkSubscription, 2 * 60 * 1000);
-    }, delay);
-};
-
+const postToClient = (type, payload) => channel.postMessage({ type, payload });
 
 registerRoute(
     ({ url }) => url.pathname.includes('/icons/'),
@@ -128,27 +126,33 @@ registerRoute(
     })
 );
 
-self.addEventListener("message", (event) => {
-    const { type, payload } = event.data
-    if (type == "SET_VAPID_KEY") vapidKey = payload.vapidKey
+self.addEventListener("install", (event) => {
+    event.waitUntil(cachePages());
 });
 
-scheduleNextCheck();
+self.addEventListener("fetch", async (event) => {
+    event.respondWith(fetch(event.request).catch(() => {
+        caches.match(event.request)
+    }));
+});
+
+self.addEventListener("message", async (event) => {
+    const { type, payload } = event.data
+    if (type == "SET_VAPID_KEY") vapidKey = payload.vapidKey
+    if (type == "CHECK_SUBSCRIPTION") await checkSubscription()
+});
 
 self.addEventListener("push", async (event) => {
 
     const { data, events } = await event.data.json()
 
     if (events.update || data.badgeCount) navigator.setAppBadge(data.badgeCount);
-
     if (events.incoming) await self.registration.showNotification(data.title, {
         body: data.message,
         icon: "/icons/icon_512.png",
         badge: "/icons/icon_512.png",
         data: { url: data.url },
-        lang: "nl",
         tag: data.id,
-        renotify: true,
     });
 
 });
@@ -160,4 +164,9 @@ self.addEventListener("notificationclick", (event) => {
         return clients.openWindow(event.notification.data.url);
     }));
 });
+
+self.setInterval(async () => {
+    await checkSubscription();
+}, 60000);
+
 

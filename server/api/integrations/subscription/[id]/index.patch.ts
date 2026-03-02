@@ -1,5 +1,8 @@
 export default defineSupabaseEventHandler(async (event, { user, server }) => {
 
+    const id = getRouterParam(event, "id");
+    if (!id) return useReturnResponse(event, badRequestError);
+
     const request = await readBody(event)
     const { error: zodError } = await schema.subscription.backend.safeParseAsync(request);
 
@@ -11,12 +14,9 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
         }
     });
 
-    const { error } = await server.from('subscriptions').insert({
-        user_id: user.id,
-        endpoint: request.endpoint,
-        expiration_time: request.expirationTime,
-        keys: request.keys,
-    })
+    const { error } = await server.from('subscriptions').update({
+        endpoint: request.endpoint, expiration_time: request.expirationTime, keys: request.keys,
+    }).eq("id", id).eq("user_id", user.id)
 
     if (error) return useReturnResponse(event, internalServerError)
 

@@ -9,10 +9,9 @@
 </template>
 
 <script setup lang="ts">
-
-  const { syncSubscription } = await usePush()
+	const { syncSubscription } = await usePush();
 
 	onMounted(async () => {
-    await syncSubscription();
+		await syncSubscription();
 	});
 </script>
