@@ -93,6 +93,15 @@ const fileMetaField = {
         .max(250, { message: "Mag niet langer zijn dan 250 tekens" }),
 }
 
+const subscriptionField = {
+    expirationTime: zod.string().nullable(),
+    endpoint: zod.string(),
+    keys: zod.object({
+        p256dh: zod.string(),
+        auth: zod.string(),
+    }),
+}
+
 export const schema = {
 
     login: {
@@ -128,6 +137,11 @@ export const schema = {
     fileMeta: {
         backend: zod.object(fileMetaField),
         frontend: toTypedSchema(zod.object(fileMetaField)),
+    },
+
+    subscription: {
+        backend: zod.object(subscriptionField),
+        frontend: toTypedSchema(zod.object(subscriptionField)),
     }
 
 };
