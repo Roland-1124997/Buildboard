@@ -167,6 +167,6 @@ self.addEventListener("notificationclick", (event) => {
 
 self.setInterval(async () => {
     await checkSubscription();
-}, 60000);
+}, 300000);
 
 
