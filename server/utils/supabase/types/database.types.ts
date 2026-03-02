@@ -143,34 +143,33 @@ export type Database = {
                 }
                 Relationships: []
             }
-
-
             subscriptions: {
                 Row: {
+                    created_at: string
+                    endpoint: string | null
+                    expiration_time: string | null
                     id: string
-                    subscription: Json | null
-                    user_id: string
+                    keys: Json | null
+                    user_id: string | null
                 }
                 Insert: {
+                    created_at?: string
+                    endpoint?: string | null
+                    expiration_time?: string | null
                     id?: string
-                    subscription?: Json | null
-                    user_id: string
+                    keys?: Json | null
+                    user_id?: string | null
                 }
                 Update: {
+                    created_at?: string
+                    endpoint?: string | null
+                    expiration_time?: string | null
                     id?: string
-                    subscription?: Json | null
-                    user_id?: string
+                    keys?: Json | null
+                    user_id?: string | null
                 }
                 Relationships: []
             },
-
-
-
-
-
-
-
-
             navigator_sessions: {
                 Row: {
                     city: string | null
