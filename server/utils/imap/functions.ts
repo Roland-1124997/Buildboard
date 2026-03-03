@@ -3,6 +3,7 @@ import { simpleParser } from 'mailparser';
 import sanitize from 'sanitize-html'
 import { JSDOM } from 'jsdom';
 
+import { consola } from "consola";
 
 import type { FetchMessageObject, FetchQueryObject, FetchOptions } from 'imapflow';
 
@@ -59,6 +60,9 @@ export const sanitizeHtml = (html: string) => {
 
 export const useConnectClient = async () => {
 
+    let error = null;
+    let data = null;
+
     const client = new ImapFlow({
         host: IMAP_HOST,
         port: Number(IMAP_PORT),
@@ -73,9 +77,17 @@ export const useConnectClient = async () => {
         logger: false
     });
 
-    await client.connect();
+    try { 
+        await client.connect() 
+        data = client;
+    }
 
-    return client;
+    catch (err) {
+        error = err;
+    }
+
+    return { imap_client: data, imap_error: error };
+
 }
 
 export const useCloseImapClient = async (client: ImapFlow) => {

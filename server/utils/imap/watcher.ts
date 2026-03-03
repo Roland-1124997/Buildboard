@@ -81,8 +81,14 @@ export const startImapWatcher = async () => {
         let idleTimer: NodeJS.Timeout | null = null;
 
         try {
+            
+            const { imap_client, imap_error } = await useConnectClient();
 
-            client = await useConnectClient();
+            if(imap_error || !imap_client) {
+                throw new Error('Failed to connect to IMAP server');
+            }
+
+            client = imap_client;
             currentClient = client;
 
             await useGetImapMailbox(client, 'INBOX');

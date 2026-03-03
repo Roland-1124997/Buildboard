@@ -4,7 +4,9 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     const id = getRouterParam(event, 'id');
     if (!id) return useReturnResponse(event, badRequestError);
 
-    const imap_client = await useConnectClient();
+    const { imap_client, imap_error } = await useConnectClient();
+    if(imap_error || !imap_client) return useReturnResponse(event, internalServerError);
+
     await useGetImapMailbox(imap_client, 'INBOX');
 
     const action = getQuery(event).action;
