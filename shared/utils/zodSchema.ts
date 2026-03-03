@@ -94,7 +94,6 @@ const fileMetaField = {
 }
 
 const subscriptionField = {
-    expirationTime: zod.string().nullable(),
     endpoint: zod.string(),
     keys: zod.object({
         p256dh: zod.string(),

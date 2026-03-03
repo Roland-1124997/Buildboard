@@ -147,7 +147,6 @@ export type Database = {
                 Row: {
                     created_at: string
                     endpoint: string | null
-                    expiration_time: string | null
                     id: string
                     keys: Json | null
                     user_id: string | null
@@ -155,7 +154,6 @@ export type Database = {
                 Insert: {
                     created_at?: string
                     endpoint?: string | null
-                    expiration_time?: string | null
                     id?: string
                     keys?: Json | null
                     user_id?: string | null
@@ -163,7 +161,6 @@ export type Database = {
                 Update: {
                     created_at?: string
                     endpoint?: string | null
-                    expiration_time?: string | null
                     id?: string
                     keys?: Json | null
                     user_id?: string | null

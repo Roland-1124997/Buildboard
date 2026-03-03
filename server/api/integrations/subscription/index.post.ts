@@ -12,10 +12,7 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
     });
 
     const { error } = await server.from('subscriptions').insert({
-        user_id: user.id,
-        endpoint: request.endpoint,
-        expiration_time: request.expirationTime,
-        keys: request.keys,
+        user_id: user.id, endpoint: request.endpoint, keys: request.keys,
     })
 
     if (error) return useReturnResponse(event, internalServerError)

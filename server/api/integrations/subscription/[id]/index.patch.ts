@@ -15,7 +15,7 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
     });
 
     const { error } = await server.from('subscriptions').update({
-        endpoint: request.endpoint, expiration_time: request.expirationTime, keys: request.keys,
+        endpoint: request.endpoint, keys: request.keys,
     }).eq("id", id).eq("user_id", user.id)
 
     if (error) return useReturnResponse(event, internalServerError)
