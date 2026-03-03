@@ -80,3 +80,8 @@ export const useSendServiceWorkerPushEvent = async (payload: any) => {
     }
 
 };
+
+export const useGetSubscriptionProviderUrl = (endpoint: string) => {
+    const parts = endpoint.split("/")
+    return `${parts[0]}//${parts[2]}`
+}

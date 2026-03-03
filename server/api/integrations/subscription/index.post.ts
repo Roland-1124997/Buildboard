@@ -12,7 +12,7 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
     });
 
     const { error } = await server.from('subscriptions').insert({
-        user_id: user.id, endpoint: request.endpoint, keys: request.keys,
+        user_id: user.id, endpoint: request.endpoint, keys: request.keys, url_provider: useGetSubscriptionProviderUrl(request.endpoint)
     })
 
     if (error) return useReturnResponse(event, internalServerError)

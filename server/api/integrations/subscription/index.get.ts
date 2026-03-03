@@ -15,7 +15,7 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
             active: data.length > 0,
             subscriptions: data.map((sub) => ({
                 id: sub.id,
-                endpoint: sub.endpoint,
+                url_provider: sub.url_provider,
             }))
         }
 

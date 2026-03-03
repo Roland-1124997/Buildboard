@@ -13,29 +13,6 @@ let vapidKey
 const url = "/api/integrations/subscription"
 const channel = new BroadcastChannel('sw-messages');
 
-const cacheName = "static-cache";
-
-const pages = [
-    "/",
-    "/berichten",
-    "/artikelen",
-    "/opslagruimte",
-    "/account",
-    "/portfolio"
-]
-
-const cachePages = async () => {
-    const cache = await caches.open(cacheName);
-    const requests = pages.map(page => new Request(page));
-    await Promise.all(
-        requests.map(request =>
-            fetch(request)
-                .then(response => cache.put(request, response))
-                .catch(() => console.log(`Failed to cache ${request.url}`))
-        )
-    );
-}
-
 const getSubscriptionStatus = async () => {
 
     await fetch("/api/user")
@@ -53,10 +30,11 @@ const subscribe = async () => {
 
     self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: vapidKey }).then(async (subscription) => {
 
-        const found = data.data.subscriptions.find((sub) => sub.endpoint == subscription?.endpoint) || null
+        const found = data.data.subscriptions.find((sub) => subscription.endpoint.startsWith(sub.url_provider)) || null
+
         await fetch("/api/security/csrf-token")
 
-        if (found) return await fetch(`url/${found.id}`, {
+        if (found) return await fetch(`${url}/${found.id}`, {
             method: "PATCH", headers: { "Content-Type": "application/json" },
             body: JSON.stringify(subscription)
         })
@@ -65,7 +43,7 @@ const subscribe = async () => {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify(subscription),
         }).then(() => postToClient("SUBSCRIPTION_UPDATED", { active: true }))
-    });
+    })
 
 }
 
@@ -126,15 +104,6 @@ registerRoute(
     })
 );
 
-self.addEventListener("install", (event) => {
-    event.waitUntil(cachePages());
-});
-
-self.addEventListener("fetch", async (event) => {
-    event.respondWith(fetch(event.request).catch(() => {
-        caches.match(event.request)
-    }));
-});
 
 self.addEventListener("message", async (event) => {
     const { type, payload } = event.data
@@ -165,8 +134,10 @@ self.addEventListener("notificationclick", (event) => {
     }));
 });
 
-self.setInterval(async () => {
-    await checkSubscription();
-}, 300000);
+self.addEventListener("activate", async (event) => {
 
+    setInterval(async () => {
+        await checkSubscription();
+    }, 300000);
 
+});
