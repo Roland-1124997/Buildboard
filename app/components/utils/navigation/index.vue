@@ -19,7 +19,7 @@
 			</div>
 		</header>
 
-		<UtilsNavigationToolbar :toolbar  />
+		<UtilsNavigationToolbar :toolbar :related  />
 
 		<slot></slot>
 	</div>
@@ -27,14 +27,14 @@
 
 <script setup lang="ts">
 
-	const { error, routes, toolbar, refresh } = await useApiRoutes();
+	const { error, routes, toolbar, related, refresh } = await useApiRoutes();
+
+	const notifications = useNotifications();
+	const isMobileMenuOpen = ref(false);
 
 	onMounted(async () => {
 		if(error.value) await refresh();
 	});
-
-	const notifications = useNotifications();
-	const isMobileMenuOpen = ref(false);
 
 </script>
 

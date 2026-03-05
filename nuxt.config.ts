@@ -124,6 +124,7 @@ export default defineNuxtConfig({
 
 
   routeRules: {
+    '/statistieken/': { redirect: '/' },
     '/auth/': { redirect: '/auth/login' },
     '/auth/**': { appLayout: 'auth' },
   },

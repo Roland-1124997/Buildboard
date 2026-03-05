@@ -181,14 +181,14 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Profiel Dashboard",
+		title: "Account Dashboard",
 		description: "Bekijk en bewerk je profielinformatie.",
-		ogTitle: "Profiel Dashboard",
-		ogDescription: "Bekijk en bewerk je profielinformatie op Follio.",
+		ogTitle: "Account Dashboard",
+		ogDescription: "Bekijk en bewerk je profielinformatie.",
 		ogUrl: "/profile",
 		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Profiel Dashboard",
-		twitterDescription: "Bekijk en bewerk je profielinformatie op Follio.",
+		twitterTitle: "Account Dashboard",
+		twitterDescription: "Bekijk en bewerk je profielinformatie.",
 		twitterImage: "/icons/icon_512.png",
 		twitterCard: "summary_large_image",
 	});

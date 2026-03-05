@@ -1,6 +1,6 @@
 const { UMAMI_API_KEY } = useRuntimeConfig();
 
-const headers = { "x-umami-api-key": UMAMI_API_KEY};
+const headers = { "x-umami-api-key": UMAMI_API_KEY };
 const baseUrl = `https://api.umami.is/v1/websites/d10b0ef2-b433-4f78-8f78-724e711e541a`;
 
 export const useFetchMetrics = defineCachedFunction(async (key: string, query: AnalyticsQuery) => {
@@ -10,7 +10,7 @@ export const useFetchMetrics = defineCachedFunction(async (key: string, query: A
     let data: Record<string, any> | null = null;
     let error = null;
 
-    try { data = await $fetch<Record<string, any>>(url, { headers, query }) } 
+    try { data = await $fetch<Record<string, any>>(url, { headers, query }) }
     catch (err) { error = err }
 
     return { data, error };
@@ -27,13 +27,13 @@ export const useFetchAnalytics = defineCachedFunction(async (key: string, query:
 
     let data: Record<string, any> | null = null;
     let error = null;
-    
-    try { data = await $fetch<Record<string, any>>(url, { headers, query }) } 
+
+    try { data = await $fetch<Record<string, any>>(url, { headers, query }) }
     catch (err) { error = err }
 
     return { data, error };
 
-},{
+}, {
     maxAge: 60 * 10,
     name: 'analytics',
     getKey: (key: string, query: AnalyticsQuery) => (`${key}-${query.timezone.split('/').join('-')}`)
@@ -70,6 +70,8 @@ export const calculateMetrics = (metrics: Record<string, any>) => {
             weergaven: item.pageviews,
             bezoekers: item.visitors,
             bezoeken: item.visits,
+            bounces: ((item.bounces / item.visits) * 100).toFixed(0),
+            totaltime: item.totaltime / item.visits
         }
 
     })

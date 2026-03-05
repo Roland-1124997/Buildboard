@@ -11,6 +11,7 @@
 		<p v-else class="mb-4 text-sm text-gray-500">Er zijn geen statistieken geregistreerd voor dit land in deze periode.</p>
 
 		<div v-if="data.count > 0" class="mt-4 ">
+			
 			<p class="text-sm text-gray-500">
 				<strong>{{ useFormatDuration(data.count || 0) }}</strong> unieke bezoeker{{ data.count !== 1 ? "s" : "" }}
 			</p>

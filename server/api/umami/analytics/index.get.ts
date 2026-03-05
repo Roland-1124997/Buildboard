@@ -123,7 +123,9 @@ export default defineSupabaseEventHandler(async (event) => {
                     },
                     values: calculateMetrics(pages)
                 },
-                countries: country
+                countries: {
+                    values: calculateMetrics(country)
+                }
 
             }
         }

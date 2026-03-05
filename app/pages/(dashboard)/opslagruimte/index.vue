@@ -17,13 +17,13 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Storage Dashboard",
+		title: "Opslagruimte Dashboard",
 		description: "Overzicht van opslag en bestanden.",
-		ogTitle: "Storage Dashboard",
+		ogTitle: "Opslagruimte Dashboard",
 		ogDescription: "Overzicht van opslag en bestanden.",
-		ogUrl: "/storage",
+		ogUrl: "/opslagruimte",
 		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Storage Dashboard",
+		twitterTitle: "Opslagruimte Dashboard",
 		twitterDescription: "Overzicht van opslag en bestanden.",
 		twitterImage: "/icons/icon_512.png",
 		twitterCard: "summary",

@@ -24,8 +24,12 @@
 
 	const route = useRoute();
 
-	watch(() => route.path, () => {
+	const { related } = await useApiRoutes();
+
+	watch(() => route.path, async () => {
 		if(route.path !== '/artikelen/opstellen') articles.clearSavedPayload()
+		if(related.value) await store.setShared(related.value)
+
 	}, { immediate: true } )
 
 	store.initialPayload();

@@ -11,6 +11,11 @@ export const useApiRoutes = async () => {
         return routes.value[current.value]?.toolbar;
     });
 
+    const related = computed(() => {
+        current.value = route.path;
+        return routes.value[current.value]?.related || null;
+    });
+
     
     const refresh = async () => {
 
@@ -34,6 +39,7 @@ export const useApiRoutes = async () => {
         error,
         routes,
         toolbar,
+        related,
         refresh
     };
 }

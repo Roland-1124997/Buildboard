@@ -33,8 +33,9 @@
 <script setup lang="ts">
 	const storageStore = useStorage();
 
-	const { toolbar } = defineProps({
+	const { toolbar, related } = defineProps({
 		toolbar: { type: Object as PropType<ToolBar>, default: null },
+		related: { type: Array as PropType<string[] | null>, default: null },
 	});
 
 	const store = computed(() => useRouterStore(toolbar.store) as StoreType);
@@ -46,6 +47,8 @@
 		callback: async (params) => {
 			await useInitilizeStore(toolbar, params);
 		},
+	}, {
+		related: related
 	});
 
 	const pending = computed(() => store.value.loading || loading.value || false);

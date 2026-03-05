@@ -20,10 +20,10 @@
 
 	const ChoroplethMapData = computed(() => {
 		return data.map((d: any) => ({
-			id: d.name,
-			count: d.visitors,
-			views: d.pageviews,
-			visits: d.visits,
+			id: d.label,
+			count: d.bezoekers,
+			views: d.weergaven,
+			visits: d.bezoeken,
 		}));
 	});
 

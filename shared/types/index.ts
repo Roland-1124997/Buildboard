@@ -123,11 +123,13 @@ export type ToolBar = {
 }
 
 export type RouteType = {
+    hidden?: boolean;
     label: string;
     iconName: string;
     refetchOnEnter?: boolean;
     alert?: boolean;
     toolbar?: ToolBar;
+    related?: string[];
 };
 
 export type StoreType = Store<string, {
@@ -142,9 +144,9 @@ export type StoreType = Store<string, {
 }>;
 
 export type HistoryEntry = { 
-    search: string | null
+    search?: string | null
     filter: string | null 
-    page: string | number | null
+    page?: string | number | null
 };
 
 export type RouteHistory = Record<string, HistoryEntry[]>;

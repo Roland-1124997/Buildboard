@@ -3,19 +3,25 @@ import type { LocationQueryValue } from 'vue-router';
 const filter = ref<string | null>(null);
 const { clear, get, LastEntry, set } = useHistory();
 
+let sharedFilters: string[] = [];
+
 export const useFilter = (options?: {
     enableWatch?: boolean;
     fallbackFilter?: Ref<string | null>;
     callback?: (
-        params: { 
-            filter: string; 
-            page: number 
+        params: {
+            filter: string;
+            page: number
         }
     ) => Promise<void>,
+}, scharedOptions?: {
+    related?: string[] | null;
 }) => {
 
+    if (scharedOptions?.related) sharedFilters = scharedOptions.related;
+
     const loading = ref(false);
-    const activeType = computed(() => filter.value);
+    const activeType = computed(() => filter.value ?? options?.fallbackFilter?.value ?? null);
 
     const router = useRouter();
     const route = useRoute();
@@ -61,8 +67,20 @@ export const useFilter = (options?: {
         const lastEntry = LastEntry(route.path);
         delete query.page;
 
-        set(route.path, [
-            { 
+        if (sharedFilters.includes(route.path)) {
+            sharedFilters.forEach(path => {
+                set(path, [
+                    {
+                        filter: value as string || "",
+                        search: route.query.search as string || "",
+                        page: route.query.page ? parseInt(route.query.page as string) : null,
+                    }
+                ]);
+            })
+        }
+
+        else set(route.path, [
+            {
                 filter: value as string || "",
                 search: route.query.search as string || "",
                 page: route.query.page ? parseInt(route.query.page as string) : null,
@@ -73,10 +91,10 @@ export const useFilter = (options?: {
         query.filter = filter.value;
 
         router.replace({ query });
-        if(value === lastEntry?.filter) return
+        if (value === lastEntry?.filter) return
 
         await execute(value as string);
-        
+
     }
 
     return {
