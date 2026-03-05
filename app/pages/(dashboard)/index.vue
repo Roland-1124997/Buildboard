@@ -88,5 +88,4 @@
 	});
 
 	const store = useAnalytics();
-	const { filter } = useFilter();
 </script>
