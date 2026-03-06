@@ -63,7 +63,7 @@ export const calculateMetrics = (metrics: Record<string, any>) => {
 
     const result: Record<string, any> = metrics.map((item: Record<string, any>) => {
 
-        const label = item.name.replace("/", "") || 'Index';
+        const label = item.name == "/" ? "/index" : item.name
 
         return {
             label: label.charAt(0).toUpperCase() + label.slice(1),

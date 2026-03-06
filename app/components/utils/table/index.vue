@@ -6,30 +6,28 @@
 					<th class="px-4 py-3 text-sm font-medium tracking-wider text-left text-gray-700 uppercase">
 						{{ categories[0]?.label }}
 					</th>
-					<th v-for="category in categories.slice(1, categories.length)" :key="category.value" class="py-3 text-sm font-medium tracking-wider text-center text-gray-700 uppercase" :class="getCategoryClass(category.value)">
+					<th v-for="category in categories.slice(1, categories.length)" :key="category.value" class="py-3 text-sm font-medium tracking-wider text-center text-gray-700 uppercase" :class="decorator(category.value)">
 						{{ category.label }}
 					</th>
 				</tr>
 			</thead>
-			<tbody class="bg-white divide-y divide-gray-200">
-				<tr v-for="meta in data" :key="meta.label" class="transition-all hover:bg-gray-50 group">
-					<td v-if="name == 'pages'" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-						<icon name="akar-icons:panel-right" class="object-cover w-6 h-6 mr-2 text-blue-600 rounded-sm opacity-50 group-hover:opacity-100" />
-						{{ meta.label }}
-					</td>
+			<tbody v-if="data.length >= 1 && !loading" class="bg-white divide-y divide-gray-200">
 
-					<td v-else-if="name == 'devices'" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-						<icon :name="`akar-icons:${meta.label.toLowerCase()}-device`" class="object-cover w-6 h-6 mr-2 text-blue-600 rounded-sm opacity-50 group-hover:opacity-100" />
-						{{ meta.label }}
-					</td>
+				<ClientOnly>
 
-					<td v-else-if="name == 'countries'" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
-						<icon :name="`twemoji:flag-${useCounryName(meta.label, 'en').replace(' ', '-').toLowerCase()}`" class="object-cover w-6 h-6 mr-2 rounded-sm opacity-70 group-hover:opacity-100" />
-						{{ useCounryName(meta.label) }}
-					</td>
+					<UtilsTableRow v-for="meta in data" :key="meta.label" :data="meta" :categories :name :decorator="decorator" :isSmall :isOpen />
+			
+					<template #fallback>
+						<UtilsTableRowSkeleton v-for="i in visable" :key="i" :categories :decorator="decorator" :isSmall :isOpen />
+					</template>
 
-					<td v-for="category in categories.slice(1, categories.length)" :key="category.value" class="py-3 text-sm text-center text-gray-700 border whitespace-nowrap" :class="getCategoryClass(category.value)">
-						{{ formatCategoryValue(meta, category.value) }}
+				</ClientOnly>
+				
+			</tbody>
+			<tbody v-else class="bg-white">
+				<tr>
+					<td colspan="100%" class="px-4 py-3 text-sm text-center text-gray-500">
+						Geen gegevens beschikbaar
 					</td>
 				</tr>
 			</tbody>
@@ -38,7 +36,23 @@
 </template>
 
 <script setup lang="ts">
-	defineProps({
+	const props = defineProps({
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		visable: {
+			type: Number,
+			default: 10,
+		},
+		isSmall: {
+			type: Boolean,
+			default: false,
+		},
+		isOpen: {
+			type: Boolean,
+			default: false,
+		},
 		name: {
 			type: String as PropType<"pages" | "countries" | "devices">,
 			required: true,
@@ -60,9 +74,12 @@
 		},
 	});
 
-	const getCategoryClass = (value: string) => {
+	const decorator = (value: string) => {
+		
+		if (props.isSmall) return "hidden";
+		
 		const classes: Record<string, string> = {
-			weergaven: "",
+			weergaven: "hidden md:table-cell",
 			bezoekers: "hidden sm:table-cell",
 			bezoeken: "hidden md:table-cell",
 			bounces: "hidden md:table-cell",
@@ -71,9 +88,5 @@
 		return classes[value] || "";
 	};
 
-	const formatCategoryValue = (meta: any, category: string) => {
-		if (category === "bounces") return `${useFormatDuration(meta[category])}%`;
-		if (category === "totaltime") return useFormatDuration(meta[category], true);
-		return useFormatDuration(meta[category]);
-	};
+	
 </script>

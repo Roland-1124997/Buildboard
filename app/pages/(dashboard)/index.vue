@@ -35,8 +35,7 @@
 					<NuxtLink to="/statistieken/pagina's" class="inline-flex items-center mb-4 text-sm font-medium text-blue-600 hover:underline"> Meer details <icon name="akar-icons:arrow-right" class="w-4 h-4 ml-1" /> </NuxtLink>
 				</div>
 
-				<UtilsAnalyticsCardsViewer class="hidden md:grid" name="pages" :visable="6" :data="store.metrics?.pages.values" />
-				<UtilsAnalyticsCardsViewer class="md:hidden" name="pages" :visable="3" :data="store.metrics?.pages.values" />
+				<UtilsAnalyticsCardsViewer name="pages" :visable="6" :data="store.metrics?.pages.values" />
 			</article>
 
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
@@ -52,8 +51,7 @@
 				<NuxtLink to="/statistieken/landen" class="inline-flex items-center mb-4 text-sm font-medium text-blue-600 hover:underline"> Meer details <icon name="akar-icons:arrow-right" class="w-4 h-4 ml-1" /> </NuxtLink>
 
 				<div class="pt-3">
-					<UtilsAnalyticsCardsViewer class="hidden md:grid" name="countries" :visable="4" :data="store.metrics.countries.values" />
-					<UtilsAnalyticsCardsViewer class="md:hidden" name="countries" :visable="3" :data="store.metrics.countries.values" />
+					<UtilsAnalyticsCardsViewer name="countries" :visable="3" :data="store.metrics?.countries.values" :isSmall="true" :isOpen="true" />
 				</div>
 			</article>
 		</section>
