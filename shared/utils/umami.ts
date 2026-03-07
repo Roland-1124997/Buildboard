@@ -16,10 +16,10 @@ export const useFormatDuration = (value: number, format: Boolean = false) => {
 };
 
 export const formatWeeklyStatsMessage = (stats: any) => {
-    const { pageviews, visitors, visits } = stats
+    const { pageviews, visitors } = stats
 
     return {
         title: 'Wekelijkse statistieken',
-        message: `Afgelopen week zijn er ${useFormatDuration(pageviews)} weergaven, ${useFormatDuration(visitors)} bezoekers en ${useFormatDuration(visits) } bezoeken geregistreerd.`
+        message: `Afgelopen week zijn er ${useFormatDuration(pageviews)} weergaven, ${useFormatDuration(visitors)} bezoekers geweest`
     }
 }
