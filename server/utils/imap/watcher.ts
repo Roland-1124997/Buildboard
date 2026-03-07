@@ -7,6 +7,8 @@ import type { ImapFlow } from 'imapflow';
 let started = false;
 let stopped = false;
 let currentClient: ImapFlow | null = null;
+const sentNotificationIds = new Map<string, number>(); // ID -> timestamp
+const NOTIFICATION_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 const IMAP_EVENTS = ['flags', 'exists', 'expunge'] as const;
 const FETCH_CONFIG = {
@@ -24,6 +26,15 @@ const mapEventFlags = (eventType: string) => ({
     deleted: eventType === 'expunge',
 });
 
+const cleanupExpiredNotifications = () => {
+    const now = Date.now();
+    for (const [id, timestamp] of sentNotificationIds.entries()) {
+        if (now - timestamp > NOTIFICATION_EXPIRY_MS) {
+            sentNotificationIds.delete(id);
+        }
+    }
+};
+
 const sendPushNotifications = async (data: any, eventFlags: any, unseen: number) => {
     if (!data) return;
 
@@ -32,17 +43,25 @@ const sendPushNotifications = async (data: any, eventFlags: any, unseen: number)
         events: eventFlags
     });
 
-    if (eventFlags.incoming) await useSendServiceWorkerPushEvent({
-        data: {
-            id: data.id,
-            title: "Nieuw bericht binnengekomen",
-            message: data.subject,
-            url: `/berichten?id=${data.id}`,
-            badgeCount: unseen,
-        },
-        events: eventFlags
-    });
+    if (eventFlags.incoming) {
+        const notificationId = data.id;
 
+        cleanupExpiredNotifications();
+
+        if (sentNotificationIds.has(notificationId)) return;
+        sentNotificationIds.set(notificationId, Date.now());
+
+        await useSendServiceWorkerPushEvent({
+            data: {
+                id: notificationId,
+                title: "Nieuw bericht binnengekomen",
+                message: data.subject,
+                url: `/berichten?id=${data.id}`,
+                badgeCount: unseen,
+            },
+            events: eventFlags
+        });
+    }
 };
 
 const imapEmitter = new EventEmitter();
@@ -81,10 +100,10 @@ export const startImapWatcher = async () => {
         let idleTimer: NodeJS.Timeout | null = null;
 
         try {
-            
+
             const { imap_client, imap_error } = await useConnectClient();
 
-            if(imap_error || !imap_client) {
+            if (imap_error || !imap_client) {
                 throw new Error('Failed to connect to IMAP server');
             }
 
