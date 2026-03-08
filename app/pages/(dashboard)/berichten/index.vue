@@ -1,5 +1,5 @@
 <template>
-	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[77dvh] md:h-[74dvh] md:grid-cols-2">
+	<div class="grid flex-1 grid-cols-1 overflow-hidden h-[74dvh] md:h-[74dvh] md:grid-cols-2">
 		<div class="z-10 md:pr-4 md:border-r">
 			<div class="flex-1 h-full overflow-y-auto">
 				<UtilsEmailsPagination v-if="store.pagination.total > 1"/>

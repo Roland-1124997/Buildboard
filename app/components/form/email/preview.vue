@@ -23,10 +23,10 @@
 			</div>
 		</header>
 
-		<div class="flex-1 py-2 overflow-y-auto max-h-[50vh] pb-4 md:p-4" aria-label="Bericht inhoud">
+		<div class="flex-1 py-2 mt-2 -mb-5 overflow-y-auto max-h-[55vh] pb-4 md:p-4" aria-label="Bericht inhoud">
 			<article class="prose text-gray-800 max-w-none">
 				<div class="text-balance">
-					<iframe :srcdoc="props.message.html" sandbox="" :title="props.message.html" class="w-full h-[46vh]"></iframe>
+					<iframe :srcdoc="props.message.html" sandbox="" :title="props.message.html" class="w-full h-[55vh]"></iframe>
 				</div>
 			</article>
 		</div>
