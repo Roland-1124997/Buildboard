@@ -6,7 +6,7 @@
 			</div>
 
 			<div class="hidden md:block">
-				<ChartsGroup :data="data.values.slice(0, 7)" :categories="data.categories" :height="410" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
+				<ChartsGroup :data="data.values.slice(0, 5)" :categories="data.categories" :height="410" :y_axis="['bezoekers', 'weergaven', 'bezoeken']" />
 			</div>
 
 			<template #fallback>
