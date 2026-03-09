@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     scheduledTasks: {
       '10 * * * *': ['analytics'],
       '0 12 */5 * *': ['supabase'],
-      '30 23 * * 0': ['notifications']
+      '30 22 * * 0': ['notifications']
     },
     experimental: {
       tasks: true

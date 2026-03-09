@@ -47,14 +47,23 @@ export const formulateDates = (filter: string) => {
     const month = nowDate.getMonth();
     const day = nowDate.getDate();
 
-    const endAt = new Date(year, month, day, 23, 59, 59, 999).getTime();
+    let startAt = new Date(year, month, day, 0, 0, 0, 0).getTime();
+    let endAt = new Date(year, month, day, 23, 59, 59, 999).getTime();
 
-    let startAt = 0
+    if (filter === 'week') {
+        startAt = new Date(year, month, day - nowDate.getDay(), 0, 0, 0, 0).getTime()
+        endAt = new Date(year, month, day + (6 - nowDate.getDay()), 23, 59, 59, 999).getTime()
+    }
 
-    if (filter === 'vandaag') startAt = new Date(year, month, day, 0, 0, 0, 0).getTime();
-    if (filter === 'week') startAt = new Date(year, month, day - 7, 0, 0, 0, 0).getTime();
-    if (filter === 'maand') startAt = new Date(year, month, day - 30, 0, 0, 0, 0).getTime();
-    if (filter === 'jaar') startAt = new Date(year, month, day - 365, 0, 0, 0, 0).getTime();
+    if (filter === 'maand') {
+        startAt = new Date(year, month, 1, 0, 0, 0, 0).getTime();
+        endAt = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
+    }
+
+    if (filter === 'jaar') {
+        startAt = new Date(year, 0, 1, 0, 0, 0, 0).getTime();
+        endAt = new Date(year, 11, 31, 23, 59, 59, 999).getTime();
+    }
 
     return { startAt, endAt };
 }

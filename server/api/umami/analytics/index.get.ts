@@ -41,6 +41,10 @@ export default defineSupabaseEventHandler(async (event) => {
             message: 'Statistieken succesvol opgehaald'
         },
         data: {
+            timeFrame: {
+                startAt: new Date(startAt),
+                endAt: new Date(endAt),
+            },
             statistics: [
                 {
                     ...calculateValues({
