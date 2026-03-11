@@ -14,7 +14,7 @@
 		<section class="grid w-full grid-cols-1 mt-3 gap-y-3 md:gap-3 md:grid-cols-3 h-fit pb-[5.5rem] md:pb-0">
 			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-2">
 				<h2 class="mb-1 text-xl font-bold">Meest bezochte pagina's</h2>
-				<UtilsAnalyticsChartsPages :metrics="store.metrics" :data="store.metrics.pages" />
+				<UtilsAnalyticsChartsPages :metrics="store.metrics" :data="store.metrics?.pages" />
 			</article>
 
 			<article class="w-full col-span-1 p-6 bg-white border rounded-lg">
