@@ -6,8 +6,8 @@ import type { FetchMessageObject, FetchQueryObject, FetchOptions } from 'imapflo
 
 const { IMAP_HOST, IMAP_PORT, IMAP_SECURE, IMAP_USER, IMAP_PASS } = useRuntimeConfig();
 
-export const sanitizeHtml = (html: string) => html
-    
+export const extendHtml = (html: string) => html += `<head><base target="_blank"></head>`;
+
 export const useConnectClient = async () => {
 
     let error = null;
@@ -27,8 +27,8 @@ export const useConnectClient = async () => {
         logger: false
     });
 
-    try { 
-        await client.connect() 
+    try {
+        await client.connect()
         data = client;
     }
 
@@ -77,7 +77,7 @@ export const buildResponse = async (message: FetchMessageObject, threadmap: Map<
         if (index < 3) previewText += element.textContent + ' ';
     });
 
-    html = sanitizeHtml(mail.html || "") || mail.textAsHtml || '';
+    html = extendHtml(mail.html || "") || mail.textAsHtml || '';
 
     attachments = mail.attachments;
     preview = previewText || mail.text || mail.textAsHtml || '';
@@ -107,7 +107,7 @@ export const useFetchImapSingleMessage = async (client: ImapFlow, search: number
 
     const msg = await client.fetchOne(search, fetchOptions, options);
     if (msg) return await buildResponse(msg, threadmap);
-    
+
 
     return null;
 }

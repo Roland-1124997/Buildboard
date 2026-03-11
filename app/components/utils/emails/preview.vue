@@ -7,9 +7,8 @@
 				</button>
 				<button @click="toggleCollapse" class="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 bg-white border border-gray-300 rounded-lg w-[8.2rem] hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400" :aria-label="collapsed ? 'Klap bericht uit' : 'Klap bericht in'" :aria-expanded="!collapsed">
 					<span>{{ collapsed ? "Uitklappen" : "Inklappen" }}</span>
-					
-					<icon :name="collapsed ? 'ri:arrow-up-s-fill' : 'ri:arrow-down-s-fill'" aria-hidden="true" class="object-cover w-6 h-6" />
 
+					<icon :name="collapsed ? 'ri:arrow-up-s-fill' : 'ri:arrow-down-s-fill'" aria-hidden="true" class="object-cover w-6 h-6" />
 				</button>
 			</div>
 			<div v-if="!collapsed" class="pt-2 space-y-3 border-t md:mt-4">
@@ -36,7 +35,7 @@
 			<article class="prose text-gray-800 max-w-none">
 				<div class="text-balance">
 					<div :class="!collapsed ? ' h-[46vh]' : ' h-[60vh]'" class="w-full overflow-hidden rounded">
-						<iframe :srcdoc="store.selected.html" sandbox="" :title="store.selected.subject" class="w-full h-full"></iframe>
+						<iframe :srcdoc="store.selected.html" sandbox="allow-popups allow-popups-to-escape-sandbox" :title="store.selected.subject" class="w-full h-full"></iframe>
 					</div>
 				</div>
 			</article>
@@ -57,5 +56,6 @@
 	store.openMessageById((store.activeMessageId as string) || "");
 
 	const collapsed = ref(false);
-	const toggleCollapse = () => collapsed.value = !collapsed.value;
+	const toggleCollapse = () => (collapsed.value = !collapsed.value);
+	
 </script>
