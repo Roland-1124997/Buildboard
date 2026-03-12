@@ -33,6 +33,10 @@
 							{{ statusMessage }}
 						</p>
 
+						<DevOnly>
+							{{ error?.stack }}
+						</DevOnly>
+
 						<UtilsButtonAction iconName="akar-icons:arrow-left" :options="{ name: 'Terug naar start', always: true }" @click="handleError" />
 					</div>
 				</main>

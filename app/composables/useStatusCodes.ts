@@ -16,7 +16,7 @@ export const useStatusCodes: Record<number, { message: string; statusMessage: st
         statusMessage: "Deze bron is op een ander URL te vinden. Volg de verstrekte link."
     },
     304: {
-        message: "Niet fewijzigd",
+        message: "Niet gewijzigd",
         statusMessage: "De bron is sinds het laatste verzoek niet gewijzigd. Gebruik de cached versie indien beschikbaar."
     },
     307: {
