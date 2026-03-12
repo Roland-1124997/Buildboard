@@ -21,16 +21,12 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     const unseen = await unseenMessagesCount(imap_client)
 
     const data = await useFetchImapSingleMessage(imap_client, search.uid, {
-        uid: true,
-        envelope: true,
-        internalDate: true,
-        flags: true,
-        source: true
+        uid: true, envelope: true, internalDate: true, flags: true, source: true
     }, { uid: true });
 
     if (data) {
         const updated = await upsertImapMessageCache(data);
-        if (!updated) await refreshImapMessagesCache(imap_client, true);
+        if (!updated) refreshImapMessagesCache(imap_client, true);
     }
 
     await useCloseImapClient(imap_client);

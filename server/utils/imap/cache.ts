@@ -66,12 +66,7 @@ const filterCachedMessages = (messages: any[], filter: string, search: string) =
     });
 };
 
-export const buildImapMessagesResponse = (allMessages: any[], options: {
-    limit: number,
-    page: number,
-    filter?: string,
-    search?: string
-}) => {
+export const buildImapMessagesResponse = (allMessages: any[], options: ImapMessagesOptions) => {
     const filter = String(options.filter ?? '');
     const search = String(options.search ?? '');
 
@@ -135,12 +130,7 @@ export const clearImapMessagesCache = async () => {
     await useStorage().removeItem(IMAP_CACHE_STORAGE_KEY);
 };
 
-export const fetchImapMessagesFromStorageCache = async (options: {
-    limit: number,
-    page: number,
-    filter?: string,
-    search?: string
-}) => {
+export const fetchImapMessagesFromStorageCache = async (options: ImapMessagesOptions) => {
     const cached = await readImapCacheEntry();
     if (!cached) return null;
 

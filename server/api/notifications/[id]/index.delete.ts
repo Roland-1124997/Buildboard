@@ -17,7 +17,7 @@ export default defineSupabaseEventHandler(async (event) => {
     }
 
     const updated = await removeImapMessageFromCache(id);
-    if (!updated) await refreshImapMessagesCache(imap_client, true);
+    if (!updated) refreshImapMessagesCache(imap_client, true);
 
     await useCloseImapClient(imap_client);
 

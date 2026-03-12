@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"build": "nuxt build",
+		"profile": "nuxt build --profile",
 		"dev": "nuxt dev",
 		"host": "nuxt dev --public",
 		"node": "node .output/server/index.mjs",
@@ -51,7 +52,7 @@
 		"jsdom": "^27.1.0",
 		"lowlight": "^3.3.0",
 		"mailparser": "^3.7.5",
-		"nuxt": "^4.3.1",
+		"nuxt": "^4.4.2",
 		"nuxt-charts": "^2.1.2",
 		"nuxt-umami": "^3.2.1",
 		"pinia": "^3.0.3",
