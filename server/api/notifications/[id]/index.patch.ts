@@ -1,11 +1,10 @@
-
 export default defineSupabaseEventHandler(async (event, { server }) => {
 
     const id = getRouterParam(event, 'id');
     if (!id) return useReturnResponse(event, badRequestError);
 
     const { imap_client, imap_error } = await useConnectClient();
-    if(imap_error || !imap_client) return useReturnResponse(event, internalServerError);
+    if (imap_error || !imap_client) return useReturnResponse(event, internalServerError);
 
     await useGetImapMailbox(imap_client, 'INBOX');
 
@@ -29,7 +28,11 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
         source: true
     }, { uid: true });
 
-    
+    if (data) {
+        const updated = await upsertImapMessageCache(data);
+        if (!updated) await refreshImapMessagesCache(imap_client, true);
+    }
+
     await useCloseImapClient(imap_client);
 
     if (error) return useReturnResponse(event, internalServerError);

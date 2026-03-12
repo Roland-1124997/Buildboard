@@ -186,3 +186,13 @@ export const makeImapPagination = (totalItems: number, currentPage: number, item
 
     return { page, total, start, end };
 }
+
+export const fetchImapMessages = async (client: ImapFlow, options: {
+    limit: number,
+    page: number,
+    filter?: string,
+    search?: string
+}) => {
+    const allMessages = await useFetchCachedImapMessages(IMAP_CACHE_KEY, client);
+    return buildImapMessagesResponse(allMessages, options);
+};

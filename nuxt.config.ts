@@ -26,7 +26,8 @@ export default defineNuxtConfig({
   ],
   nitro: {
     scheduledTasks: {
-      '5 * * * *': ['analytics'],
+      '10 * * * *': ['analytics'],
+      '0 1 1 */1 *': ['revalidate-imap-cache'],
       '0 12 */5 * *': ['supabase'],
       '30 22 * * 0': ['notifications']
     },

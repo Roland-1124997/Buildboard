@@ -1,19 +1,26 @@
-
 export default defineSupabaseEventHandler(async (event) => {
 
     const id = getRouterParam(event, 'id');
     if (!id) return useReturnResponse(event, badRequestError);
 
     const { imap_client, imap_error } = await useConnectClient();
-    if(imap_error || !imap_client) return useReturnResponse(event, internalServerError);
+    if (imap_error || !imap_client) return useReturnResponse(event, internalServerError);
 
     await useGetImapMailbox(imap_client, 'INBOX');
-    
+
     const search = { uid: id };
 
     const { error: messageError } = await useDeleteMessage(imap_client, search);
-    if (messageError) return useReturnResponse(event, internalServerError);
-    
+    if (messageError) {
+        await useCloseImapClient(imap_client);
+        return useReturnResponse(event, internalServerError);
+    }
+
+    const updated = await removeImapMessageFromCache(id);
+    if (!updated) await refreshImapMessagesCache(imap_client, true);
+
+    await useCloseImapClient(imap_client);
+
     return useReturnResponse(event, {
         status: {
             success: true,

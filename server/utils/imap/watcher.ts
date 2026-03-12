@@ -116,8 +116,22 @@ export const startImapWatcher = async () => {
             IMAP_EVENTS.forEach((event: string) => {
                 const handler = async (mail: any) => {
                     const unseen = await unseenMessagesCount(client!);
-                    const data = await useFetchImapSingleMessage(client!, mail.seq || mail.count, FETCH_CONFIG);
                     const eventFlags = mapEventFlags(event);
+                    let data = null;
+
+                    if (eventFlags.deleted) {
+                        // Full refresh on expunge so cache UIDs stay in sync
+                        await refreshImapMessagesCache(client!, true);
+                    } else {
+                        const search = mail?.uid ?? (mail?.seq ?? mail?.count);
+                        const fetchOpts = mail?.uid ? { uid: true } : undefined;
+                        data = await useFetchImapSingleMessage(client!, search, FETCH_CONFIG, fetchOpts as any);
+
+                        if (data) {
+                            const updated = await upsertImapMessageCache(data);
+                            if (!updated) await refreshImapMessagesCache(client!, true);
+                        }
+                    }
 
                     const payload = { data, events: eventFlags, unseen };
                     imapEmitter.emit('new', payload);
@@ -209,88 +223,14 @@ export const stopImapWatcher = async () => {
 
 export const getImapEmitter = () => imapEmitter;
 
-const getFilteredMessageUids = async (client: ImapFlow, filter: string, search: string) => {
-    const seen_filter = filter === "gelezen";
-    const unseen_filter = filter === "ongelezen";
-    const has_search = !!search;
+export const warmupImapCache = async () => {
+    const { imap_client, imap_error } = await useConnectClient();
+    if (imap_error || !imap_client) return;
 
-
-    if (!has_search && !seen_filter && !unseen_filter) return [];
-
-    const searchQuery: any = {};
-    if (seen_filter || unseen_filter) searchQuery.seen = seen_filter;
-
-    if (has_search) searchQuery.or = [
-        { subject: search },
-        { from: search },
-        { body: search }
-    ];
-
-    const uids = await client.search(searchQuery);
-    return uids === false ? [] : uids;
-};
-
-const buildFetchCriteria = (uids: number[], page: number, limit: number, start: number, end: number) => {
-    if (uids.length > 0) {
-        const sortedUids = [...uids].sort((a, b) => b - a);
-        const pageUids = sortedUids.slice((page - 1) * limit, page * limit);
-
-        return pageUids.join(',');
+    try {
+        await useGetImapMailbox(imap_client, 'INBOX');
+        await refreshImapMessagesCache(imap_client, true);
+    } catch { /* warmup is best-effort */ } finally {
+        try { await imap_client.logout(); } catch { }
     }
-
-    return `${start}:${end}`;
-};
-
-const fetchMessagesWithCriteria = async (client: ImapFlow, criteria: string) => {
-    return await useFetchImapMessages(client, criteria, {
-        uid: true,
-        envelope: true,
-        internalDate: true,
-        flags: true,
-        source: true,
-    });
-};
-
-export const fetchImapMessages = async (client: ImapFlow, options: {
-    limit: number,
-    page: number,
-    filter?: string,
-    search?: string
-}) => {
-    const filter = options.filter as string;
-    const search = options.search as string;
-    const seen_filter = filter === "gelezen";
-    const unseen_filter = filter === "ongelezen";
-    const has_search = !!search;
-    const hasFilterOrSearch = seen_filter || unseen_filter || has_search;
-
-    const [mailbox, unseen, messageUids] = await Promise.all([
-        useGetImapMailbox(client, 'INBOX'),
-        unseenMessagesCount(client),
-        hasFilterOrSearch ? getFilteredMessageUids(client, filter, search) : Promise.resolve([])
-    ]);
-
-    const totalMessages = hasFilterOrSearch ? messageUids.length : (mailbox.exists || 0);
-
-    const { page, total, start, end } = makeImapPagination(
-        totalMessages,
-        options.page as number,
-        options.limit as number
-    );
-
-    if (page > total || totalMessages === 0) return { data: null, unseen, error: true };
-
-    const criteria = buildFetchCriteria(messageUids, page, options.limit as number, start, end);
-    const messages = await fetchMessagesWithCriteria(client, criteria);
-
-    return {
-        data: {
-            messages,
-        },
-        unseen,
-        pagination: {
-            current_page: page,
-            total_Pages: total,
-        }
-    };
 };
