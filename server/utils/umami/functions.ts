@@ -16,7 +16,7 @@ export const useFetchMetrics = defineCachedFunction(async (key: string, query: A
     return { data, error };
 
 }, {
-    maxAge: 60 * 10,
+    maxAge: 60 * 60 * 24 * 1,
     name: 'analytics',
     getKey: (key: string, query: AnalyticsQuery) => (`${key}-${query.timezone.split('/').join('-')}`)
 })

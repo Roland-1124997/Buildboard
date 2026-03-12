@@ -21,7 +21,7 @@ const schared = [
     "/statistieken/apparaten",
 ]
 
-const routes = (subscriptionActive: boolean): Record<string, RouteType> => {
+const routes = defineCachedFunction((subscriptionActive: boolean): Record<string, RouteType> => {
 
     return {
         "/": {
@@ -191,14 +191,14 @@ const routes = (subscriptionActive: boolean): Record<string, RouteType> => {
             related: schared
         },
 
-
-
     }
-}
+}, {
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    name: 'configuration_routes',
+    getKey: (subscriptionActive: boolean) => subscriptionActive ? 'active' : 'inactive',
+})
 
 export default defineSupabaseEventHandler(async (event, { user, server }) => {
-    const { data } = await server.from('subscriptions').select("id").eq("user_id", user.id)
-    const active = (data && data.length > 0) || false
-    return routes(active)
+    return routes(await subscriptions(server, user.id, false));
 });
 

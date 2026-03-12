@@ -20,6 +20,8 @@ export default defineSupabaseEventHandler(async (event, { user, server }) => {
 
     if (error) return useReturnResponse(event, internalServerError)
 
+    await subscriptions(server, user.id, true);
+
     return useReturnResponse(event, {
         status: {
             success: true,
