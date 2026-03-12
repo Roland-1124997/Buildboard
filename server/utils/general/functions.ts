@@ -1,6 +1,8 @@
 import { consola } from "consola";
 import webpush from "web-push";
 
+import { importEncryptSecret } from 'uncsrf'
+
 export const useMakePagination = (itemsPerPage: number = 16, page: number = 1) => {
 
     const start = (page - 1) * itemsPerPage;
@@ -89,3 +91,8 @@ export const useGetSubscriptionProviderUrl = (endpoint: string) => {
     const parts = endpoint.split("/")
     return `${parts[0]}//${parts[2]}`
 }
+
+let secretKey: Awaited<ReturnType<typeof importEncryptSecret>>
+export const useSecretKey = async (options: ModuleOptions) => secretKey
+    ? secretKey
+    : (secretKey = await importEncryptSecret(options.encryptSecret, options.encryptAlgorithm))

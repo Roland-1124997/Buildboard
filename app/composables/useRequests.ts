@@ -12,7 +12,14 @@ const catcher = async <T>(promise: Promise<T>) => {
 }
 
 export const useCsrfToken = async () => {
-    await catcher($fetch("/api/security/csrf-token"));
+
+    const token = useControlToken()
+
+    const fetch = $fetch("/api/security/csrf-token", {
+        headers: { "x-control-csrf-token": token || "" }
+    })
+    
+    await catcher(fetch);
 }
 
 export const useApiHandler = <G>(url: FetchUrl) => {
@@ -22,9 +29,13 @@ export const useApiHandler = <G>(url: FetchUrl) => {
         if(options?.method != 'GET') await useCsrfToken();
 
         const extendedUrl = options?.extends ? `${url}${options.extends}` : url;
-        return catcher<T>($fetch(extendedUrl, {
+        
+        // @ts-ignore
+        const fetch = $fetch(extendedUrl, {
             ...options
-        }))
+        }) as Promise<T>
+        
+        return catcher<T>(fetch);
     }
 
     const Get = <T = G>(options?: MethodOptions) => Send<T>({

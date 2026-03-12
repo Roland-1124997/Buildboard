@@ -59,6 +59,7 @@
 		"resend": "^6.4.2",
 		"sanitize-html": "^2.17.0",
 		"tailwindcss-animate": "^1.0.7",
+		"uncsrf": "^1.2.0",
 		"vue": "^3.5.22",
 		"vue-router": "^4.5.1",
 		"web-push": "^3.6.7",

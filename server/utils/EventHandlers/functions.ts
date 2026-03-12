@@ -1,4 +1,5 @@
 import { H3Event } from "h3";
+import * as csrf from 'uncsrf'
 
 const ignoredMethods = ['GET', 'HEAD', 'OPTIONS'];
 const ignorePath = ['/api/savory'];
@@ -88,6 +89,24 @@ export const defineMultiFactorVerificationEventHandler = (callback: (event: H3Ev
     })
 }
 
+export const defineSecurityEventHandler = (callback: (event: H3Event) => any ) => {
+    return defineEventHandler(async (event) => {
+
+        const config = useRuntimeConfig()
+        const security = config.security as ModuleOptions
+
+        const secret = getCookie(event, security.key!) ?? ''
+        const token = getHeader(event, security.header!) ?? ''
+        
+        const isValidToken = await csrf.verify(secret, token, await useSecretKey(security), security.encryptAlgorithm)
+        
+        if (!isValidToken) return useReturnResponse(event, unauthorizedError)
+        
+        return callback(event)
+
+    })
+}
+    
 export const defineAuthEventHandler = (callback: (event: H3Event, options: { client: SupabaseClient<Database>, user: SupaBaseUser, server: SupabaseClient<Database> }) => any) => {
     return defineBaseEventHandler(async (event, { client, user, server }) => {
         return callback(event, { client, user: user as SupaBaseUser, server })

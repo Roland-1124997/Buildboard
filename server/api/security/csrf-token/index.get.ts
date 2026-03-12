@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineSecurityEventHandler(async (event) => {
 
     const { production } = useRuntimeConfig();
 

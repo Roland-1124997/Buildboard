@@ -87,6 +87,14 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+
+    security: {
+      key: process.env.SECURITY_KEY,
+      header: process.env.SECURITY_HEADER,
+      encryptSecret: process.env.SECURITY_ENCRYPT_SECRET,
+      encryptAlgorithm: process.env.SECURITY_ENCRYPT_ALGORITHM
+    },
+
     SaltToken: process.env.SaltToken,
     appId: process.env.GitAppId,
     privateKey: process.env.GitPrivateKey,
@@ -118,11 +126,11 @@ export default defineNuxtConfig({
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
     public: {
-      vapidPublicKey: process.env.VAPID_PUBLIC_KEY
+      vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+      securityKey: process.env.SECURITY_KEY,
     },
 
   },
-
 
   routeRules: {
     '/statistieken/': { redirect: '/' },
