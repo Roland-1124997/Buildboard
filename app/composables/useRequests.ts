@@ -13,10 +13,8 @@ const catcher = async <T>(promise: Promise<T>) => {
 
 export const useCsrfToken = async () => {
 
-    const token = useControlToken()
-
     const fetch = $fetch("/api/security/csrf-token", {
-        headers: { "x-control-csrf-token": token || "" }
+        headers: useControlToken()
     })
     
     await catcher(fetch);

@@ -10,7 +10,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
 let vapidKey
-let securityHeaders
+let headers
 const url = "/api/integrations/subscription"
 const channel = new BroadcastChannel('sw-messages');
 
@@ -34,7 +34,7 @@ const subscribe = async () => {
         const found = data.data.subscriptions.find((sub) => subscription.endpoint.startsWith(sub.url_provider)) || null
 
         await fetch("/api/security/csrf-token", {
-            headers: securityHeaders
+            headers: headers
         })
 
         if (found) return await fetch(`${url}/${found.id}`, {
@@ -111,7 +111,7 @@ registerRoute(
 self.addEventListener("message", async (event) => {
     const { type, payload } = event.data
     if (type == "SET_VAPID_KEY") vapidKey = payload.vapidKey
-    if (type == "SET_TOKEN") securityHeaders = payload
+    if (type == "SET_TOKEN_HEADER") headers = payload.headers
     if (type == "CHECK_SUBSCRIPTION") await checkSubscription()
 
 });

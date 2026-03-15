@@ -133,14 +133,9 @@ export const usePush = async () => {
     }
 
     const syncSubscription = async () => {
-
-        console.log("[WORKER]: Syncing subscription with service worker...")
-        const token = useControlToken()
-
         postToWorker("SET_VAPID_KEY", { vapidKey: urlBase64ToUint8Array(vapidKey) })
-        postToWorker("SET_TOKEN", { "x-control-csrf-token": token || "" })
+        postToWorker("SET_TOKEN_HEADER", { headers: useControlToken() })
         postToWorker("CHECK_SUBSCRIPTION")
-        
     }
 
     return { subscribe, unsubscribe, syncSubscription, active }

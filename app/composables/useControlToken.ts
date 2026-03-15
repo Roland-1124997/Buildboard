@@ -13,7 +13,12 @@ export const useControlToken = () => {
         token.value = metaTag?.getAttribute('content')
     }
 
-    return token.value as string | undefined
-        
+    const headers = computed(() => {
+        if (!token.value) return {}
+        return { [`x-${securityKey}`]: token.value }
+    })
+
+    return headers.value as HeadersInit 
+
 }
 
