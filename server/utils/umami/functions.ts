@@ -48,14 +48,22 @@ export const formulateDates = (filter: string) => {
     const month = nowDate.getMonth();
     const day = nowDate.getDate();
 
-    const oneHour = production ? -60 * 60 * 1000 : 0; // Op production 1 uur aftrekken
+    const oneHour = production ? -60 * 60 * 1000 : 0; // subtract one hour in production to account for timezone differences
 
     let startAt = new Date(year, month, day, 0, 0, 0, 0).getTime() + oneHour;
     let endAt = new Date(year, month, day, 23, 59, 59, 999).getTime() + oneHour;
 
     if (filter === 'week') {
-        startAt = new Date(year, month, day - nowDate.getDay(), 0, 0, 0, 0).getTime() + oneHour;
-        endAt = new Date(year, month, day + (6 - nowDate.getDay()), 23, 59, 59, 999).getTime() + oneHour;
+        // getDay(): sunday = 0, monday = 1, ..., saturday = 6
+        const mondayBasedDay = (nowDate.getDay() + 6) % 7;
+        const weekStartDate = new Date(year, month, day - mondayBasedDay, 0, 0, 0, 0);
+        const weekEndDate = new Date(weekStartDate);
+        
+        weekEndDate.setDate(weekStartDate.getDate() + 6);
+        weekEndDate.setHours(23, 59, 59, 999);
+
+        startAt = weekStartDate.getTime() + oneHour;
+        endAt = weekEndDate.getTime() + oneHour;
     }
 
     if (filter === 'maand') {
