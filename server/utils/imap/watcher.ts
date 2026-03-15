@@ -115,28 +115,29 @@ export const startImapWatcher = async () => {
             // Setup event listeners
             IMAP_EVENTS.forEach((event: string) => {
                 const handler = async (mail: any) => {
-                    const unseen = await unseenMessagesCount(client!);
                     const eventFlags = mapEventFlags(event);
                     let data = null;
 
-                    if (eventFlags.deleted) {
-                        // Full refresh on expunge so cache UIDs stay in sync
-                        await refreshImapMessagesCache(client!, true);
-                    } else {
+                    if (eventFlags.deleted) await refreshImapMessagesCache(client!, true);
+                    const unseen = await unseenMessagesCount(client!);
+
+                    if (!eventFlags.deleted) {
+
                         const search = mail?.uid ?? (mail?.seq ?? mail?.count);
                         const fetchOpts = mail?.uid ? { uid: true } : undefined;
-                        data = await useFetchImapSingleMessage(client!, search, FETCH_CONFIG, fetchOpts as any);
 
-                        if (data) {
-                            const updated = await upsertImapMessageCache(data);
-                            if (!updated) await refreshImapMessagesCache(client!, true);
-                        }
+                        data = await useFetchImapSingleMessage(client!, search, FETCH_CONFIG, fetchOpts as any);
                     }
 
                     const payload = { data, events: eventFlags, unseen };
                     imapEmitter.emit('new', payload);
 
                     await sendPushNotifications(data, eventFlags, unseen);
+
+                    if (data) {
+                        const updated = await upsertImapMessageCache(data);
+                        if (!updated) await refreshImapMessagesCache(client!, true);
+                    }
                 };
                 eventHandlers.set(event, handler);
                 client!.on(event as any, handler);
