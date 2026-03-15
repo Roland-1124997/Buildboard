@@ -146,6 +146,7 @@ export type Database = {
             subscriptions: {
                 Row: {
                     created_at: string
+                    updated_at: Date
                     endpoint: string
                     url_provider: string | null
                     id: string
@@ -154,6 +155,7 @@ export type Database = {
                 }
                 Insert: {
                     created_at?: string
+                    updated_at?: Date
                     endpoint?: string
                     url_provider?: string | null
                     id?: string
@@ -162,6 +164,7 @@ export type Database = {
                 }
                 Update: {
                     created_at?: string
+                    updated_at?: Date
                     endpoint?: string
                     url_provider?: string | null
                     id?: string

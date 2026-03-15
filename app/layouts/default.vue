@@ -37,18 +37,22 @@
 	articles.initialPayload();
 	storageStore.initialPayload();
 	notifications.initialPayload();
+	const { syncSubscription } = await usePush();
 
 	const { close } = await notifications.realTime();
 
 	onMounted(async () => {
-		
+
 		session.setCloseFunction(close);
+
+		await syncSubscription();
 
 		if(store.error) store.refresh()
 		if(account.error) account.refresh()
 		if(articles.error) articles.refresh()
 		if(storageStore.error) storageStore.refresh()
 		if(notifications.error) notifications.refresh()
+
 	});
 
 	onUnmounted(() => close());
