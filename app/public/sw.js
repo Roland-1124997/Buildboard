@@ -127,7 +127,7 @@ self.addEventListener("message", async (event) => {
     const { type, payload } = event.data
     if (type == "SET_VAPID_KEY") vapidKey = payload.vapidKey
     if (type == "SET_TOKEN_HEADER") headers = payload.headers
-    if (type == "CHECK_SUBSCRIPTION") await checkSubscription(false)
+    if (type == "CHECK_SUBSCRIPTION") await checkSubscription(true)
 
 });
 
