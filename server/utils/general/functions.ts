@@ -73,36 +73,18 @@ const useGetVapidDetails = async () => {
 export const useSendServiceWorkerPushEvent = async (payload: any) => {
 
     const { data: subscriptions, error } = await useGetVapidDetails()
+    const server = useSupaBaseServer()
 
     if (!error) for (const data of subscriptions) {
 
         const endpoint = useDecryptValue(data.endpoint)
         const keys = useDecryptValue(data.keys, true)
 
-        webpush.sendNotification({ 
-            endpoint: endpoint, keys: keys 
-        }, JSON.stringify(payload))
-
-        .catch(error => {
-
-            const { message, statusMessage } = (useStatusCodes[error.statusCode]) || { message: "", statusMessage: "" };
-
-            consola.error(
-                '[Notification] Error sending notification:\n' +
-                JSON.stringify({
-                    user_id: data.user_id,
-                    subscription_id: data.id,
-                    statusCode: error.statusCode,
-                    statusMessage: statusMessage,
-                    message: message,
-                    time_caused_at: new Date().toLocaleString(),
-                }, null, 2)
-            )
-
+        webpush.sendNotification({ endpoint: endpoint, keys: keys }, JSON.stringify(payload)).catch(async (err: any) => {
+            await server.from("subscriptions").delete().eq("id", data.id)
         })
-        
-    }
 
+    }
 };
 
 export const useGetSubscriptionProviderUrl = (endpoint: string) => {

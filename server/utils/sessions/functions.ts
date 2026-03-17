@@ -1,5 +1,5 @@
 import { H3Event } from "h3";
-import { SupabaseClient, Session, User } from "@supabase/supabase-js";
+import { SupabaseClient, Session, User, AuthError } from "@supabase/supabase-js";
 
 export type { SupabaseClient, Session, User }
 export type SupaBaseUser = User & { current_session_id: string, aal: string };
@@ -26,13 +26,23 @@ export const validateRefreshToken = (currentSession: Session | Omit<Session, "us
 
 export const useRefreshSession = async (client: SupabaseClient<Database>, currentSession: Session | Omit<Session, "user">) => {
 
-    const validation = validateRefreshToken(currentSession)
-    if (!validation.valid) return {
-        data: { user: null, session: null },
-        error: validation.error
+    try {
+        const validation = validateRefreshToken(currentSession)
+        if (!validation.valid) return {
+            data: { user: null, session: null },
+            error: validation.error
+        }
+
+        return await client.auth.refreshSession(currentSession);
     }
-    
-    return await client.auth.refreshSession(currentSession);
+
+    catch (error: any) {
+        return {
+            data: { user: null, session: null },
+            error: new AuthError(error.message, error.status)
+        }
+    }
+
 }
 
 export const useGetSession = async (event: H3Event, client: SupabaseClient<Database>, currentSession: Session | Omit<Session, "user"> | null) => {
