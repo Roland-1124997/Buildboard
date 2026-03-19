@@ -120,14 +120,19 @@ export const startImapWatcher = async () => {
 
                     let data = null;
 
+                    if (eventFlags.deleted) await removeImapMessageFromCache(mail?.uid);
                     if (!eventFlags.deleted) {
 
                         const search = mail?.uid ?? (mail?.seq ?? mail?.count);
                         const fetchOpts = mail?.uid ? { uid: true } : undefined;
 
                         data = await useFetchImapSingleMessage(client!, search, FETCH_CONFIG, fetchOpts as any);
-                    }
 
+                        if (eventFlags.incoming) await upsertImapMessageCache(data);
+                        else if (eventFlags.update) await updateFlagsImapMessageCache(data);
+
+                    }
+                    
                     const payload = { data, events: eventFlags, unseen };
                     imapEmitter.emit('new', payload);
 
