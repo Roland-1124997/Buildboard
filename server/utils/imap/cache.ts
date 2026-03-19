@@ -85,9 +85,9 @@ export const buildImapMessagesResponse = (allMessages: any[], options: ImapMessa
         total_Pages: total,
     }
 
-    if (totalMessages === 0) return { data: null, unseen, pagination: null, error: true as const};
+    if (totalMessages === 0) return { data: null, unseen, pagination: null, error: true as const };
     if (page > total || page < 1) return { data: null, unseen, pagination, error: true as const };
-    
+
     const startIndex = (page - 1) * options.limit;
     const paginatedMessages = messages.slice(startIndex, startIndex + options.limit);
 
@@ -111,6 +111,17 @@ export const useFetchCachedImapMessages = defineCachedFunction(_fetchAllImapMess
 
 export const refreshImapMessagesCache = async (client: ImapFlow, revalidate = true) => {
     return await useFetchCachedImapMessages(IMAP_CACHE_KEY, client, revalidate);
+};
+
+export const updateFlagsImapMessageCache = async (message: any) => {
+    return await updateCachedImapMessages((messages) => {
+        const nextFlags: string[] = message.flags || [];
+
+        return messages.map((item: any) => {
+            if (item?.uid !== Number(message?.uid)) return item;
+            return { ...item, flags: nextFlags };
+        });
+    });
 };
 
 export const upsertImapMessageCache = async (message: any) => {

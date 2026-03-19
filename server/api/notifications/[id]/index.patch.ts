@@ -21,6 +21,10 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     const unseen = await unseenMessagesCount(imap_client)
     await useCloseImapClient(imap_client);
 
+    await updateFlagsImapMessageCache({
+        uid: id, flags: action == 'markAsSeen' ? seen : []
+    })
+
     if (error) return useReturnResponse(event, internalServerError);
 
     return useReturnResponse(event, {

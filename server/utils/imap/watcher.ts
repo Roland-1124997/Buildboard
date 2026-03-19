@@ -116,10 +116,9 @@ export const startImapWatcher = async () => {
             IMAP_EVENTS.forEach((event: string) => {
                 const handler = async (mail: any) => {
                     const eventFlags = mapEventFlags(event);
-                    let data = null;
-
-                    if (eventFlags.deleted) await refreshImapMessagesCache(client!, true);
                     const unseen = await unseenMessagesCount(client!);
+
+                    let data = null;
 
                     if (!eventFlags.deleted) {
 
@@ -134,10 +133,6 @@ export const startImapWatcher = async () => {
 
                     await sendPushNotifications(data, eventFlags, unseen);
 
-                    if (data) {
-                        const updated = await upsertImapMessageCache(data);
-                        if (!updated) await refreshImapMessagesCache(client!, true);
-                    }
                 };
                 eventHandlers.set(event, handler);
                 client!.on(event as any, handler);
