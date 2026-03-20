@@ -44,17 +44,16 @@
 </template>
 
 <script setup lang="ts">
-
 	useSeoMeta({
-		title: "Twee-factor authenticatie - Dashboard",
+		title: "Insights - Verificatie",
 		description: "Verifieer je identiteit met een authenticatie code.",
-		ogTitle: "Twee-factor authenticatie - Dashboard",
+		ogTitle: "Insights - Verificatie",
 		ogDescription: "Verifieer je identiteit met een authenticatie code.",
 		ogUrl: "/auth/verify",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Twee-factor authenticatie - Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Verificatie",
 		twitterDescription: "Verifieer je identiteit met een authenticatie code.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -66,7 +65,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

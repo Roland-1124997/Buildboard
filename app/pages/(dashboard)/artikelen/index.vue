@@ -7,21 +7,21 @@
 				<UtilsArticlesCardSkeleton />
 			</template>
 		</ClientOnly>
-		<UtilsArticlesError v-else class="col-span-3 " />
+		<UtilsArticlesError v-else class="col-span-3" />
 	</div>
 </template>
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Artikelen Dashboard",
+		title: "Insights - Artikelen",
 		description: "Overzicht van alle artikelen en blog posts.",
-		ogTitle: "Artikelen Dashboard",
+		ogTitle: "Insights - Artikelen",
 		ogDescription: "Overzicht van alle artikelen en blog posts.",
 		ogUrl: "/artikelen",
-		ogImage: "/icons/icon_512.svg",
-		twitterTitle: "Artikelen Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Artikelen",
 		twitterDescription: "Overzicht van alle artikelen en blog posts.",
-		twitterImage: "/icons/icon_512.svg",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -33,11 +33,10 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});
 
 	const store = useArticles();
-
 </script>

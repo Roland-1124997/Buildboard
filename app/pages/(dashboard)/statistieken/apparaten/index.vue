@@ -9,15 +9,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Statistieken Apparaten",
+		title: "Insights - Statistieken Apparaten",
 		description: "Bekijk alle statistieken van de apparaten, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
-		ogTitle: "Statistieken Apparaten",
+		ogTitle: "Insights - Statistieken Apparaten",
 		ogDescription: "Bekijk alle statistieken van de apparaten, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
 		ogUrl: "/statistieken/apparaten",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Statistieken Apparaten",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Statistieken Apparaten",
 		twitterDescription: "Bekijk alle statistieken van de apparaten, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -29,7 +29,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

@@ -140,8 +140,8 @@ self.addEventListener("push", async (event) => {
         if (events.update || data.badgeCount) navigator.setAppBadge(data.badgeCount);
         if (events.incoming) await self.registration.showNotification(data.title, {
             body: data.message,
-            icon: "/icons/icon_512.png",
-            badge: "/icons/icon_512.png",
+            icon: "/icons/icon_512-blue.png",
+            badge: "/icons/icon_512-blue.png",
             data: { url: data.url },
             tag: data.id,
         });

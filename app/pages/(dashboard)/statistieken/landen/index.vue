@@ -9,15 +9,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Statistieken Landen",
+		title: "Insights - Statistieken Landen",
 		description: "Bekijk alle statistieken van de landen, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
-		ogTitle: "Statistieken Landen",
+		ogTitle: "Insights - Statistieken Landen",
 		ogDescription: "Bekijk alle statistieken van de landen, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
 		ogUrl: "/statistieken/landen",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Statistieken Landen",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Statistieken Landen",
 		twitterDescription: "Bekijk alle statistieken van de landen, inclusief weergaven, bezoekers, bezoeken en sessieduur.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -29,7 +29,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

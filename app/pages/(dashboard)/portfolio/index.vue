@@ -1,22 +1,18 @@
 <template>
-	<div class="relative z-10">
-		
-	</div>
+	<div class="relative z-10"></div>
 </template>
 
 <script setup lang="ts">
-	
-
 	useSeoMeta({
-		title: "Profiel Dashboard",
+		title: "Insights - Profiel",
 		description: "Bekijk en bewerk je profielinformatie.",
-		ogTitle: "Profiel Dashboard",
+		ogTitle: "Insights - Profiel",
 		ogDescription: "Bekijk en bewerk je profielinformatie op Follio.",
 		ogUrl: "/profile",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Profiel Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Profiel",
 		twitterDescription: "Bekijk en bewerk je profielinformatie op Follio.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "summary_large_image",
 	});
 
@@ -28,9 +24,8 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});
-
 </script>

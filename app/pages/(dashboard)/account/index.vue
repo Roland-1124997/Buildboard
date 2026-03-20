@@ -181,15 +181,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Account Dashboard",
-		description: "Bekijk en bewerk je profielinformatie.",
-		ogTitle: "Account Dashboard",
-		ogDescription: "Bekijk en bewerk je profielinformatie.",
+		title: "Insights - Account",
+		description: "Bekijk en beheer je accountgegevens, beveiligingsinstellingen en actieve sessies.",
+		ogTitle: "Insights - Account",
+		ogDescription: "Bekijk en beheer je accountgegevens, beveiligingsinstellingen en actieve sessies.",
 		ogUrl: "/profile",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Account Dashboard",
-		twitterDescription: "Bekijk en bewerk je profielinformatie.",
-		twitterImage: "/icons/icon_512.png",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Account",
+		twitterDescription: "Bekijk en beheer je accountgegevens, beveiligingsinstellingen en actieve sessies.",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "summary_large_image",
 	});
 
@@ -201,7 +201,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

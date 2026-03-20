@@ -48,15 +48,15 @@
 	import TableOfContents from "@tiptap/extension-table-of-contents";
 
 	useSeoMeta({
-		title: "Artikel shrijven",
+		title: "Insights - Artikel Opstellen",
 		description: "Schrijf een nieuw artikel of blog post voor je website.",
-		ogTitle: "Artikel shrijven",
+		ogTitle: "Insights - Artikel Opstellen",
 		ogDescription: "Schrijf een nieuw artikel of blog post voor je website.",
 		ogUrl: "/artikelen/opstellen",
-		ogImage: "/icons/icon_512.svg",
-		twitterTitle: "Artikel shrijven",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Artikel Opstellen",
 		twitterDescription: "Schrijf een nieuw artikel of blog post voor je website.",
-		twitterImage: "/icons/icon_512.svg",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -68,7 +68,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});
@@ -76,7 +76,6 @@
 	const { addToast } = useToast();
 
 	const store = useArticles();
-	
 
 	const content = ref<Record<string, any>>();
 	const activeId: any = ref(null);
@@ -87,11 +86,11 @@
 		return route.query.edit as string | undefined;
 	});
 
-	const loaded = ref(true)
+	const loaded = ref(true);
 
 	// hack to ensure there's no rendering issues with the buttons
 	onMounted(async () => {
-		if(!editId.value) await new Promise((resolve) => setTimeout(resolve, 100));
+		if (!editId.value) await new Promise((resolve) => setTimeout(resolve, 100));
 		loaded.value = false;
 	});
 
@@ -120,7 +119,6 @@
 	};
 
 	const populateFields = (editor: Editor) => {
-		
 		content.value = editor.getJSON();
 		store.savePayload(content.value);
 
@@ -185,13 +183,14 @@
 		url: editId.value ? `/api/articles/${editId.value}` : "/api/articles",
 		method: editId.value ? "PATCH" : "POST",
 		onsuccess: async (response) => {
-			await upload(response.data?.id)
-			await store.refresh()
+			await upload(response.data?.id);
+			await store.refresh();
 		},
-		onfailure: () => addToast({
-			message: failureMessage,
-			type: "error",
-		}),
+		onfailure: () =>
+			addToast({
+				message: failureMessage,
+				type: "error",
+			}),
 	};
 
 	const appendToBody = async (values: any) => {

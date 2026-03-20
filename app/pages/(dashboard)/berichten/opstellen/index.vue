@@ -33,18 +33,16 @@
 </template>
 
 <script setup lang="ts">
-	
-	
 	useSeoMeta({
-		title: "Bericht Opstellen",
+		title: "Insights - Berichten Opstellen",
 		description: "Stel een nieuw bericht of e-mail op en verstuur deze.",
-		ogTitle: "Bericht Opstellen",
+		ogTitle: "Insights - Berichten Opstellen",
 		ogDescription: "Stel een nieuw bericht of e-mail op en verstuur deze.",
 		ogUrl: "/berichten/opstellen",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Bericht Opstellen",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Berichten Opstellen",
 		twitterDescription: "Stel een nieuw bericht of e-mail op en verstuur deze.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -56,7 +54,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

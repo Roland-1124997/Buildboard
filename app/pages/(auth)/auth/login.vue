@@ -30,15 +30,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Dashboard",
+		title: "Insights",
 		description: "Welkom terug! Log in om door te gaan naar je dashboard.",
-		ogTitle: "Dashboard",
+		ogTitle: "Insights",
 		ogDescription: "Welkom terug! Log in om door te gaan naar je dashboard.",
 		ogUrl: "/",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights",
 		twitterDescription: "Welkom terug! Log in om door te gaan naar je dashboard.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -50,7 +50,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});
@@ -65,7 +65,10 @@
 			const { data, error } = await ipRequest.Get();
 			if (error || !data) return;
 
-			const { screen: { width, height }, navigator: { language } } = window;
+			const {
+				screen: { width, height },
+				navigator: { language },
+			} = window;
 
 			const request = useApiHandler("/api/auth/account/sessions");
 

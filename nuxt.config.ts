@@ -140,8 +140,15 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'Insights - Personal Dashboard',
       link: [
-        { rel: 'icon', type: 'image/png', href: '/icons/icon_512.png' },
+        { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+        { rel: 'icon', href: '/icons/icon_192-blue.png', sizes: '192x192' },
+        { rel: 'apple-touch-icon', href: '/icons/icon_192-blue.png', sizes: '192x192' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: "" },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Livvic:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,900&display=swap' },
+        { rel: 'manifest', href: '/manifest.webmanifest' }
       ],
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no',
@@ -165,6 +172,7 @@ export default defineNuxtConfig({
       background_color: "#FFFFFF",
       start_url: "/",
       scope: "/",
+      lang: "nl-NL",
       theme_color: "#FFFFFF",
       display: "standalone",
       display_override: ["window-controls-overlay", "standalone", "minimal-ui", "fullscreen", "browser"],
@@ -186,27 +194,27 @@ export default defineNuxtConfig({
       ],
       icons: [
         {
-          src: "icons/icon_120.png",
+          src: "icons/icon_120-blue.png",
           sizes: "120x120",
           type: "image/png",
         },
         {
-          src: "icons/icon_144.png",
+          src: "icons/icon_144-blue.png",
           sizes: "144x144",
           type: "image/png",
         },
         {
-          src: "icons/icon_152.png",
+          src: "icons/icon_152-blue.png",
           sizes: "152x152",
           type: "image/png",
         },
         {
-          src: "icons/icon_192.png",
+          src: "icons/icon_192-blue.png",
           sizes: "192x192",
           type: "image/svg",
         },
         {
-          src: "icons/icon_512.png",
+          src: "icons/icon_512-blue.png",
           sizes: "512x512",
           type: "image/png",
         },

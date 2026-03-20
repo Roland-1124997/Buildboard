@@ -12,7 +12,7 @@
 				</ClientOnly>
 			</template>
 
-			<template v-else> 
+			<template v-else>
 				<UtilsAnalyticsSkeleton />
 			</template>
 		</section>
@@ -31,7 +31,7 @@
 				<UtilsAnalyticsChartsDevices :metrics="store.metrics || []" :data="store.metrics?.devices || []" />
 			</article>
 
-			 <article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-3">
 				<div class="flex flex-col justify-between w-full md:items-center md:flex-row">
 					<div class="mb-1 md:mb-6">
 						<h2 class="mb-1 text-xl font-bold">Breakdown per pagina</h2>
@@ -50,7 +50,7 @@
 				<UtilsAnalyticsChartsWorld :metrics="store.metrics || []" :data="store.metrics?.countries.values || []" />
 			</article>
 
-			 <article class="w-full col-span-1 p-6 border rounded-lg md:col-span-1">
+			<article class="w-full col-span-1 p-6 border rounded-lg md:col-span-1">
 				<h2 class="mb-1 text-xl font-bold">Top landen</h2>
 				<p class="mb-1 text-sm text-gray-600">De landen waaruit je meeste bezoekers komen,</p>
 
@@ -66,15 +66,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Statistieken Dashboard",
+		title: "Insights - Dashboard",
 		description: "Bekijk een overzicht van de algemene statistieken van je website, inclusief bezoekers, weergaven en bezoekduur.",
-		ogTitle: "Statistieken Dashboard",
+		ogTitle: "Insights - Dashboard",
 		ogDescription: "Bekijk een overzicht van de algemene statistieken van je website, inclusief bezoekers, weergaven en bezoekduur.",
 		ogUrl: "/",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Statistieken Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Dashboard",
 		twitterDescription: "Bekijk een overzicht van de algemene statistieken van je website, inclusief bezoekers, weergaven en bezoekduur.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -86,7 +86,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

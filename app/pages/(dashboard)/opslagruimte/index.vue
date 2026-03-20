@@ -17,15 +17,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Opslagruimte Dashboard",
+		title: "Insights - Opslagruimte",
 		description: "Overzicht van opslag en bestanden.",
-		ogTitle: "Opslagruimte Dashboard",
+		ogTitle: "Insights - Opslagruimte",
 		ogDescription: "Overzicht van opslag en bestanden.",
 		ogUrl: "/opslagruimte",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Opslagruimte Dashboard",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Opslagruimte",
 		twitterDescription: "Overzicht van opslag en bestanden.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "summary",
 	});
 
@@ -37,7 +37,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});

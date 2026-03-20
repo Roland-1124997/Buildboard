@@ -3,10 +3,10 @@
 		<div class="flex flex-col h-full select-none">
 			<div class="flex items-center justify-between h-16 px-4 border-b">
 				<div class="flex items-center space-x-3">
-					<div class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
-						<img src="\icons\icon_512-blue.svg" alt="Buildboard Logo" draggable="false" class="rounded-lg w-7 h-7" />
+					<div class="flex items-center justify-center w-8 h-8 overflow-hidden bg-blue-600 rounded-lg">
+						<img src="\svgs\icon_512-blue.svg" alt="Insights Logo" draggable="false" class="rounded-lg w-7 h-7" />
 					</div>
-					<h1 class="text-xl font-bold text-gray-800">Buildboard</h1>
+					<h1 class="text-xl font-bold text-blue-950">Insights</h1>
 				</div>
 
 				<button aria-label="sluit sidebar menu" @click="isMobileMenuOpen = false" class="flex items-center justify-center p-2 rounded-lg lg:hidden hover:bg-gray-100">

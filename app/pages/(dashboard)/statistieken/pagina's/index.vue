@@ -9,15 +9,15 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Statistieken Pagina's",
+		title: "Insights - Statistieken Pagina's",
 		description: "Bekijk alle statistieken van de pagina's op je website, inclusief weergaven, bezoekers en bounces.",
-		ogTitle: "Statistieken Pagina's",
+		ogTitle: "Insights - Statistieken Pagina's",
 		ogDescription: "Bekijk alle statistieken van de pagina's op je website, inclusief weergaven, bezoekers en bounces.",
 		ogUrl: "/statistieken/paginas",
-		ogImage: "/icons/icon_512.png",
-		twitterTitle: "Statistieken Pagina's",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Statistieken Pagina's",
 		twitterDescription: "Bekijk alle statistieken van de pagina's op je website, inclusief weergaven, bezoekers en bounces.",
-		twitterImage: "/icons/icon_512.png",
+		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",
 	});
 
@@ -29,7 +29,7 @@
 			{
 				rel: "icon",
 				type: "image/png",
-				href: "/icons/icon_512.png",
+				href: "/icons/icon_512-blue.png",
 			},
 		],
 	});
