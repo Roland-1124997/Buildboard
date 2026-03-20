@@ -141,6 +141,9 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Insights - Personal Dashboard',
+      meta: [
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      ],
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
         { rel: 'icon', href: '/icons/icon_192-blue.png', sizes: '192x192' },
