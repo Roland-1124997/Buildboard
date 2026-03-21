@@ -4,9 +4,9 @@
 			<div class="flex items-center justify-between gap-2 mt-3">
 				<div class="w-2/4 h-6 bg-gray-200 rounded"></div>
 				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
 				</div>
 			</div>
 			<div class="w-full h-4 mb-2 bg-gray-200 rounded"></div>
@@ -27,9 +27,9 @@
 			<div class="flex items-center justify-between gap-2 mt-3">
 				<div class="w-2/4 h-6 bg-gray-200 rounded"></div>
 				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
-					<div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
+					<div class="bg-gray-200 rounded-lg w-7 h-7"></div>
 				</div>
 			</div>
 			<div class="w-full h-4 mb-2 bg-gray-200 rounded"></div>

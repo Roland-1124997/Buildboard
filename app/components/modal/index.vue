@@ -8,7 +8,7 @@
 							<div class="w-screen max-w-2xl p-5 bg-white min-h-[25vh] h-fit max-h-[95vh] rounded-2xl flex flex-col items-start justify-between">
 								<div class="w-full mb-8 ">
 									<div class="flex items-start justify-between w-full">
-										<h1 class="text-2xl font-bold text-black text-balance">{{ content?.name }}</h1>
+										<h1 class="text-2xl font-bold text-black truncate text-balance">{{ content?.name }}</h1>
 										<button v-if="!content?.hideCloseButton" class="flex items-center justify-center" aria-label="sluit modal" @click="onclose(content?.props)">
 											<Icon name="akar-icons:x-small" size="2em"></Icon>
 											<span class="sr-only">Sluit modal</span>
