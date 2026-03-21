@@ -84,6 +84,11 @@ const filterStorageFiles = (files: any[], search: string, filter: string) => {
     });
 };
 
+export const fetchStorageFile = async (server: SupabaseClient, id: string) => {
+    const files = await useFetchCachedStorageFiles(STORAGE_CACHE_KEY, server);
+    return { data: files.find((file) => file.id === id) };
+}
+
 export const fetchStorageFiles = async (server: SupabaseClient, options: {
     limit: number,
     page: number,
