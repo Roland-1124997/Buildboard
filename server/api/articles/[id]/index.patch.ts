@@ -13,6 +13,12 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
         if (error) return useReturnResponse(event, internalServerError);
 
+        const { error: Error} = await server.from('attachments').update({
+            published: publish === 'true'
+        }).eq('article_id', id);
+
+        if (!Error) await invalidateStorageFilesCache();
+
         return useReturnResponse(event, {
             status: {
                 code: 200,

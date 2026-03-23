@@ -76,6 +76,7 @@
 	const { addToast } = useToast();
 
 	const store = useArticles();
+	const storage = useStorage();
 
 	const content = ref<Record<string, any>>();
 	const activeId: any = ref(null);
@@ -185,6 +186,7 @@
 		onsuccess: async (response) => {
 			await upload(response.data?.id);
 			await store.refresh();
+			await storage.refresh();
 		},
 		onfailure: () =>
 			addToast({

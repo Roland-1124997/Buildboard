@@ -13,6 +13,9 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
     if (attachments.length > 0) {
         const paths = attachments?.map((item) => `/${item.name}`)
         await server.storage.from('stores').remove(paths)
+
+        const {error } = await server.from('attachments').delete().eq('article_id', id)
+        if(!error) await invalidateStorageFilesCache();
     }
 
     await invalidateStorageFilesCache();

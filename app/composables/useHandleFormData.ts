@@ -13,7 +13,7 @@ export const useHandleFormData = (successMessage: string, failureMessage: string
 
             const { error: storageError } = await Request.Post({
                 body: formData,
-                query: { published: true, articleId: articleId },
+                query: { published: false, articleId: articleId },
             });
 
             if (storageError) return addToast({

@@ -4,6 +4,8 @@ export const useArticles = defineStore("useArticles", () => {
     const { create, close } = useModal();
     const { clear, get, LastEntry, set } = useHistory();
 
+    const storage = useStorage();
+
     const uri = "/api/articles";
     const Request = useApiHandler<ApiResponse<FileData[]>>(uri);
 
@@ -91,6 +93,7 @@ export const useArticles = defineStore("useArticles", () => {
         const onComplete = async () => {
             close();
             await refresh();
+            await storage.refresh();
         }
 
         const onCancel = () => close();
@@ -132,6 +135,7 @@ export const useArticles = defineStore("useArticles", () => {
                 type: "success",
             });
             await refresh();
+            await storage.refresh();
         }
         else {
             addToast({
