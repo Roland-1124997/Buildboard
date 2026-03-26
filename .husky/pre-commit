@@ -1,2 +1,2 @@
 npm run fmt
-git commit -m "style(format): apply formatter"
+git update-index --again
