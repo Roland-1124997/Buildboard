@@ -4,7 +4,7 @@
 		:key="article.id"
 		class="relative z-10 flex flex-col h-full p-0 overflow-hidden transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 rounded-2xl">
 		<div class="flex flex-col flex-1 gap-3 p-5 pt-2">
-			<div class="flex items-center justify-between gap-2 mt-3">
+			<div class="flex items-start justify-between gap-2 mt-3">
 				<h2 class="text-xl font-bold leading-tight capitalize text-slate-900 line-clamp-2">
 					{{ article.title }}
 				</h2>
