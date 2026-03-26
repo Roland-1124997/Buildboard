@@ -16,6 +16,7 @@ export type FileData = {
 	published: boolean;
 	media: string;
 	metadata: MetaData;
+	article_name: string;
 };
 
 export type FileType = {

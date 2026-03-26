@@ -12,23 +12,23 @@
 				<div class="flex items-center justify-between gap-2 select-none">
 					<NuxtLink
 						:to="`/artikelen/opstellen?edit=${article.id}`"
-						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-blue-700 focus:outline-none focus:bg-transparent focus:text-blue-700 focus:ring-2 focus:ring-blue-300"
 						title="Bewerken">
 						<icon name="akar-icons:edit" class="w-4 h-4" aria-hidden="true" />
 					</NuxtLink>
 					<button
 						:aria-label="article.published ? 'Gepubliceerd' : 'Concept'"
 						@click="store.togglePublish(article)"
-						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-300"
+						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-teal-600 focus:bg-transparent focus:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-300"
 						:title="article.published ? 'Gepubliceerd' : 'Concept'">
-						<icon :name="article.published ? 'akar-icons:circle-check' : 'akar-icons:circle-x'" class="w-4 h-4" aria-hidden="true" />
+						<icon :name="article.published ? 'akar-icons:toggle-on' : 'akar-icons:toggle-off'" class="w-4 h-4" aria-hidden="true" />
 					</button>
 					<button
 						aria-label="verwijder articleikel"
 						@click="store.remove(article.id)"
-						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300"
+						class="flex items-center justify-center transition-colors bg-gray-200 rounded-lg w-7 h-7 hover:text-white hover:bg-red-700 focus:bg-transparent focus:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-300"
 						title="Verwijderen">
-						<icon name="akar-icons:circle-minus" class="w-4 h-4" aria-hidden="true" />
+						<icon name="akar-icons:trash-can" class="w-4 h-4" aria-hidden="true" />
 					</button>
 				</div>
 			</div>

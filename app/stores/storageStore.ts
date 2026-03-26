@@ -27,6 +27,26 @@ export const useStorage = defineStore("useStorage", () => {
 	const error = ref<ErrorResponse | null>(null);
 	const loading = ref<boolean>(true);
 
+	const updateFilesInList = (data: { article_name: string; id: string; published: boolean }) => {
+		if (!files.value) return;
+
+		const index = files.value[data.article_name]?.findIndex((file: any) => file.id === data.id);
+
+		if (index === -1 || !files.value[data.article_name]) return;
+
+		const oldFile = files.value[data.article_name]![index as number];
+
+		if (!oldFile) return;
+		
+		const updatedFile = {
+			...oldFile,
+			id: oldFile.id,
+			published: data.published,
+		} as FileData;
+
+		files.value[data.article_name]![index as number] = updatedFile;
+	};
+
 	const refresh = async (params?: { filter?: string; page?: number; search?: string }) => {
 		const route = useRoute();
 		loading.value = true;
@@ -117,24 +137,39 @@ export const useStorage = defineStore("useStorage", () => {
 	};
 
 	const patch = async (file: FileData) => {
+
+		const id = file.id;
+		const published = !file.published;
+		const article_name = file.article_name;
+		
+		updateFilesInList({
+			article_name, id, published
+		});
+
 		const { error } = await Request.Patch({
 			extends: `/${file.id}`,
 			body: { published: !file.published },
 		});
 
-		if (error)
+		if (error) {
+			updateFilesInList({
+				article_name, id, published: file.published,
+			});
+
 			return addToast({
 				message: "Er is een fout opgetreden tijdens het bijwerken van het bestand.",
 				type: "error",
 				duration: 5000,
 			});
+		}
 
+		
 		addToast({
 			message: `Bestand ${!file.published ? "succesvol zichtbaar gemaakt" : "succesvol verborgen"}.`,
 			type: "info",
 		});
+		
 
-		await refresh();
 	};
 
 	const remove = async (file: FileData) => {

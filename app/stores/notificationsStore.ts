@@ -19,7 +19,7 @@ export const useNotifications = defineStore("useNotifications", () => {
 
 	const loading = ref<boolean>(true);
 	const selected = ref<Inbox | null>(null);
-	const messages = ref<Inbox[]>([]);
+	const messages = ref<(Inbox & { showDropdown?: boolean })[]>([]);
 	const unseen = ref<number>(0);
 	const error = ref<ErrorResponse | null>(null);
 

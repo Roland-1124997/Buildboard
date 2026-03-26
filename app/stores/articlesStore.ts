@@ -8,9 +8,28 @@ export const useArticles = defineStore("useArticles", () => {
 	const uri = "/api/articles";
 	const Request = useApiHandler<ApiResponse<Article[] | Article>>(uri);
 
-	const articles = ref<Article[] | Article | null>(null);
+	const articles = ref<Article[] | null>(null);
 	const error = ref<ErrorResponse | null>(null);
 	const loading = ref<boolean>(true);
+
+	const updateArticlesInList = (data: { id: string; published: boolean }) => {
+		const index = articles.value?.findIndex((article: any) => article.id === data.id);
+
+		if (index === -1 || !articles.value) return;
+
+		const oldArticle = articles.value[index as number];
+
+		if (!oldArticle) return;
+		
+		const updatedArticle = {
+			...oldArticle,
+			id: oldArticle.id,
+			published: data.published,
+		} as Article;
+
+		articles.value![index as number] = updatedArticle;
+		
+	};
 
 	const storedPayload = useLocalStorage<string | null>("articles:payload", null);
 	const savePayload = async (payload: any) => (storedPayload.value = JSON.stringify(payload));
@@ -35,7 +54,7 @@ export const useArticles = defineStore("useArticles", () => {
 
 		if (!Error && data) {
 			loading.value = false;
-			articles.value = data.data as Article[] | Article;
+			articles.value = data.data as Article[];
 		} else {
 			loading.value = false;
 			error.value = Error;
@@ -78,7 +97,7 @@ export const useArticles = defineStore("useArticles", () => {
 
 	const remove = (id: number) => {
 		// @ts-ignore it is guaranteed that articles.value is an array when this function is called, because the delete button is only rendered when articles.value is an array and contains the article
-		const content = articles.value.find((art: any) => art.id === id);
+		const content = articles.value.find((art: any) => art.id === id) as Article;
 
 		const onComplete = async () => {
 			close();
@@ -112,26 +131,37 @@ export const useArticles = defineStore("useArticles", () => {
 	const togglePublish = async (article: any) => {
 		const id = article.id;
 		const title = article.title;
-		const publish = !article.published;
+		const published = !article.published;
 
-		const { data, error: Error } = await Request.Patch({
-			extends: `/${id}`,
-			query: { publish: publish },
+		updateArticlesInList({
+			id, published
 		});
 
-		if (!Error && data) {
-			addToast({
-				message: `Artikel ${title} succesvol ${publish ? "gepubliceerd" : "gedepubliceerd"}.`,
-				type: "success",
+		const { error } = await Request.Patch({
+			extends: `/${id}`,
+			query: { publish: published },
+		});
+
+		if (error) {
+			updateArticlesInList({
+				id, published: article.published
 			});
-			await refresh();
-			await storage.refresh();
-		} else {
-			addToast({
-				message: `Er is een fout opgetreden bij het ${publish ? "publiceren" : "depubliceren"} van het artikel ${title}.`,
+
+			return addToast({
+				message: `Er is een fout opgetreden tijdens het ${published ? "publiceren" : "depubliceren"} van het artikel ${title}.`,
 				type: "error",
+				duration: 5000,
 			});
 		}
+
+		
+		addToast({
+			message: `Artikel ${title} succesvol ${published ? "gepubliceerd" : "gedepubliceerd"}.`,
+			type: "success",
+		});
+
+		await storage.refresh();
+		
 	};
 
 	return {
