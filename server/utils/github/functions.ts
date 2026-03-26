@@ -39,14 +39,16 @@ export const useOctokit = async (InstallID: string) => {
 
 type Repositories = Endpoints["GET /installation/repositories"]["response"]["data"];
 
-const useFetchRepositories = async (token: string): Promise<{ data: Repositories | null; error: unknown }> => {
+const useFetchRepositories = async (token: string, per_page: number = 100): Promise<{ data: Repositories | null; error: unknown }> => {
 	let result: Repositories | null = null;
 	let error: unknown = null;
 
 	const octokit = new Octokit({ auth: token });
 
 	await octokit
-		.request("GET /installation/repositories")
+		.request("GET /installation/repositories", {
+			per_page: per_page,
+		})
 		.then(({ data }) => {
 			const sorted = data.repositories.sort((a, b) => {
 				const dateA = a.pushed_at ? new Date(a.pushed_at).getTime() : 0;
@@ -65,39 +67,18 @@ const useFetchRepositories = async (token: string): Promise<{ data: Repositories
 	return { data: result, error };
 };
 
-export const useGetRepositories = async (token: string, per_page: number, page: number) => {
-	const cacheKey = `repos-${token}`;
+export const useGetRepositories = async (token: string, per_page: number) => {
+	const cacheKey = `cache:nitro:functions:repos-${token}`;
 	const stored = useStorage(cacheKey);
 
 	const cached = await stored.getItem<Repositories>(cacheKey);
 	if (cached) return { data: cached, error: null };
 
-	const { data, error } = await useFetchRepositories(token);
-	const paginated = data ? paginate(data, per_page, page) : null;
+	const { data, error } = await useFetchRepositories(token, per_page);
+	if (data) await stored.setItem(cacheKey, data, { ttl: 60 * 5 });
+	
+	return { data, error };
 
-	if (paginated) {
-		await stored.setItem(cacheKey, paginated, { ttl: 60 * 5 });
-
-		setTimeout(
-			async () => {
-				await stored.removeItem(cacheKey);
-			},
-			60 * 5 * 1000,
-		);
-	}
-
-	return { data: paginated, error };
-};
-
-export const paginate = (repositories: Repositories, repositoriesPerPage: number, page: number): Repositories => {
-	const startIndex = (page - 1) * repositoriesPerPage;
-	const endIndex = startIndex + repositoriesPerPage;
-	const paginatedRepos = repositories.repositories.slice(startIndex, endIndex);
-
-	return {
-		total_count: repositories.total_count,
-		repositories: paginatedRepos,
-	};
 };
 
 export const useEncryptValue = (value: string, stringify: boolean = false) => {
