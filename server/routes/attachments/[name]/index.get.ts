@@ -13,7 +13,7 @@ export default defineSupabaseFileHandler(async (event, { user, server }) => {
 	setHeaders(event, {
 		"Content-Disposition": `inline; filename="${name}"`,
 		"Content-Type": data.type || "application/octet-stream",
-		"Cache-Control": "public, max-age=14400",
+		"Cache-Control": "public, max-age=86400",
 	});
 
 	return data;

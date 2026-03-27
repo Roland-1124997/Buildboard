@@ -5,7 +5,7 @@
 		class="relative z-10 flex flex-col h-full p-0 overflow-hidden transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 rounded-2xl">
 		<div class="flex flex-col flex-1 gap-3 p-5 pt-2">
 			<div class="flex items-start justify-between gap-2 mt-3">
-				<h2 class="text-xl font-bold leading-tight capitalize text-slate-900 line-clamp-2">
+				<h2 class="text-xl font-bold leading-6 capitalize text-slate-900 line-clamp-2 min-h-12">
 					{{ article.title }}
 				</h2>
 
@@ -33,11 +33,11 @@
 				</div>
 			</div>
 
-			<p class="mb-2 text-sm text-gray-600 line-clamp-2 md:line-clamp-3">
+			<p class="mb-2 text-sm leading-5 text-gray-600 line-clamp-2 min-h-10 md:line-clamp-3 md:min-h-[3.75rem]">
 				{{ article.description || "Geen beschrijving beschikbaar" }}
 			</p>
 
-			<img v-if="article.thumbnail_url" :src="article.thumbnail_url" :alt="`Thumbnail voor ${article.title}`" class="object-cover w-full h-40 mb-2 border rounded-lg select-none" />
+			<img v-if="article.thumbnail_url" :src="article.thumbnail_url" :alt="`Thumbnail voor ${article.title}`" class="object-cover object-top w-full h-40 mb-2 bg-white border rounded-lg select-none" />
 
 			<div class="flex flex-wrap items-center gap-2 mb-2 select-none">
 				<span v-for="topic in article.topics" :key="topic" class="flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-md">
