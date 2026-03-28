@@ -5,18 +5,9 @@ export const useHistory = () => {
 		history[path] = [];
 	};
 
-	const getHistory = (path: string): HistoryEntry[] => {
-		return history[path] || [];
-	};
-
-	const getHistoryLastEntry = (path: string): HistoryEntry | null => {
-		console.log(history);
-		return getHistory(path)[0] || null;
-	};
-
-	const setHistory = (path: string, entries: HistoryEntry[]) => {
-		history[path] = entries;
-	};
+	const getHistory = (path: string): HistoryEntry[] => history[path] || [];
+	const getHistoryLastEntry = (path: string): HistoryEntry | null => getHistory(path)[0] || null;
+	const setHistory = (path: string, entries: HistoryEntry[]) => (history[path] = entries);
 
 	return {
 		clear: clearHistory,
