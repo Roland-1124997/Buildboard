@@ -7,7 +7,6 @@ let sharedFilters: string[] = [];
 
 export const useFilter = (
 	options?: {
-		enableWatch?: boolean;
 		fallbackFilter?: Ref<string | null>;
 		callback?: (params: { filter: string; page: number }) => Promise<void>;
 	},
@@ -38,29 +37,8 @@ export const useFilter = (
 		}
 	};
 
-	if (options?.enableWatch) {
-		watch(
-			() => route.path,
-			async () => {
-				const lastEntry = LastEntry(route.path);
-				filter.value = lastEntry?.filter || options?.fallbackFilter?.value || null;
-
-				if (options?.fallbackFilter?.value != filter.value) {
-					router
-						.replace({
-							query: {
-								...route.query,
-								filter: filter.value || undefined,
-							},
-						})
-						.catch(() => {});
-				}
-			},
-		);
-	}
-
 	const setFilter = async (value: string | LocationQueryValue[] | null) => {
-		const query = { ...route.query };
+		const query = { ...route.query } as { [key: string]: string | number | undefined };
 		const lastEntry = LastEntry(route.path);
 		delete query.page;
 
@@ -84,7 +62,7 @@ export const useFilter = (
 			]);
 
 		filter.value = value as string;
-		query.filter = filter.value;
+		query.filter = filter.value == options?.fallbackFilter?.value ? undefined : filter.value;
 
 		router.replace({ query }).catch(() => {});
 		if (value === lastEntry?.filter) return;

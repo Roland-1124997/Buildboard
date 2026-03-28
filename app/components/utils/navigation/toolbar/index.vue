@@ -91,7 +91,6 @@
 
 	const { activeType, loading, filter, setFilter } = useFilter(
 		{
-			enableWatch: true,
 			fallbackFilter: fallbackFilter,
 			callback: async (params) => {
 				await useInitilizeStore(toolbar, params);

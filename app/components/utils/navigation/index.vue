@@ -19,11 +19,12 @@
 		</header>
 
 		<TransitionGroup name="page">
-			<div class="flex flex-col flex-1 w-full overflow-hidden" v-if="!isLoading">
+			<div v-if="!isLoading">
 				<UtilsNavigationToolbar :toolbar :related />
-				<slot></slot>
 			</div>
 		</TransitionGroup>
+
+		<slot></slot>
 	</div>
 </template>
 
@@ -39,11 +40,35 @@
 
 	const isLoading = ref(false);
 	const route = useRoute();
+	const router = useRouter();
+
+	const { LastEntry } = useHistory();
+
+	const fallbackFilter = computed(() => toolbar.value?.fallbackFilter || null);
 
 	watch(
 		() => route.path,
 		(path) => {
 			isLoading.value = true;
+
+			const lastEntry = LastEntry(route.path);
+
+			if (lastEntry) {
+				const query = {
+					filter: lastEntry.filter && lastEntry.filter != fallbackFilter.value ? lastEntry.filter : undefined,
+					search: lastEntry.search || undefined,
+					page: lastEntry.page && Number(lastEntry.page) > 2 ? lastEntry.page : undefined,
+				};
+
+				router
+					.replace({
+						query: {
+							...route.query,
+							...query,
+						},
+					})
+					.catch(() => {});
+			}
 
 			setTimeout(() => {
 				isLoading.value = false;

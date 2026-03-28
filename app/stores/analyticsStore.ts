@@ -45,6 +45,8 @@ export const useAnalytics = defineStore("useAnalytics", () => {
 
 		const params = {
 			filter: activePage ? route.query.filter || "vandaag" : "vandaag",
+			page: null,
+			search: "",
 		} as { filter: string };
 
 		shared.value.forEach((path) => {

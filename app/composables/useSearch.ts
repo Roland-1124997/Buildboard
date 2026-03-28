@@ -22,24 +22,6 @@ export const useSearch = (options?: { localSearch?: Ref<string | null>; callback
 		}
 	};
 
-	watch(
-		() => route.path,
-		async () => {
-			const lastEntry = LastEntry(route.path);
-			search.value = lastEntry?.search || null;
-			if (options?.localSearch) options.localSearch.value = search.value;
-
-			router
-				.push({
-					query: {
-						...route.query,
-						search: search.value || undefined,
-					},
-				})
-				.catch(() => {});
-		},
-	);
-
 	const setSearch = async (value: string | LocationQueryValue[] | null) => {
 		const query = { ...route.query };
 		const lastEntry = LastEntry(route.path);

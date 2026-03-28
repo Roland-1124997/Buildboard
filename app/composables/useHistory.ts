@@ -10,6 +10,7 @@ export const useHistory = () => {
 	};
 
 	const getHistoryLastEntry = (path: string): HistoryEntry | null => {
+		console.log(history);
 		return getHistory(path)[0] || null;
 	};
 
