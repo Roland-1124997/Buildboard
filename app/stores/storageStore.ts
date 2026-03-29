@@ -53,12 +53,14 @@ export const useStorage = defineStore("useStorage", () => {
 
 		await new Promise((resolve) => setTimeout(resolve, 300));
 
+		const query = {
+			page: params?.page || route.query.page || 1,
+			filter: params?.filter || route.query.filter || "alles",
+			search: params?.search !== undefined ? params.search : route.query.search || "",
+		} as { filter: string; page: number; search: string };
+
 		const { data, error: Error } = await Request.Get({
-			query: {
-				page: params?.page || route.query.page || 1,
-				filter: params?.filter || route.query.filter || "alles",
-				search: params?.search !== undefined ? params.search : route.query.search || "",
-			},
+			query: { ...query },
 		});
 
 		if (!Error && data) {

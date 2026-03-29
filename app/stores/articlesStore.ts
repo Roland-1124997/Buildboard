@@ -43,12 +43,14 @@ export const useArticles = defineStore("useArticles", () => {
 		loading.value = true;
 		await new Promise((resolve) => setTimeout(resolve, 300));
 
+		const query = {
+			page: params?.page || useRoute().query.page || 1,
+			filter: params?.filter || useRoute().query.filter || "",
+			search: params?.search !== undefined ? params.search : useRoute().query.search || "",
+		} as { filter: string; page: number; search: string };
+
 		const { data, error: Error } = await Request.Get({
-			query: {
-				page: params?.page || useRoute().query.page || 1,
-				filter: params?.filter || useRoute().query.filter || "all",
-				search: params?.search !== undefined ? params.search : useRoute().query.search || "",
-			},
+			query: { ...query },
 		});
 
 		if (!Error && data) {
