@@ -64,13 +64,13 @@
 
 <script setup lang="ts">
 	useSeoMeta({
-		title: "Insights - Berichten Opstellen",
+		title: "Insights - Bericht Opstellen",
 		description: "Stel een nieuw bericht of e-mail op en verstuur deze.",
-		ogTitle: "Insights - Berichten Opstellen",
+		ogTitle: "Insights - Bericht Opstellen",
 		ogDescription: "Stel een nieuw bericht of e-mail op en verstuur deze.",
 		ogUrl: "/berichten/opstellen",
 		ogImage: "/icons/icon_512-blue.png",
-		twitterTitle: "Insights - Berichten Opstellen",
+		twitterTitle: "Insights - Bericht Opstellen",
 		twitterDescription: "Stel een nieuw bericht of e-mail op en verstuur deze.",
 		twitterImage: "/icons/icon_512-blue.png",
 		twitterCard: "app",

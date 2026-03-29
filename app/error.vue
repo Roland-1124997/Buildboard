@@ -50,6 +50,19 @@
 </template>
 
 <script setup lang="ts">
+	useSeoMeta({
+		title: "Insights - Foutmelding",
+		description: "Er is iets misgegaan bij het laden van de pagina. Probeer het opnieuw of ga terug naar de startpagina.",
+		ogTitle: "Insights - Foutmelding",
+		ogDescription: "Er is iets misgegaan bij het laden van de pagina. Probeer het opnieuw of ga terug naar de startpagina.",
+		ogUrl: "/error",
+		ogImage: "/icons/icon_512-blue.png",
+		twitterTitle: "Insights - Foutmelding",
+		twitterDescription: "Er is iets misgegaan bij het laden van de pagina. Probeer het opnieuw of ga terug naar de startpagina.",
+		twitterImage: "/icons/icon_512-blue.png",
+		twitterCard: "app",
+	});
+
 	const { routes } = await useApiRoutes();
 
 	const error = useError();
