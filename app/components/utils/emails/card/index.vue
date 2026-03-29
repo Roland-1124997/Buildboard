@@ -7,7 +7,7 @@
 		@keydown.enter="store.selectMessage(inbox)"
 		:class="[
 			'w-full md:p-4 p-3 px-4 text-left mb-2 border cursor-pointer transition-colors duration-150 rounded-lg',
-			store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 hover:bg-gray-100',
+			store.selected?.id == inbox.id ? 'bg-blue-50 border-blue-200' : ' hover:bg-gray-50 border-gray-200 hover:border-gray-300',
 		]">
 		<div class="flex items-start gap-3 select-none">
 			<div class="flex-1">
