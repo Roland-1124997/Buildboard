@@ -19,12 +19,16 @@
 		</header>
 
 		<TransitionGroup name="page">
-			<div v-if="!isLoading">
+			<div class="flex flex-col flex-1 w-full overflow-hidden" v-if="!isLoading">
 				<UtilsNavigationToolbar :toolbar :related />
+
+				<slot></slot>
 			</div>
 		</TransitionGroup>
 
-		<slot></slot>
+		<div v-if="isLoading" aria-hidden class="pointer-events-none sr-only">
+			<slot></slot>
+		</div>
 	</div>
 </template>
 
