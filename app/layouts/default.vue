@@ -11,13 +11,11 @@
 </template>
 
 <script setup lang="ts">
-	useSearch();
-	useFilter();
-
 	const account = useAccount();
 	const store = useAnalytics();
-	const articles = useArticles();
+	const monitor = useMonitor();
 	const session = useSessions();
+	const articles = useArticles();
 	const storageStore = useStorage();
 	const notifications = useNotifications();
 
@@ -36,6 +34,7 @@
 
 	store.initialPayload();
 	account.initialPayload();
+	monitor.initialPayload();
 	articles.initialPayload();
 	storageStore.initialPayload();
 	notifications.initialPayload();
@@ -58,6 +57,7 @@
 		if (store.error) store.refresh();
 		if (account.error) account.refresh();
 		if (articles.error) articles.refresh();
+		if (monitor.error) monitor.refresh();
 		if (storageStore.error) storageStore.refresh();
 		if (notifications.error) notifications.refresh();
 

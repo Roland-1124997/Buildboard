@@ -40,6 +40,22 @@ const routes = defineCachedFunction(
 				},
 				related: schared,
 			},
+			"/monitors": {
+				label: "Monitors",
+				iconName: "akar-icons:alarm",
+				toolbar: {
+					buttons: [
+						createButton({
+							iconName: "akar-icons:arrow-cycle",
+							description: "Monitors synchroniseren",
+							isButton: true,
+							onClick: "refresh",
+						}),
+					],
+					search: createSearch("monitors"),
+					store: "useMonitor",
+				},
+			},
 			"/berichten": {
 				label: "Berichten",
 				iconName: "akar-icons:inbox",

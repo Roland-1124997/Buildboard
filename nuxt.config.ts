@@ -111,6 +111,8 @@ export default defineNuxtConfig({
 		whitelistedDomains: process.env.WHITELISTED_DOMAINS,
 		production: process.env.NODE_ENV === "development" ? false : true,
 
+		betterstackSourceToken: process.env.BETTERSTACK_SOURCE_TOKEN,
+
 		vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
 		vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
 		public: {

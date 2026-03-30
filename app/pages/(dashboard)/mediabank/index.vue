@@ -5,7 +5,7 @@
 		<div v-else-if="Object.keys(store.files).length > 0" class="space-y-3">
 			<ClientOnly>
 				<UtilsDisplayCount :text="['document', 'documenten']" :count="Number(store.count)" />
-				<UtilsStorageCardGroup v-for="(grouped, articleTitle) in store.files" :key="articleTitle" :files="grouped" :articleTitle="articleTitle" />
+				<UtilsStorageCardGroup v-for="(grouped, articleTitle) in store.files" :key="articleTitle" :files="grouped" :title="articleTitle" />
 				<template #fallback>
 					<UtilsStorageCardSkeleton />
 				</template>
