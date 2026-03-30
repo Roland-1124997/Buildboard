@@ -1,5 +1,18 @@
 <template>
-	
+	<div class="pb-[5.5rem] md:pb-0">
+		<UtilsMonitorsCardSkeleton v-if="store.loading" />
+
+		<div v-else-if="Object.keys(store.monitors).length > 0" class="space-y-3">
+			<ClientOnly>
+				<UtilsDisplayCount :text="['monitor', 'monitors']" :count="Number(store.count)" />
+				<UtilsMonitorsCardGroup v-for="(grouped, title) in store.monitors" :key="title" :monitors="grouped" :title="String(title)" />
+				<template #fallback>
+					<UtilsMonitorsCardSkeleton />
+				</template>
+			</ClientOnly>
+		</div>
+		<UtilsDisplayError label="monitors" IconName="akar-icons:alarm" v-else />
+	</div>
 </template>
 
 <script setup lang="ts">
