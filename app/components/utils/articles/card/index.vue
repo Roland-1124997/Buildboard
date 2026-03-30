@@ -67,13 +67,13 @@
 <script setup lang="ts">
 	defineProps<{
 		articles: Array<{
-			id: number;
+			id: string;
 			title: string;
 			description?: string;
 			thumbnail_url?: string;
 			topics: string[];
 			words?: number;
-			read_time?: number;
+			read_time?: string;
 			updated_at?: string;
 			published: boolean;
 		}>;

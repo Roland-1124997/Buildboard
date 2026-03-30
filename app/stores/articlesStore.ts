@@ -96,7 +96,7 @@ export const useArticles = defineStore("useArticles", () => {
 		}
 	};
 
-	const remove = (id: number) => {
+	const remove = (id: string) => {
 		// @ts-ignore it is guaranteed that articles.value is an array when this function is called, because the delete button is only rendered when articles.value is an array and contains the article
 		const content = articles.value.find((art: any) => art.id === id) as Article;
 

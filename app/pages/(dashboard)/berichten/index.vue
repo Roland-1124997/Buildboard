@@ -5,7 +5,7 @@
 				<UtilsEmailsPagination v-if="store.pagination.total > 1" />
 				<UtilsEmailsCardSkeleton v-if="store.loading" />
 				<template v-else>
-					<UtilsEmailsError v-if="store.messages.length === 0" />
+					<UtilsDisplayError label="berichten" IconName="akar-icons:inbox" v-if="store.messages.length === 0" />
 					<ClientOnly v-else>
 						<UtilsEmailsCard />
 						<template #fallback>

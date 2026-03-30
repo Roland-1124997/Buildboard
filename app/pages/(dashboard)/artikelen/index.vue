@@ -1,13 +1,13 @@
 <template>
 	<div class="grid gap-4 grid-cols-1 md:grid-cols-3 pb-[5.5rem] md:pb-0">
 		<UtilsArticlesCardSkeleton v-if="store.loading" />
-		<ClientOnly v-else-if="store.articles.length > 0">
+		<ClientOnly v-else-if="store.articles && store.articles.length > 0">
 			<UtilsArticlesCard :articles="store.articles" />
 			<template #fallback>
 				<UtilsArticlesCardSkeleton />
 			</template>
 		</ClientOnly>
-		<UtilsArticlesError v-else class="col-span-3" />
+		<UtilsDisplayError label="artikelen" IconName="akar-icons:newspaper" v-else class="col-span-3" />
 	</div>
 </template>
 
