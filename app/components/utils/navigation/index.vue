@@ -46,7 +46,7 @@
 	const route = useRoute();
 	const router = useRouter();
 
-	const { LastEntry, set } = useHistory();
+	const { LastEntry } = useHistory();
 
 	const fallbackFilter = computed(() => toolbar.value?.fallbackFilter || null);
 
@@ -55,7 +55,7 @@
 		(path) => {
 			isLoading.value = true;
 
-			const lastEntry = LastEntry(route.path);
+			const lastEntry = LastEntry(path);
 
 			if (lastEntry) {
 				const query = {
@@ -63,8 +63,6 @@
 					search: lastEntry.search || undefined,
 					page: lastEntry.page && Number(lastEntry.page) > 2 ? lastEntry.page : undefined,
 				} as { filter: string; search: string; page: number };
-
-				set(route.path, [query]);
 
 				router
 					.replace({

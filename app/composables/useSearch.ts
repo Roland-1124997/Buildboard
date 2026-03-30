@@ -15,39 +15,47 @@ export const useSearch = (options?: { localSearch?: Ref<string | null>; callback
 			await new Promise((resolve) => setTimeout(resolve, 300));
 
 			await options.callback({
-				filter: (route.query.filter as string) || "alles",
-				search: value,
-				page: route.query.page ? parseInt(route.query.page as string) : 1,
+				filter: (route.query.filter as string) || "",
+				search: value || "",
+				page: 1,
 			});
 		}
 	};
 
-	const setSearch = async (value: string | LocationQueryValue[] | null) => {
-		const query = { ...route.query } as { [key: string]: string | number | undefined };
-		const lastEntry = LastEntry(route.path);
-		delete query.page;
+	const setSearch = async (value: string | LocationQueryValue[] | null, pathOverride?: string) => {
+		const path = pathOverride || route.path;
+		const current = (value as string | null) || null;
+		const lastEntry = LastEntry(path);
 
-		set(route.path, [
+		if ((lastEntry?.search || "") === (current || "")) return;
+
+		set(path, [
 			{
-				search: (route.query.serch as string) || (value as string) || "",
-				filter: (route.query.filter as string) || "",
-				page: route.query.page ? parseInt(route.query.page as string) : 1,
+				search: current || "",
+				filter: (lastEntry?.filter as string) || (route.path === path ? (route.query.filter as string) || "" : ""),
+				page: 1,
 			},
 		]);
 
-		const last = lastEntry?.search || null;
-		const current = value || null;
+		if (route.path !== path) return;
 
-		if (current === last) return;
+		search.value = current;
 
-		search.value = value as string;
-		query.search = search.value;
+		const query = { ...route.query } as { [key: string]: string | number | undefined };
+		delete query.page;
 
-		if (!current) delete query.search;
+		if (current) query.search = current;
+		else delete query.search;
 
-		await execute(value as string);
+		const routeSearch = (route.query.search as string) || null;
+		const routePage = (route.query.page as string) || null;
+		const nextSearch = (query.search as string) || null;
 
-		router.replace({ query }).catch(() => {});
+		const nextPage = query.page !== undefined ? String(query.page) : null;
+		const hasRouteChange = routeSearch !== nextSearch || routePage !== nextPage;
+
+		if (hasRouteChange) await router.replace({ query }).catch(() => {});
+		await execute(current || "");
 	};
 
 	return {

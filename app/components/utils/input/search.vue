@@ -5,7 +5,7 @@
 			<input
 				:disabled="disabled"
 				:value="localSearch"
-				@input="localSearch = ($event.target as HTMLInputElement).value"
+				@input="onInput"
 				:id="name"
 				:placeholder
 				type="search"
@@ -34,8 +34,9 @@
 	value.value = initialValue;
 
 	const route = useRoute();
-	const localSearch = ref();
-	const localHistory = ref();
+	const localSearch = ref<string>("");
+	const localHistory = ref<string>("");
+	const sourcePath = ref<string>(route.path);
 
 	const { history, setSearch } = useSearch({
 		localSearch,
@@ -46,15 +47,29 @@
 
 	localHistory.value = history.LastEntry(route.path)?.search || "";
 
+	const onInput = (event: Event) => {
+		sourcePath.value = route.path;
+		localSearch.value = (event.target as HTMLInputElement).value;
+	};
+
 	onMounted(() => {
+		sourcePath.value = route.path;
 		localSearch.value = (route.query.search as string) || localHistory.value;
 	});
+
+	watch(
+		() => route.path,
+		(path) => {
+			sourcePath.value = path;
+			localSearch.value = (route.query.search as string) || history.LastEntry(path)?.search || "";
+		},
+	);
 
 	watchDebounced(
 		localSearch,
 		async (newValue) => {
-			await setSearch(newValue);
+			await setSearch(newValue, sourcePath.value);
 		},
-		{ immediate: true, debounce: 1000, maxWait: 5000 },
+		{ immediate: false, debounce: 1000, maxWait: 5000 },
 	);
 </script>

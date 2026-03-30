@@ -24,7 +24,7 @@
 					v-for="(route, to) in routes"
 					v-show="!route.hidden"
 					:key="to"
-					:to="`${to}`"
+					:to="constructRoute(to, route)"
 					:class="routerActiveRelatedClass(route, to)"
 					class="flex items-center gap-3 px-3 py-2 text-gray-700 transition-colors rounded-lg hover:bg-blue-100 hover:text-blue-800"
 					@click="clickAction(route)">
@@ -54,6 +54,8 @@
 	const store = useSessions();
 	const route = useRoute();
 
+	const { LastEntry } = useHistory();
+
 	const isMobileMenuOpen = defineModel<boolean>("isMobileMenuOpen");
 	const { routes } = defineProps<{ routes: Record<string, RouteType> }>();
 
@@ -70,6 +72,19 @@
 		const isRelated = (to !== "/" && path.startsWith(target)) || config.related?.includes(route.path);
 
 		return isRelated ? className : "";
+	};
+
+	const constructRoute = (to: string, Route: RouteType) => {
+		const lastEntry = LastEntry(to);
+
+		const params = new URLSearchParams();
+
+		if (lastEntry?.filter && lastEntry.filter != Route.toolbar?.fallbackFilter) params.set("filter", lastEntry.filter);
+		if (lastEntry?.search) params.set("search", lastEntry.search);
+		if (lastEntry?.page && Number(lastEntry.page) > 2) params.set("page", String(lastEntry.page));
+
+		const queryString = params.toString();
+		return queryString ? `${to}?${queryString}` : to;
 	};
 </script>
 
