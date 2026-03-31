@@ -1,13 +1,13 @@
 <template>
 	<div class="pb-[5.5rem] md:pb-0">
-		<UtilsMonitorsCardSkeleton v-if="store.loading" />
+		<UtilsMonitorsCardSkeleton :days v-if="store.loading" />
 
 		<div v-else-if="Object.keys(store.monitors).length > 0" class="space-y-3">
 			<ClientOnly>
 				<UtilsDisplayCount :text="['monitor', 'monitors']" :count="Number(store.count)" />
-				<UtilsMonitorsCardGroup v-for="(grouped, title) in store.monitors" :key="title" :monitors="grouped" :title="String(title)" />
+				<UtilsMonitorsCardGroup v-for="(grouped, title) in store.monitors" :key="title" :monitors="grouped" :title="String(title)" :days />
 				<template #fallback>
-					<UtilsMonitorsCardSkeleton />
+					<UtilsMonitorsCardSkeleton :days />
 				</template>
 			</ClientOnly>
 		</div>
@@ -16,8 +16,6 @@
 </template>
 
 <script setup lang="ts">
-	const store = useMonitor();
-
 	useSeoMeta({
 		title: "Insights - Monitors",
 		description: "Bekijk een overzicht van al je monitors en hun huidige status.",
@@ -43,4 +41,7 @@
 			},
 		],
 	});
+
+	const store = useMonitor();
+	const days = ref(42);
 </script>

@@ -19,19 +19,28 @@
 								<div class="w-32 h-5 mt-1 mb-2 bg-gray-200 rounded"></div>
 								<div class="w-48 h-3 mt-1 bg-gray-100 rounded"></div>
 							</div>
-							<div class="w-12 h-6 bg-gray-200 rounded-lg"></div>
+							<div class="w-24 h-6 bg-gray-200 rounded-lg"></div>
 						</div>
-						<div class="grid grid-cols-2 gap-2 mt-4 text-sm">
+						<div class="grid grid-cols-2 gap-2 mt-5 text-sm">
 							<div class="p-2 rounded-lg bg-gray-50">
-								<div class="w-20 h-3 mb-2 bg-gray-200 rounded"></div>
+								<div class="w-20 h-3 mt-1 mb-3 bg-gray-200 rounded"></div>
 								<div class="w-16 h-4 bg-gray-100 rounded"></div>
 							</div>
 							<div class="p-2 rounded-lg bg-gray-50">
-								<div class="w-20 h-3 mb-2 bg-gray-200 rounded"></div>
+								<div class="w-20 h-3 mt-1 mb-3 bg-gray-200 rounded"></div>
 								<div class="w-16 h-4 bg-gray-100 rounded"></div>
 							</div>
+
+							<div class="col-span-2 p-3 rounded-lg md:p-4 bg-gray-50">
+								<div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-0.5 md:gap-1">
+									<div v-for="value in days" class="w-full aspect-square">
+										<div class="relative flex items-center justify-center w-full h-full bg-gray-200 rounded md:rouned-md"></div>
+									</div>
+								</div>
+							</div>
+
 							<div class="col-span-2 p-2 rounded-lg bg-gray-50">
-								<div class="h-3 mb-2 bg-gray-200 rounded w-28"></div>
+								<div class="h-3 mt-1 mb-3 bg-gray-200 rounded w-28"></div>
 								<div class="w-40 h-4 bg-gray-100 rounded"></div>
 							</div>
 						</div>
@@ -53,19 +62,28 @@
 								<div class="w-32 h-5 mt-1 mb-2 bg-gray-200 rounded"></div>
 								<div class="w-48 h-3 mt-1 bg-gray-100 rounded"></div>
 							</div>
-							<div class="w-12 h-6 bg-gray-200 rounded-lg"></div>
+							<div class="w-24 h-6 bg-gray-200 rounded-lg"></div>
 						</div>
-						<div class="grid grid-cols-2 gap-2 mt-4 text-sm">
+						<div class="grid grid-cols-2 gap-2 mt-5 text-sm">
 							<div class="p-2 rounded-lg bg-gray-50">
-								<div class="w-20 h-3 mb-2 bg-gray-200 rounded"></div>
+								<div class="w-20 h-3 mt-1 mb-3 bg-gray-200 rounded"></div>
 								<div class="w-16 h-4 bg-gray-100 rounded"></div>
 							</div>
 							<div class="p-2 rounded-lg bg-gray-50">
-								<div class="w-20 h-3 mb-2 bg-gray-200 rounded"></div>
+								<div class="w-20 h-3 mt-1 mb-3 bg-gray-200 rounded"></div>
 								<div class="w-16 h-4 bg-gray-100 rounded"></div>
 							</div>
+
+							<div class="col-span-2 p-3 rounded-lg md:p-4 bg-gray-50">
+								<div class="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-0.5 md:gap-1">
+									<div v-for="value in days" class="w-full aspect-square">
+										<div class="relative flex items-center justify-center w-full h-full bg-gray-200 rounded md:rouned-md"></div>
+									</div>
+								</div>
+							</div>
+
 							<div class="col-span-2 p-2 rounded-lg bg-gray-50">
-								<div class="h-3 mb-2 bg-gray-200 rounded w-28"></div>
+								<div class="h-3 mt-1 mb-3 bg-gray-200 rounded w-28"></div>
 								<div class="w-40 h-4 bg-gray-100 rounded"></div>
 							</div>
 						</div>
@@ -75,3 +93,12 @@
 		</div>
 	</div>
 </template>
+
+<script setup lang="ts">
+	defineProps({
+		days: {
+			type: Number,
+			default: 42,
+		},
+	});
+</script>

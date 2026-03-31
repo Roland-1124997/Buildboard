@@ -3,7 +3,7 @@
 
 	<div class="grid gap-3 md:grid-cols-2">
 		<div v-for="(monitor, index) in monitors" :key="index" class="z-10 flex items-center w-full gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 group hover:border-gray-300">
-			<UtilsMonitorsCard :monitor />
+			<UtilsMonitorsCard :days :monitor />
 		</div>
 	</div>
 </template>
@@ -17,6 +17,10 @@
 		title: {
 			type: String,
 			required: true,
+		},
+		days: {
+			type: Number,
+			default: 42,
 		},
 	});
 </script>
