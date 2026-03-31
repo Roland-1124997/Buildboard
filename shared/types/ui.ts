@@ -94,6 +94,7 @@ export type StatusHistoryItem = {
 };
 
 export type MonitorResource = {
+	position?: number;
 	attributes: {
 		public_name: string;
 		explanation?: string;
@@ -104,5 +105,6 @@ export type MonitorResource = {
 		status_history: StatusHistoryItem[];
 		status_page_section_name: string;
 		status_page_section_id: number;
+		resource_type: string;
 	};
 };

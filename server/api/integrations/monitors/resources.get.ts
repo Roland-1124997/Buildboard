@@ -3,14 +3,14 @@ const { betterstackSourceToken } = useRuntimeConfig();
 const headers = { Authorization: `Bearer ${betterstackSourceToken}` };
 const baseUrl = `https://uptime.betterstack.com/api/v2`;
 
-const Sections = new Map<number, { name: string }>();
+const Sections = new Map<number, { name: string; position: number }>();
 
 const useFetchSections = async () => {
 	const url = `${baseUrl}/status-pages/228653/sections`;
 
 	await $fetch<Record<string, any>>(url, { headers }).then((data) => {
-		data.data.forEach((section: { id: number; attributes: { name: string } }) => {
-			Sections.set(Number(section.id), { name: section.attributes.name });
+		data.data.forEach((section: { id: number; attributes: { name: string; position: number } }) => {
+			Sections.set(Number(section.id), { name: section.attributes.name, position: section.attributes.position });
 		});
 	});
 };
@@ -46,6 +46,7 @@ export default defineSupabaseEventHandler(async (event) => {
 				const section = Sections.get(id);
 
 				return {
+					position: section?.position,
 					...monitor,
 					attributes: {
 						...monitor.attributes,
@@ -61,12 +62,17 @@ export default defineSupabaseEventHandler(async (event) => {
 				return monitor_name || group_name;
 			}) ?? [];
 
-	const groupedMonitors = Object.fromEntries(
-		Object.entries(Object.groupBy(monitors.reverse(), (monitor: MonitorResource) => monitor.attributes.status_page_section_name)).map(([section, group]) => [
-			section,
-			(group ?? []).sort((a, b) => a.attributes?.position - b.attributes?.position),
-		]),
-	);
+	const sortedMonitors = monitors.sort((a, b) => {
+		const posA = a.position ?? 0;
+		const posB = b.position ?? 0;
+
+		return posA - posB;
+	});
+
+	const result = Object.groupBy(sortedMonitors, (monitor: MonitorResource) => {
+		const sectionName = monitor.attributes.status_page_section_name ?? null;
+		return `${sectionName}`;
+	});
 
 	return useReturnResponse(event, {
 		status: {
@@ -76,7 +82,7 @@ export default defineSupabaseEventHandler(async (event) => {
 		},
 		data: {
 			count: monitors.length,
-			monitors: groupedMonitors,
+			monitors: result,
 		},
 	});
 });
