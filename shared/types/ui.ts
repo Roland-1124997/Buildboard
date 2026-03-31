@@ -85,3 +85,24 @@ export type Inbox = {
 	html: string;
 	references?: string[];
 };
+
+export type StatusHistoryItem = {
+	day: string;
+	status: string;
+	downtime_duration: number;
+	maintenance_duration: number;
+};
+
+export type MonitorResource = {
+	attributes: {
+		public_name: string;
+		explanation?: string;
+		status: string;
+		position: number;
+		availability: number;
+		last_checked_at: string;
+		status_history: StatusHistoryItem[];
+		status_page_section_name: string;
+		status_page_section_id: number;
+	};
+};

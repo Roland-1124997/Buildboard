@@ -9,7 +9,7 @@ const useFetchSections = async () => {
 	const url = `${baseUrl}/status-pages/228653/sections`;
 
 	await $fetch<Record<string, any>>(url, { headers }).then((data) => {
-		data.data.forEach((section: any) => {
+		data.data.forEach((section: { id: number; attributes: { name: string } }) => {
 			Sections.set(Number(section.id), { name: section.attributes.name });
 		});
 	});
@@ -39,9 +39,9 @@ export default defineSupabaseEventHandler(async (event) => {
 
 	await useFetchSections();
 
-	const monitors: any[] =
+	const monitors: MonitorResource[] =
 		data?.data
-			.map((monitor: any) => {
+			.map((monitor: MonitorResource) => {
 				const id = monitor.attributes.status_page_section_id;
 				const section = Sections.get(id);
 
@@ -54,12 +54,19 @@ export default defineSupabaseEventHandler(async (event) => {
 				};
 			})
 
-			.filter((monitor: any) => {
+			.filter((monitor: MonitorResource) => {
 				const monitor_name = monitor.attributes?.public_name?.toLowerCase().includes(search);
 				const group_name = monitor.attributes?.status_page_section_name?.toLowerCase().includes(search);
 
 				return monitor_name || group_name;
 			}) ?? [];
+
+	const groupedMonitors = Object.fromEntries(
+		Object.entries(Object.groupBy(monitors.reverse(), (monitor: MonitorResource) => monitor.attributes.status_page_section_name)).map(([section, group]) => [
+			section,
+			(group ?? []).sort((a, b) => a.attributes?.position - b.attributes?.position),
+		]),
+	);
 
 	return useReturnResponse(event, {
 		status: {
@@ -69,7 +76,7 @@ export default defineSupabaseEventHandler(async (event) => {
 		},
 		data: {
 			count: monitors.length,
-			monitors: Object.groupBy(monitors.reverse(), (monitor: any) => monitor.attributes.status_page_section_name),
+			monitors: groupedMonitors,
 		},
 	});
 });

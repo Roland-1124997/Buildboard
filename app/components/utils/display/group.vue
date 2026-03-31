@@ -4,8 +4,8 @@
 		<span class="text-xs font-semibold text-gray-600">
 			{{ name === "null" ? "Niet gekoppeld" : `${name}` }}
 		</span>
-		<span class="text-xs text-gray-400">•</span>
-		<span class="text-xs text-gray-500">{{ data.length }} {{ data.length === 1 ? text[0] : text[1] }}</span>
+		<span class="text-xs text-gray-500">•</span>
+		<span class="text-xs font-medium text-gray-500">{{ data.length }} {{ data.length === 1 ? text[0] : text[1] }}</span>
 	</div>
 </template>
 
