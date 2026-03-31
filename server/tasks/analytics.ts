@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 const filters = {
 	vandaag: "vandaag",
 	week: "week",
@@ -13,10 +11,9 @@ export default defineTask({
 		description: "Collect analytics data and cache it for faster retrieval",
 	},
 	async run() {
-		const startTime = Date.now();
-		console.log(`\n${chalk.black("[Analytics]")} Running at: ${chalk.black(new Date().toLocaleString())}`);
+		const heartBeat = useHeartBeat("analytics");
 
-		await Promise.all(
+		return await Promise.all(
 			Object.entries(filters).map(async ([_key, value]) => {
 				const { startAt, endAt } = formulateDates(value);
 
@@ -65,10 +62,16 @@ export default defineTask({
 					}),
 				]);
 			}),
-		);
+		)
 
-		console.log(`  ${chalk.bold("Time elapsed:")} ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
+			.then(async () => {
+				await heartBeat.success();
+				return { result: "Success" };
+			})
 
-		return { result: "Success" };
+			.catch(async () => {
+				await heartBeat.error();
+				return { result: "Error fetching analytics data" };
+			});
 	},
 });

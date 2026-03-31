@@ -4,7 +4,7 @@ import { loopThroughChunks } from "./server/utils/chunks/functions";
 import { headConfiguration } from "./server/utils/head/functions";
 
 export default defineNuxtConfig({
-	compatibilityDate: "2025-07-15",
+	compatibilityDate: "2026-03-31",
 	devtools: {
 		enabled: true,
 
@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 	modules: ["@nuxt/icon", "@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/image", "@nuxtjs/supabase", "@pinia/nuxt", "@vite-pwa/nuxt", "nuxt-umami", "nuxt-charts", "@vee-validate/nuxt", "@nuxt/a11y"],
 	nitro: {
 		scheduledTasks: {
-			"*/10 * * * *": ["analytics"],
+			"*/10 * * * *": ["analytics", "endpoints"],
 			"0 1 1 */1 *": ["revalidate-imap-cache"],
 			"0 12 */5 * *": ["supabase"],
 			"30 22 * * 0": ["notifications"],
@@ -27,8 +27,8 @@ export default defineNuxtConfig({
 
 	vite: {
 		build: {
-			// Verhoog de waarschuwing limiet voor chunk grootte, aangezien sommige libraries (zoals elk.js) een grote footprint hebben
-			chunkSizeWarningLimit: 1500,
+			// Verhoog de waarschuwing limiet voor chunk grootte, aangezien sommige libraries (zoals elk.js, vue.pdf) een grote footprint hebben
+			chunkSizeWarningLimit: 2200,
 			rollupOptions: {
 				output: {
 					manualChunks(id) {
@@ -88,6 +88,13 @@ export default defineNuxtConfig({
 		privateKey: process.env.GitPrivateKey,
 		clientId: process.env.GitClientID,
 		clientSecret: process.env.GitClientSecret,
+
+		heartbeats: {
+			analytics: process.env.BETTERSTACK_HEARTBEAT_ID_ANALYTICS,
+			endpoints: process.env.BETTERSTACK_HEARTBEAT_ID_ENDPOINTS,
+			imapCache: process.env.BETTERSTACK_HEARTBEAT_ID_IMAP_CACHE,
+			notifications: process.env.BETTERSTACK_HEARTBEAT_ID_NOTIFICATIONS,
+		},
 
 		email: {
 			key: process.env.RESEND_API_KEY,

@@ -1,5 +1,4 @@
 import { randomUUID } from "crypto";
-import chalk from "chalk";
 
 const { startAt, endAt } = formulateDates("week");
 const timezone = "Europe/Amsterdam";
@@ -10,8 +9,9 @@ export default defineTask({
 		description: "sends a notification every week with visits page statistics",
 	},
 	async run() {
-		console.log(`\n${chalk.black("[schedule]")} Running at: ${chalk.black(new Date().toLocaleString())}`);
 
+		const heartBeat = useHeartBeat("notifications");
+		
 		const { data, error } = await useFetchAnalytics(`stats:week`, {
 			startAt,
 			endAt,
@@ -19,7 +19,10 @@ export default defineTask({
 			timezone,
 		});
 
-		if (error) return { result: "Error fetching analytics data" };
+		if (error) {
+			await heartBeat.error();
+			return { result: "Error fetching analytics data" };
+		}
 
 		const { message, title } = formatWeeklyStatsMessage(data);
 
@@ -37,6 +40,7 @@ export default defineTask({
 			},
 		});
 
+		await heartBeat.success();
 		return { result: "Success" };
 	},
 });

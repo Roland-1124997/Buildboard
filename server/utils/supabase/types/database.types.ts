@@ -203,6 +203,24 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			endpoints: {
+				Row: {
+					created_at: string;
+					endpoint: string;
+					id: string;
+				};
+				Insert: {
+					created_at?: string;
+					endpoint?: string;
+					id?: string;
+				};
+				Update: {
+					created_at?: string;
+					endpoint?: string;
+					id?: string;
+				};
+				Relationships: [];
+			}
 		};
 		Views: {
 			[_ in never]: never;
