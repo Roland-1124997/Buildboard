@@ -27,13 +27,13 @@ export default defineBaseEventHandler(async (event) => {
 					linkdin: {
 						label: "LinkedIn",
 						iconName: "akar-icons:linkedin-fill",
-						url: "https://www.linkedin.com/in/roland-meijer-1124997a0/",
+						url: "https://www.linkedin.com/in/roland-meijer-07bb97198",
 						hidden: false,
 					},
 					telefoon: {
 						label: "Bel mij",
 						iconName: "akar-icons:phone",
-						url: "tel:+31612345678",
+						url: "tel:+31638305453",
 						hidden: false,
 					},
 					github: {
