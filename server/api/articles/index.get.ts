@@ -1,5 +1,4 @@
 export default defineBaseEventHandler(async (event, { server, user }) => {
-	
 	const search = String((getQuery(event).search as string) ?? "").toLowerCase();
 	let query;
 

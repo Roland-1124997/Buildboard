@@ -21,7 +21,7 @@ export const useSetCookies = (event: H3Event, session: Omit<Session, "user"> | n
 			maxAge: 60 * 60 * 24 * 14,
 			httpOnly: true,
 			secure: production,
-			sameSite: production ?  "none" : "strict",
+			sameSite: production ? "none" : "strict",
 			domain: production ? "roland-meijer.nl" : "localhost",
 		});
 	}
