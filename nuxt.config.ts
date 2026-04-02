@@ -54,9 +54,11 @@ export default defineNuxtConfig({
 		cookiePrefix: "access-token",
 		cookieOptions: {
 			maxAge: 60 * 60 * 8,
-			sameSite: "strict",
+			sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
+			domain: process.env.NODE_ENV === "development" ? "localhost" : "roland-meijer.nl",
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "development" ? false : true,
+			path: "/",
 		},
 		types: "~~/server/utils/supabase/types/database.types.ts",
 	},

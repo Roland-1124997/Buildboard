@@ -19,9 +19,10 @@ export const useSetCookies = (event: H3Event, session: Omit<Session, "user"> | n
 	if (session) {
 		setCookie(event, "refresh-token", session.refresh_token, {
 			maxAge: 60 * 60 * 24 * 14,
-			sameSite: "strict",
 			httpOnly: true,
 			secure: production,
+			sameSite: production ?  "none" : "strict",
+			domain: production ? "roland-meijer.nl" : "localhost",
 		});
 	}
 };

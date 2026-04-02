@@ -39,7 +39,7 @@ export const useMonitor = defineStore("useMonitor", () => {
 			loading.value = false;
 			error.value = Error;
 			addToast({
-				message: "Er is een fout opgetreden bij het verversen van de bestanden.",
+				message: "Er is een fout opgetreden bij het verversen van de monitoren.",
 				type: "error",
 			});
 		}
@@ -71,7 +71,7 @@ export const useMonitor = defineStore("useMonitor", () => {
 			loading.value = false;
 			error.value = Error.value as unknown as ErrorResponse;
 			addToast({
-				message: "Er is een fout opgetreden bij het ophalen van bestanden.",
+				message: "Er is een fout opgetreden bij het ophalen van monitoren.",
 				type: "error",
 			});
 		}

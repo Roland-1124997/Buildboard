@@ -4,7 +4,7 @@ import * as csrf from "uncsrf";
 const ignoredMethods = ["GET", "HEAD", "OPTIONS"];
 const ignorePath = ["/api/savory"];
 
-const defineBaseEventHandler = (
+export const defineBaseEventHandler = (
 	callback: (
 		event: H3Event,
 		options: {
