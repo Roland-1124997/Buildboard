@@ -12,7 +12,7 @@ export default defineNuxtConfig({
 			enabled: true,
 		},
 	},
-	modules: ["@nuxt/icon", "@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/image", "@nuxtjs/supabase", "@pinia/nuxt", "@vite-pwa/nuxt", "nuxt-umami", "nuxt-charts", "@vee-validate/nuxt", "@nuxt/a11y"],
+	modules: ["@nuxt/icon", "@nuxtjs/tailwindcss", "@vueuse/nuxt", "@nuxt/image", "@nuxtjs/supabase", "@pinia/nuxt", "@vite-pwa/nuxt", "nuxt-charts", "@vee-validate/nuxt", "@nuxt/a11y"],
 	nitro: {
 		scheduledTasks: {
 			"*/10 * * * *": ["analytics", "endpoints"],
@@ -61,20 +61,6 @@ export default defineNuxtConfig({
 			path: "/",
 		},
 		types: "~~/server/utils/supabase/types/database.types.ts",
-	},
-
-	umami: {
-		id: process.env.UMAMI_ID,
-		host: process.env.UMAMI_HOST,
-		useDirective: true,
-		autoTrack: true,
-		enabled: true,
-		proxy: "cloak",
-		ignoreLocalhost: true,
-		urlOptions: {
-			excludeSearch: true,
-			excludeHash: true,
-		},
 	},
 
 	runtimeConfig: {
