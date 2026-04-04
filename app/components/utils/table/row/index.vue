@@ -3,7 +3,9 @@
 		<th v-if="name == 'pages'" scope="row" class="flex items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-left text-gray-900 whitespace-nowrap">
 			<div class="flex items-center gap-3">
 				<icon name="ri:global-line" aria-hidden="true" class="object-cover w-6 h-6 mr-2 text-blue-600 rounded-sm opacity-50 group-hover:opacity-100" />
-				{{ data.label }}
+				<span class="truncate w-fit max-w-48 md:max-w-fit">
+					{{ data.label }}
+				</span>
 			</div>
 
 			<button
@@ -21,7 +23,9 @@
 		<th v-else-if="name == 'devices'" scope="row" class="flex items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-left text-gray-900 whitespace-nowrap">
 			<div class="flex items-center gap-3">
 				<icon :name="`akar-icons:${data.label.toLowerCase()}-device`" aria-hidden="true" class="object-cover w-6 h-6 mr-2 text-blue-600 rounded-sm opacity-50 group-hover:opacity-100" />
-				{{ data.label }}
+				<span class="truncate w-fit max-w-48 md:max-w-fit">
+					{{ data.label }}
+				</span>
 			</div>
 
 			<button
@@ -42,7 +46,10 @@
 					:name="`twemoji:flag-${useCounryName(data.label, 'en').replace(' ', '-').toLowerCase()}`"
 					aria-hidden="true"
 					class="object-cover w-6 h-6 mr-2 rounded-sm opacity-70 group-hover:opacity-100" />
-				{{ useCounryName(data.label) }}
+
+				<span class="truncate w-fit max-w-48 md:max-w-fit">
+					{{ useCounryName(data.label) }}
+				</span>
 			</div>
 
 			<button
