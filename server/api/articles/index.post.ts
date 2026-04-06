@@ -27,8 +27,6 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
 	if (error) return useReturnResponse(event, internalServerError);
 
-	await $fetch(`https://roland-meijer.nl/revalidate/articles`).catch(() => {});
-
 	return useReturnResponse(event, {
 		status: {
 			code: 200,

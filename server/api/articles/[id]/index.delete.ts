@@ -19,8 +19,6 @@ export default defineSupabaseEventHandler(async (event, { server }) => {
 
 	await invalidateStorageFilesCache();
 
-	await $fetch(`https://roland-meijer.nl/revalidate/articles`).catch(() => {});
-
 	return useReturnResponse(event, {
 		status: {
 			code: 200,
