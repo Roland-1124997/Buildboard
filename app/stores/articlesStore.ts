@@ -1,3 +1,5 @@
+// await $fetch(`https://roland-meijer.nl/revalidate/articles`).catch(() => {});
+
 export const useArticles = defineStore("useArticles", () => {
 	const { addToast } = useToast();
 	const { create, close } = useModal();
@@ -7,6 +9,9 @@ export const useArticles = defineStore("useArticles", () => {
 
 	const uri = "/api/articles";
 	const Request = useApiHandler<ApiResponse<Article[] | Article>>(uri);
+
+	const cacheUri = "https://roland-meijer.nl/revalidate/articles";
+	const cacheRequest = useApiHandler<ApiResponse<Article[] | Article>>(cacheUri);
 
 	const articles = ref<Article[] | null>(null);
 	const error = ref<ErrorResponse | null>(null);
@@ -37,6 +42,22 @@ export const useArticles = defineStore("useArticles", () => {
 	const getSavedPayload = () => {
 		if (storedPayload.value) return JSON.parse(storedPayload.value);
 		return null;
+	};
+
+	const revalidate = async () => {
+		const { error } = await cacheRequest.Get();
+
+		if (error) {
+			addToast({
+				message: "Er is een fout opgetreden bij het vernieuwen van de cache.",
+				type: "error",
+			});
+		} else {
+			addToast({
+				message: "Cache succesvol vernieuwd.",
+				type: "success",
+			});
+		}
 	};
 
 	const refresh = async (params?: { filter?: string; page?: number; search?: string }) => {
@@ -169,6 +190,7 @@ export const useArticles = defineStore("useArticles", () => {
 		articles,
 		error,
 		loading,
+		revalidate,
 		initialPayload,
 		remove,
 		refresh,

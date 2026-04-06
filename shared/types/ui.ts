@@ -27,7 +27,7 @@ export type Buttons = {
 	description?: string;
 	isSmall?: boolean;
 	isButton?: boolean;
-	onClick?: "triggerFileSelect" | "refresh" | "subscribe" | "unsubscribe";
+	onClick?: "triggerFileSelect" | "refresh" | "subscribe" | "unsubscribe" | "revalidate";
 };
 
 export type ToolBar = {

@@ -121,6 +121,7 @@
 	const isFileSelectButton = (btn: Buttons) => btn.onClick === "triggerFileSelect";
 	const isSubscribeButton = (btn: Buttons) => btn.onClick === "subscribe";
 	const isUnsubscribeButton = (btn: Buttons) => btn.onClick === "unsubscribe";
+	const isRevalidateButton = (btn: Buttons) => btn.onClick === "revalidate";
 
 	const checkIconButton = (btn: Buttons) => {
 		if (isSubscribeButton(btn) || isUnsubscribeButton(btn)) {
@@ -134,6 +135,7 @@
 	const checkClickAction = (btn: Buttons) => {
 		if (isFileSelectButton(btn)) triggerFileSelect();
 		else if (isRefreshButton(btn)) store.value.refresh?.();
+		else if (isRevalidateButton(btn)) store.value.revalidate?.();
 		else if (isSubscribeButton(btn) || isUnsubscribeButton(btn)) {
 			if (active.value) unsubscribe();
 			else if (!active.value) subscribe();

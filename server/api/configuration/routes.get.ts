@@ -104,6 +104,12 @@ const routes = defineCachedFunction(
 							isButton: true,
 							onClick: "refresh",
 						}),
+						createButton({
+							iconName: "akar-icons:data",
+							description: "Revalidate cache",
+							isButton: true,
+							onClick: "revalidate",
+						}),
 					],
 					search: createSearch("artikelen"),
 					store: "useArticles",

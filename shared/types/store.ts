@@ -5,6 +5,7 @@ export type StoreType = Store<
 	string,
 	{
 		refresh?: (params?: { filter?: string; page?: number; search?: string }) => Promise<void>;
+		revalidate?: () => Promise<void>;
 		alert?: { value: number };
 		loading: boolean;
 		error: ErrorResponse | null;
