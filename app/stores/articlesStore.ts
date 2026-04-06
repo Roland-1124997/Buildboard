@@ -10,9 +10,6 @@ export const useArticles = defineStore("useArticles", () => {
 	const uri = "/api/articles";
 	const Request = useApiHandler<ApiResponse<Article[] | Article>>(uri);
 
-	const cacheUri = "https://roland-meijer.nl/revalidate/articles";
-	const cacheRequest = useApiHandler<ApiResponse<Article[] | Article>>(cacheUri);
-
 	const articles = ref<Article[] | null>(null);
 	const error = ref<ErrorResponse | null>(null);
 	const loading = ref<boolean>(true);
@@ -45,7 +42,7 @@ export const useArticles = defineStore("useArticles", () => {
 	};
 
 	const revalidate = async () => {
-		const { error } = await cacheRequest.Get();
+		const { error } = await Request.Get({ extends: "/revalidate" });
 
 		if (error) {
 			addToast({
