@@ -2,15 +2,18 @@
 	<div class="">
 		<div class="">
 			<div v-if="editor">
-				<div class="grid grid-cols-1 md:grid-cols-[1fr_0.35fr] h-full">
+				<div class="grid grid-cols-1 md:grid-cols-[1fr_0.45fr] h-full">
 					<div class="z-10 bg-white md:pr-4 md:border-r">
-						<div class="relative flex-1 mt-1 overflow-x-hidden overflow-y-auto outline-none appearance-none md:mt-auto h-[85vh] md:h-[88vh]">
-							<div class="sticky top-0 z-10 bg-white">
+						<div class="relative flex flex-col mt-1 outline-none appearance-none md:mt-auto h-[85vh] md:h-[88vh]">
+							<div class="sticky top-0 z-20 bg-white">
 								<TiptapMenu v-if="!loaded" class="flex items-center p-1 py-1 mb-1 overflow-x-auto underline border rounded-lg bg-gray-50" :editor="editor" :editable />
 
 								<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
 									<div v-if="!loaded" class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
-										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ words }} woorden</p>
+										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">
+											{{ words }} 
+											woord{{ words === 1 ? "" : "en" }}
+										</p>
 
 										<p v-if="Object.keys(errors).length" class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">{{ Object.keys(errors).length }} fouten</p>
 
@@ -38,7 +41,9 @@
 								</FormBase>
 							</div>
 
-							<TiptapEditor v-if="!loaded" :editor="editor" aria-label="Artkel inhoud" />
+							<div id="tiptap-container" class="flex-1 min-h-0 p-2 overflow-x-hidden overflow-y-auto md:p-10">
+								<TiptapEditor v-if="!loaded" :editor="editor" aria-label="Artkel inhoud" />
+							</div>
 						</div>
 					</div>
 					<TiptapTableList v-if="!loaded" :Anchors="Anchors" v-model="activeId" />
@@ -49,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-	import TableOfContents from "@tiptap/extension-table-of-contents";
+	import { getHierarchicalIndexes, TableOfContents } from "@tiptap/extension-table-of-contents";
 
 	useSeoMeta({
 		title: "Insights - Artikel Opstellen",
@@ -116,6 +121,7 @@
 		uniqueAnchors.push({
 			id: anchor.id,
 			level: anchor.level,
+			isActive: anchor.isActive,
 			itemIndex: anchor.itemIndex,
 			textContent: anchor.textContent,
 		});
@@ -141,8 +147,15 @@
 		const uniqueAnchors: Anchor[] = [];
 		const seenAnchorIds = new Set<string>();
 
+		activeId.value = anchors.filter((anchor) => anchor.isActive)[0]?.id || null;
+
 		anchors.forEach((anchor) => populateUniqueAnchors(uniqueAnchors, seenAnchorIds, anchor));
 		Anchors.value = uniqueAnchors;
+	};
+
+	const getScrollParent = () => {
+		const container = document.getElementById("tiptap-container");
+		return container ?? window;
 	};
 
 	// Debounce for future syncing or autosaving features
@@ -154,7 +167,9 @@
 		extensions: [
 			...articleExtensions,
 			TableOfContents.configure({
+				getIndex: getHierarchicalIndexes,
 				onUpdate: (anchors) => populateAnchors(anchors),
+				scrollParent: getScrollParent,
 			}),
 		],
 		onCreate: ({ editor }) => populateFields(editor),

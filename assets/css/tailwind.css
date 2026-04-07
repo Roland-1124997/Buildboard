@@ -65,15 +65,15 @@ li::marker {
 }
 
 .tiptap h2 {
-	@apply mb-2 text-2xl font-semibold text-gray-800 text-balance scroll-m-[6.85rem];
+	@apply mb-2 text-2xl font-semibold text-gray-800 text-balance;
 }
 
 .tiptap h3 {
-	@apply mb-2 text-lg font-semibold text-gray-800 text-balance scroll-m-[6.85rem];
+	@apply mb-2 text-lg font-semibold text-gray-800 text-balance;
 }
 
 .tiptap h4 {
-	@apply text-base italic font-semibold text-gray-600 text-balance scroll-m-[6.85rem];
+	@apply text-base italic font-semibold text-gray-600 text-balance;
 }
 
 .tiptap p {
@@ -93,7 +93,7 @@ li::marker {
 }
 
 .tiptap img {
-	@apply w-[99%] m-auto my-6 rounded-lg border bg-gray-50 md:min-h-[20vh];
+	@apply w-[99%] m-auto my-8 last:mb-10 rounded-lg border bg-gray-50 md:min-h-[20vh];
 }
 
 .tiptap.ProseMirror img.ProseMirror-selectednode {

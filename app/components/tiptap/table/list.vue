@@ -1,5 +1,5 @@
 <template>
-	<aside class="pl-2 select-none">
+	<aside class="pl-4 select-none">
 		<nav class="mb-2 hidden md:inline md:w-64 h-[73vh] md:h-[76vh] overflow-y-auto">
 			<h1 class="mb-2 text-lg font-semibold">Inhoudsopgave</h1>
 
