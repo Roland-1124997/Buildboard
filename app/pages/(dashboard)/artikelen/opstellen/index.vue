@@ -11,7 +11,7 @@
 								<FormBase :appendToBody :request :schema="schema.article.frontend" v-slot="{ loading, errors, meta }">
 									<div v-if="!loaded" class="flex items-center justify-between gap-2 py-1 pb-3 mb-3 overflow-x-auto text-sm border-b">
 										<p class="w-full p-2 text-center text-blue-600 border border-blue-600 rounded-md select-none">
-											{{ words }} 
+											{{ words }}
 											woord{{ words === 1 ? "" : "en" }}
 										</p>
 
