@@ -301,5 +301,4 @@ input:-webkit-autofill:focus {
 	.custom-drag-handle {
 		@apply flex items-center gap-1 p-1 mr-4 bg-gray-100 rounded cursor-grab;
 	}
-
 }

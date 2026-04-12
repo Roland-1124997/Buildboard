@@ -199,9 +199,7 @@
 				const { data: repositories, error } = await request.Get();
 
 				if (!error && repositories?.data) {
-
-					if(nodeView) {
-						
+					if (nodeView) {
 						const nodeAttrs = nodeView.node.attrs;
 						const selected = repositories.data.find((repo) => repo.html_url === nodeAttrs.html_url);
 
@@ -210,21 +208,16 @@
 							html_url: selected?.html_url || nodeAttrs.html_url || "",
 							homepage: selected?.homepage || nodeAttrs.homepage || "",
 						};
-						
-						nodeView.setAttribute(attrs);
 
-					}
-					
-					else create({
-						name: "Verbind met GitHub",
-						description: "Kies een repository om mee te verbinden",
-						component: "FormSelect",
-						props: { repositories: repositories.data, editor },
-					});
-				} 
-				
-				
-				else
+						nodeView.setAttribute(attrs);
+					} else
+						create({
+							name: "Verbind met GitHub",
+							description: "Kies een repository om mee te verbinden",
+							component: "FormSelect",
+							props: { repositories: repositories.data, editor },
+						});
+				} else
 					addToast({
 						type: "error",
 						message: "er is een fout opgetreden bij het ophalen van repositories",
