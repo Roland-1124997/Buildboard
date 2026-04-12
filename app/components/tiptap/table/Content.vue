@@ -7,7 +7,7 @@
 			:class="[{ 'text-blue-950 bg-blue-100': active, 'text-gray-500': !active }]"
 			:style="paddingStyle">
 			<span>{{ node.level }}.</span>
-			<span class="truncate">{{ node.textContent }}</span>
+			<span class="text-left line-clamp-2">{{ node.textContent }}</span>
 		</button>
 
 		<ul v-if="node.children && node.children.length" class="mt-1 space-y-1">

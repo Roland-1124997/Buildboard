@@ -180,24 +180,51 @@
 			icon: "bxl:github",
 			title: "Verbind project",
 			action: async () => {
-				addToast({
-					type: "info",
-					message: "Ophalen van repositories...",
-				});
+				const nodeView = editor.$node("nodeView");
+
+				if (!nodeView)
+					addToast({
+						type: "info",
+						message: "Ophalen van repositories...",
+					});
+				else
+					addToast({
+						type: "info",
+						message: "Bijwerken repository gegevens...",
+					});
 
 				const uri = "/api/integrations/github/repositories";
-				const request = useApiHandler<ApiResponse<{ name: string; id: string }>>(uri);
+				const request = useApiHandler<ApiResponse<GithubRepository[]>>(uri);
 
 				const { data: repositories, error } = await request.Get();
 
 				if (!error && repositories?.data) {
-					create({
+
+					if(nodeView) {
+						
+						const nodeAttrs = nodeView.node.attrs;
+						const selected = repositories.data.find((repo) => repo.html_url === nodeAttrs.html_url);
+
+						const attrs = {
+							private: selected?.private || nodeAttrs.private || false,
+							html_url: selected?.html_url || nodeAttrs.html_url || "",
+							homepage: selected?.homepage || nodeAttrs.homepage || "",
+						};
+						
+						nodeView.setAttribute(attrs);
+
+					}
+					
+					else create({
 						name: "Verbind met GitHub",
 						description: "Kies een repository om mee te verbinden",
 						component: "FormSelect",
 						props: { repositories: repositories.data, editor },
 					});
-				} else
+				} 
+				
+				
+				else
 					addToast({
 						type: "error",
 						message: "er is een fout opgetreden bij het ophalen van repositories",

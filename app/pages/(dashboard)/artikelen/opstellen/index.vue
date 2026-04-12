@@ -41,12 +41,21 @@
 								</FormBase>
 							</div>
 
-							<div id="tiptap-container" class="flex-1 min-h-0 p-2 overflow-x-hidden overflow-y-auto md:p-10">
+							<div id="tiptap-container" class="relative flex-1 min-h-0 p-2 overflow-x-hidden overflow-y-auto md:p-10">
+								<drag-handle v-if="editor" :editor="editor" :compute-position-config="{ placement: 'left-start', strategy: 'absolute' }">
+									<div class="custom-drag-handle">
+										<icon name="fluent:re-order-dots-20-filled" class="w-4 h-4 text-gray-800" aria-hidden="true" />
+										<span class="sr-only">Sleep om te herordenen</span>
+									</div>
+								</drag-handle>
+
 								<TiptapEditor v-if="!loaded" :editor="editor" aria-label="Artkel inhoud" />
 							</div>
 						</div>
 					</div>
-					<TiptapTableList v-if="!loaded" :Anchors="Anchors" v-model="activeId" />
+					<div class="overflow-scroll md:h-[88vh]">
+						<TiptapTableList v-if="!loaded" :Anchors="Anchors" v-model="activeId" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -55,6 +64,8 @@
 
 <script setup lang="ts">
 	import { getHierarchicalIndexes, TableOfContents } from "@tiptap/extension-table-of-contents";
+	import { DragHandle } from "@tiptap/extension-drag-handle-vue-3";
+	import { NodeRange } from "@tiptap/extension-node-range";
 
 	useSeoMeta({
 		title: "Insights - Artikel Opstellen",
@@ -170,6 +181,9 @@
 				getIndex: getHierarchicalIndexes,
 				onUpdate: (anchors) => populateAnchors(anchors),
 				scrollParent: getScrollParent,
+			}),
+			NodeRange.configure({
+				key: null,
 			}),
 		],
 		onCreate: ({ editor }) => populateFields(editor),

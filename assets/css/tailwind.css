@@ -297,4 +297,9 @@ input:-webkit-autofill:focus {
 		box-shadow: 0 0 0 30px #fef2f2 inset !important;
 		background-clip: content-box !important;
 	}
+
+	.custom-drag-handle {
+		@apply flex items-center gap-1 p-1 mr-4 bg-gray-100 rounded cursor-grab;
+	}
+
 }
