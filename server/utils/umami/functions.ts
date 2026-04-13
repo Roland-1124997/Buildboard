@@ -1,6 +1,4 @@
-import { start } from "repl";
-
-const { UMAMI_API_KEY, production } = useRuntimeConfig();
+const { UMAMI_API_KEY } = useRuntimeConfig();
 
 const headers = { "x-umami-api-key": UMAMI_API_KEY };
 const baseUrl = `https://api.umami.is/v1/websites/d10b0ef2-b433-4f78-8f78-724e711e541a`;
@@ -49,7 +47,7 @@ export const useFetchAnalytics = defineCachedFunction(
 	},
 );
 
-const setReferenceDate = (filter: "dag" | "week" | "maand" | "jaar", previous: boolean) => {
+const setReferenceDate = (filter: "vandaag" | "week" | "maand" | "jaar", previous: boolean) => {
 	const timezone = "Europe/Amsterdam";
 	const nowDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
 
@@ -69,7 +67,7 @@ const setReferenceDate = (filter: "dag" | "week" | "maand" | "jaar", previous: b
 	};
 };
 
-const calculateStartAndEndDates = (filter: "dag" | "week" | "maand" | "jaar", year: number, month: number, day: number) => {
+const calculateStartAndEndDates = (filter: "vandaag" | "week" | "maand" | "jaar", year: number, month: number, day: number) => {
 	let startAt = new Date(year, month, day, 0, 0, 0, 0).getTime();
 	let endAt = new Date(year, month, day, 23, 59, 59, 999).getTime();
 
@@ -100,7 +98,7 @@ const calculateStartAndEndDates = (filter: "dag" | "week" | "maand" | "jaar", ye
 	return { startAt, endAt };
 };
 
-export const formulateDates = (filter: "dag" | "week" | "maand" | "jaar", previous: boolean) => {
+export const formulateDates = (filter: "vandaag" | "week" | "maand" | "jaar", previous: boolean = false) => {
 	const { year, month, day } = setReferenceDate(filter, previous);
 	return calculateStartAndEndDates(filter, year, month, day);
 };

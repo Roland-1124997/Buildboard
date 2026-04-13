@@ -1,5 +1,5 @@
 export default defineSupabaseEventHandler(async (event) => {
-	const filter = (getQuery(event).filter || "vandaag") as string;
+	const filter = (getQuery(event).filter || "vandaag") as "vandaag" | "jaar" | "maand" | "week";
 
 	const { startAt, endAt } = formulateDates(filter);
 

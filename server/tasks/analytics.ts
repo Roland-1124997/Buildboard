@@ -3,7 +3,7 @@ const filters = {
 	week: "week",
 	maand: "maand",
 	jaar: "jaar",
-};
+} as const;
 
 export default defineTask({
 	meta: {
