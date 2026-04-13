@@ -18,7 +18,7 @@ export default defineNuxtConfig({
 			"*/10 * * * *": ["analytics", "endpoints"],
 			"0 1 1 */1 *": ["revalidate-imap-cache"],
 			"0 12 */5 * *": ["supabase"],
-			"30 22 * * 0": ["notifications"],
+			"0 3 * * 1": ["notifications"],
 		},
 		experimental: {
 			tasks: true,

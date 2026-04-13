@@ -1,3 +1,5 @@
+import { start } from "repl";
+
 const { UMAMI_API_KEY, production } = useRuntimeConfig();
 
 const headers = { "x-umami-api-key": UMAMI_API_KEY };
@@ -47,43 +49,62 @@ export const useFetchAnalytics = defineCachedFunction(
 	},
 );
 
-export const formulateDates = (filter: string) => {
+const setReferenceDate = (filter: "dag" | "week" | "maand" | "jaar", previous: boolean) => {
 	const timezone = "Europe/Amsterdam";
 	const nowDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
 
-	const year = nowDate.getFullYear();
-	const month = nowDate.getMonth();
-	const day = nowDate.getDate();
+	const referenceDate = new Date(nowDate);
 
-	const oneHour = production ? -60 * 60 * 1000 : 0; // subtract one hour in production to account for timezone differences
+	if (previous) {
+		if (filter === "week") referenceDate.setDate(referenceDate.getDate() - 7);
+		else if (filter === "maand") referenceDate.setMonth(referenceDate.getMonth() - 1);
+		else if (filter === "jaar") referenceDate.setFullYear(referenceDate.getFullYear() - 1);
+		else referenceDate.setDate(referenceDate.getDate() - 1);
+	}
 
-	let startAt = new Date(year, month, day, 0, 0, 0, 0).getTime() + oneHour;
-	let endAt = new Date(year, month, day, 23, 59, 59, 999).getTime() + oneHour;
+	return {
+		year: referenceDate.getFullYear(),
+		month: referenceDate.getMonth(),
+		day: referenceDate.getDate(),
+	};
+};
+
+
+
+const calculateStartAndEndDates = (filter: "dag" | "week" | "maand" | "jaar", year: number, month: number, day: number) => {
+	let startAt = new Date(year, month, day, 0, 0, 0, 0).getTime();
+	let endAt = new Date(year, month, day, 23, 59, 59, 999).getTime();
 
 	if (filter === "week") {
+		const currentDate = new Date(year, month, day);
 		// getDay(): sunday = 0, monday = 1, ..., saturday = 6
-		const mondayBasedDay = (nowDate.getDay() + 6) % 7;
+		const mondayBasedDay = (currentDate.getDay() + 6) % 7;
 		const weekStartDate = new Date(year, month, day - mondayBasedDay, 0, 0, 0, 0);
 		const weekEndDate = new Date(weekStartDate);
 
 		weekEndDate.setDate(weekStartDate.getDate() + 6);
 		weekEndDate.setHours(23, 59, 59, 999);
 
-		startAt = weekStartDate.getTime() + oneHour;
-		endAt = weekEndDate.getTime() + oneHour;
+		startAt = weekStartDate.getTime();
+		endAt = weekEndDate.getTime();
 	}
 
 	if (filter === "maand") {
-		startAt = new Date(year, month, 1, 0, 0, 0, 0).getTime() + oneHour;
-		endAt = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime() + oneHour;
+		startAt = new Date(year, month, 1, 0, 0, 0, 0).getTime();
+		endAt = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
 	}
 
 	if (filter === "jaar") {
-		startAt = new Date(year, 0, 1, 0, 0, 0, 0).getTime() + oneHour;
-		endAt = new Date(year, 11, 31, 23, 59, 59, 999).getTime() + oneHour;
+		startAt = new Date(year, 0, 1, 0, 0, 0, 0).getTime();
+		endAt = new Date(year, 11, 31, 23, 59, 59, 999).getTime();
 	}
 
 	return { startAt, endAt };
+};
+
+export const formulateDates = (filter: "dag" | "week" | "maand" | "jaar", previous: boolean) => {
+	const { year, month, day } = setReferenceDate(filter, previous);
+	return calculateStartAndEndDates(filter, year, month, day);
 };
 
 export const calculateMetrics = (metrics: Record<string, any>) => {

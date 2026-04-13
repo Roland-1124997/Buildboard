@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 
-const { startAt, endAt } = formulateDates("week");
+const { startAt, endAt } = formulateDates("week", true);
 const timezone = "Europe/Amsterdam";
 
 export default defineTask({
@@ -11,7 +11,9 @@ export default defineTask({
 	async run() {
 		const heartBeat = useHeartBeat("notifications");
 
-		const { data, error } = await useFetchAnalytics(`stats:week`, {
+		console.log(new Date(startAt).toLocaleDateString(), new Date(endAt).toLocaleDateString());
+
+		const { data, error } = await useFetchAnalytics(`stats:prev-week`, {
 			startAt,
 			endAt,
 			unit: "day",
