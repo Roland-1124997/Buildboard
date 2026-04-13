@@ -92,7 +92,7 @@
 	});
 
 	const visibleHistory = computed(() => monitor.attributes.status_history.slice(-days));
-	const availabilityPercentage = computed(() => `${(monitor.attributes.availability * 100).toFixed(2)}%`);
+	const availabilityPercentage = computed(() => `${monitor.attributes.availability * 100}`.slice(0, 6) + "%");
 	const totalDowntimeSeconds = computed(() => visibleHistory.value.reduce((total, item) => total + item.downtime_duration, 0));
 	const downtimeIncidents = computed(() => visibleHistory.value.filter((item) => (!isOperational(item.status) && !IsNotMonitored(item.status)) || item.downtime_duration > 0).length);
 	const latestIncident = computed<StatusHistoryItem | null>(() => {
