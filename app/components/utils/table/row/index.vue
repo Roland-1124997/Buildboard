@@ -93,7 +93,7 @@
 
 	const iconName = (name: string, label?: string) => {
 		if (name === "events") return "akar-icons:radio-fill";
-		if (name === "countries" && label) return `twemoji:flag-${useCountryName(label, "en").replace(" ", "-").toLowerCase()}`;
+		if (name === "countries" && label) return `twemoji:flag-${useCountryName(label, "en").replaceAll(" ", "-").toLowerCase()}`;
 		if (name === "devices") return `akar-icons:${label?.toLowerCase()}-device`;
 		if (name === "tokens") return "ri:key-fill";
 
